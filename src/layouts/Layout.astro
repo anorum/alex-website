@@ -1,3 +1,11 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+import ChainlitCopilot from '../components/ChainlitCopilot.jsx';
+import Navigation from '../components/Navigation.astro';
+
+import "../styles/global.css";
+---
 <!doctype html>
 <html lang="en">
 	<head>
@@ -6,8 +14,11 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
+		<ClientRouter />
 	</head>
 	<body>
+		<ChainlitCopilot client:load />
+		<Navigation />
 		<slot />
 	</body>
 </html>

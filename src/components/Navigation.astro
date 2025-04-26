@@ -1,0 +1,31 @@
+---
+const links = [
+  { name: "About", href: "/" },
+  { name: "Projects", href: "/projects" },
+  { name: "Playground", href: "/playground" },
+  { name: "Contact", href: "/contact" },
+];
+---
+<nav class="flex justify-center">
+  <div class="mx-auto max-w-7xl px-2 sm:px-4 md:px-6 lg:px-8">
+    <div class="relative flex h-16 items-center justify-center">
+      <div class="flex items-center justify-center">
+        <div class="flex space-x-2 sm:space-x-3 md:space-x-4">
+          {links.map((link) => (
+            <a 
+              href={link.href} 
+              class={`rounded-full px-2 py-2 sm:px-3 sm:py-2 md:px-4 md:py-3 text-sm font-medium ${
+                Astro.url.pathname === link.href 
+                  ? "bg-gray-900 text-white" 
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+              }`}
+              aria-current={Astro.url.pathname === link.href ? "page" : undefined}
+            >
+              {link.name}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
