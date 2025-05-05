@@ -17,6 +17,12 @@ export default function ChainlitCopilot() {
 
       window.mountChainlitWidget({
         chainlitServer: "http://localhost:8000",
+        theme: "dark",
+        button: {
+          imageUrl: "public/logo_light.png",
+          // containerId: "mara-chat",
+          // className: "absolute right-8 bottom-16"      
+        }
       });
 
       // Watermark removal logic
