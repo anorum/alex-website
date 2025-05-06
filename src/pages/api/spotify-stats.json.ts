@@ -15,7 +15,7 @@ interface Track {
 }
 
 // Function to get a new access token using the refresh token
-async function getAccessToken(): Promise<string | null> {
+export async function getAccessToken(): Promise<string | null> {
   const refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN;
   const clientId = import.meta.env.SPOTIFY_CLIENT_ID;
   const clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET;
@@ -45,7 +45,7 @@ async function getAccessToken(): Promise<string | null> {
   }
 }
 
-async function fetchWebApi<T>(endpoint: string, method: string, token: string, body?: unknown): Promise<T> {
+export async function fetchWebApi<T>(endpoint: string, method: string, token: string, body?: unknown): Promise<T> {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ async function fetchWebApi<T>(endpoint: string, method: string, token: string, b
   return await res.json();
 }
 
-async function getTopTracks(token: string, time_range = 'short_term', limit = 10): Promise<Track[]> {
+export async function getTopTracks(token: string, time_range = 'short_term', limit = 10): Promise<Track[]> {
   const endpoint = `v1/me/top/tracks?time_range=${time_range}&limit=${limit}`;
   const response = await fetchWebApi<{ items: any[] }>(endpoint, 'GET', token);
   
@@ -68,14 +68,17 @@ async function getTopTracks(token: string, time_range = 'short_term', limit = 10
   }));
 }
 
-async function getTopArtists(token: string, time_range = 'short_term', limit = 10): Promise<Artist[]> {
+export async function getTopArtists(token: string, time_range = 'short_term', limit = 10): Promise<any[]> {
   const endpoint = `v1/me/top/artists?time_range=${time_range}&limit=${limit}`;
   const response = await fetchWebApi<{ items: any[] }>(endpoint, 'GET', token);
+  
+  console.log('Raw artist data from Spotify:', response.items[0]);
   
   return response.items.map(item => ({
     name: item.name,
     imageUrl: item.images?.[0]?.url || '',
-    count: item.popularity || 0
+    count: item.popularity || 0,
+    genres: item.genres || []
   }));
 }
 
@@ -108,7 +111,25 @@ export const GET: APIRoute = async ({ request }) => {
       getTopTracks(accessToken, timeRange as 'short_term' | 'medium_term' | 'long_term')
     ]);
     
-    return new Response(JSON.stringify({ topArtists, topTracks }), {
+    // Extract genres from top artists
+    const genreCounts: Record<string, number> = {};
+    topArtists.forEach((artist: any) => {
+      if (artist.genres) {
+        artist.genres.forEach((genre: string) => {
+          const formattedGenre = genre.split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          genreCounts[formattedGenre] = (genreCounts[formattedGenre] || 0) + artist.count;
+        });
+      }
+    });
+    
+    const topGenres = Object.entries(genreCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    
+    return new Response(JSON.stringify({ topArtists, topTracks, topGenres }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json'

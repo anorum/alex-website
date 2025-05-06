@@ -1,5 +1,4 @@
 ---
-// Import types
 // Define interfaces for our data
 interface Artist {
   name: string;
@@ -19,22 +18,6 @@ interface Genre {
   count: number;
 }
 
-interface ListeningTime {
-  total: number;
-  average: number;
-  peak: {
-    day: string;
-    time: string;
-  };
-}
-
-interface SpotifyData {
-  topArtists: Artist[];
-  topTracks: Track[];
-  topGenres: Genre[];
-  listeningTime: ListeningTime;
-}
-
 // Available time ranges for the dropdown
 const timeRanges = [
   { value: 'short_term', label: '4 Weeks' },
@@ -42,82 +25,48 @@ const timeRanges = [
   { value: 'long_term', label: 'Year' }
 ];
 
-// Spotify API credentials from environment variables
-const refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN;
-const clientId = import.meta.env.SPOTIFY_CLIENT_ID;
-const clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET;
+// Import the functions from the API endpoint
+import { getAccessToken, getTopArtists, getTopTracks } from '../pages/api/spotify-stats.json';
 
-// Function to get a new access token using the refresh token
-async function getAccessToken(): Promise<string | null> {
-  try {
-    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${btoa(`${clientId}:${clientSecret}`)}`
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken
-      })
+// Fetch initial data directly using the API functions
+let topArtists: Artist[] = [];
+let topTracks: Track[] = [];
+let topGenres: Genre[] = [];
+
+try {
+  const accessToken = await getAccessToken();
+  
+  if (accessToken) {
+    // Fetch top artists and tracks
+    const [artistsData, tracksData] = await Promise.all([
+      getTopArtists(accessToken, 'medium_term'),
+      getTopTracks(accessToken, 'medium_term')
+    ]);
+    
+    topArtists = artistsData;
+    topTracks = tracksData;
+    
+    // Extract genres from top artists
+    const genreCounts: Record<string, number> = {};
+    topArtists.forEach((artist: any) => {
+      if (artist.genres) {
+        artist.genres.forEach((genre: string) => {
+          const formattedGenre = genre.split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          genreCounts[formattedGenre] = (genreCounts[formattedGenre] || 0) + artist.count;
+        });
+      }
     });
     
-    if (!tokenResponse.ok) {
-      throw new Error(`Failed to refresh token: ${tokenResponse.status} ${tokenResponse.statusText}`);
-    }
-    
-    const tokenData = await tokenResponse.json();
-    return tokenData.access_token;
-  } catch (error) {
-    console.error('Error refreshing token:', error);
-    return null;
+    topGenres = Object.entries(genreCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
   }
+} catch (error) {
+  console.error('Error fetching initial data:', error);
 }
-
-const accessToken = await getAccessToken();
-
-async function fetchWebApi<T>(endpoint: string, method: string, body?: unknown): Promise<T> {
-  const res = await fetch(`https://api.spotify.com/${endpoint}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    method,
-    body:JSON.stringify(body)
-  });
-  return await res.json();
-}
-
-async function getTopTracks(
-  time_range: 'short_term' | 'medium_term' | 'long_term' = 'short_term',
-  limit: number = 10
-): Promise<Track[]> {
-    const endpoint = `v1/me/top/tracks?time_range=${time_range}&limit=${limit}`;
-    const response = await fetchWebApi<{ items: any[] }>(endpoint, 'GET');
-    
-    return response.items.map(item => ({
-      name: item.name,
-      artist: item.artists.map((artist: any) => artist.name).join(', '),
-      imageUrl: item.album?.images?.[0]?.url || '',
-      count: item.popularity || 0
-    }));
-}
-
-async function getTopArtists(
-  time_range: 'short_term' | 'medium_term' | 'long_term' = 'short_term',
-  limit: number = 10
-): Promise<Artist[]> {
-    const endpoint = `v1/me/top/artists?time_range=${time_range}&limit=${limit}`;
-    const response = await fetchWebApi<{ items: any[] }>(endpoint, 'GET');
-    
-    return response.items.map(item => ({
-      name: item.name,
-      imageUrl: item.images?.[0]?.url || '',
-      count: item.popularity || 0
-    }));
-}
-
-let topTracks = await getTopTracks()
-let topArtists = await getTopArtists()
 
 ---
 
@@ -178,7 +127,7 @@ let topArtists = await getTopArtists()
       <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Artists</h3>
         <div id="top-artists-container" class="space-y-3">
-          {topArtists.map((artist, index) => (
+          {topArtists.map((artist: Artist, index: number) => (
             <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
               <div class="flex items-center">
                 <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
@@ -197,7 +146,7 @@ let topArtists = await getTopArtists()
       <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Tracks</h3>
         <div id="top-tracks-container" class="space-y-3">
-          {topTracks.map((track, index) => (
+          {topTracks.map((track: Track, index: number) => (
             <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
               <div class="flex items-center">
                 <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
@@ -214,7 +163,32 @@ let topArtists = await getTopArtists()
       </div>
     )}
     
-    <!-- Placeholder for additional stats that can be added later -->
+    <!-- Top Genres -->
+    {topGenres && topGenres.length > 0 ? (
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Genres</h3>
+        <div id="top-genres-container" class="space-y-3">
+          {topGenres.map((genre: Genre, index: number) => (
+            <div class="mb-3 last:mb-0">
+              <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-gray-900 dark:text-white">{genre.name}</span>
+                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Popularity: {genre.count}</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div class="bg-green-600 h-2.5 rounded-full" style={`width: ${(genre.count / topGenres[0].count) * 100}%`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Genres</h3>
+        <div id="top-genres-container">
+          <p class="text-gray-500 dark:text-gray-400">No genre data available</p>
+        </div>
+      </div>
+    )}
   </div>
 </div>
 
@@ -253,6 +227,9 @@ let topArtists = await getTopArtists()
         
         console.log('Updating tracks with:', data.topTracks);
         updateTopTracks(data.topTracks);
+        
+        console.log('Updating genres with:', data.topGenres);
+        updateTopGenres(data.topGenres);
         
         // Hide loading indicator
         if (loadingIndicator) loadingIndicator.classList.add('hidden');
@@ -317,6 +294,34 @@ let topArtists = await getTopArtists()
             </div>
           </div>
           <span class="text-sm text-gray-500 dark:text-gray-400">Popularity: ${track.count}</span>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
+  
+  function updateTopGenres(genres: any[]) {
+    const container = document.getElementById('top-genres-container');
+    if (!container) return;
+    
+    if (!genres || genres.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No genre data available</p>';
+      return;
+    }
+    
+    let html = '';
+    genres.forEach((genre: any) => {
+      const percentage = (genre.count / genres[0].count) * 100;
+      html += `
+        <div class="mb-3 last:mb-0">
+          <div class="flex justify-between mb-1">
+            <span class="text-base font-medium text-gray-900 dark:text-white">${genre.name}</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Popularity: ${genre.count}</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div class="bg-green-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+          </div>
         </div>
       `;
     });
