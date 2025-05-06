@@ -6,24 +6,24 @@ import SkillsGroup from '../components/SkillsGroup.astro';
 import InterestItem from '../components/InterestItem.astro';
 
 // Define skills data
-const frontendSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Vue', 'Tailwind CSS'];
-const backendSkills = ['Node.js', 'Express', 'Python', 'Django', 'GraphQL'];
-const databaseSkills = ['MongoDB', 'PostgreSQL', 'MySQL', 'Redis'];
-const devopsSkills = ['Docker', 'Kubernetes', 'AWS', 'CI/CD', 'Git'];
+const frontendSkills = ['HTML', 'CSS', 'JavaScript', 'Astro', 'React', 'Tailwind CSS'];
+const backendSkills = ['Python', 'FastAPI', 'Node.js', 'TypeScript'];
+const databaseSkills = ['Snowflake', 'PostgreSQL', 'MySQL', 'Redis'];
+const devopsSkills = ['Airflow', 'Kubernetes', 'Terraform', 'AWS', 'GitHub Actions', 'CI/CD'];
 
 // Define interests data
 const interests = [
   {
-    title: 'Technology',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    icon: `<svg class="w-5 h-5 text-indigo-600 dark:text-indigo-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM13.5 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm-7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 16a6 6 0 0 1-5.5-3.59A1.51 1.51 0 0 1 5.95 11h8.1a1.51 1.51 0 0 1 1.45 1.41A6 6 0 0 1 10 16Z"/></svg>`,
-    colorScheme: 'indigo'
+    title: 'Trail Running',
+    description: 'I’m currently training for a marathon, and I love exploring forest trails around the Pacific Northwest.',
+    icon: `<svg class="w-5 h-5 text-green-600 dark:text-green-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 018 8 8 8 0 11-8-8zM8 9H5a1 1 0 000 2h3v3a1 1 0 002 0v-3h3a1 1 0 000-2H10V6a1 1 0 10-2 0v3z"/></svg>`,
+    colorScheme: 'green'
   },
   {
-    title: 'Writing',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    icon: `<svg class="w-5 h-5 text-pink-600 dark:text-pink-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M19 4h-1a1 1 0 1 0 0 2v11a1 1 0 0 1-2 0V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V5a1 1 0 0 0-1-1ZM3 4a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4Zm9 13H4a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-3H4a1 1 0 0 1 0-2h8a1 1 0 0 1 0 2Zm0-3H4a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2Zm0-3h-2a1 1 0 0 1 0-2h2a1 1 0 1 1 0 2Zm0-3h-2a1 1 0 0 1 0-2h2a1 1 0 1 1 0 2Z"/></svg>`,
-    colorScheme: 'pink'
+    title: 'DIY & Homelab Projects',
+    description: 'From running Kubernetes on Raspberry Pis to building LLM-powered assistants, I enjoy automating and optimizing my home infrastructure.',
+    icon: `<svg class="w-5 h-5 text-yellow-600 dark:text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z"/></svg>`,
+    colorScheme: 'yellow'
   }
 ];
 ---
@@ -64,10 +64,7 @@ const interests = [
 					<div class="col-span-2">
 						<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
 						<p class="text-lg text-gray-500 dark:text-gray-400 mb-4">
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-						</p>
-						<p class="text-lg text-gray-500 dark:text-gray-400 mb-4">
-							Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+							I'm a data platform engineering leader with over a decade of experience building scalable, reliable, and self-service infrastructure. I currently lead the Data Platform Engineering team at LegalZoom, where I focus on enabling teams through clean tooling, governance, and cost-efficient architecture. Outside of work, I enjoy trail running, snowboarding, cooking, and exploring side projects involving LLMs and automation. I live in Portland, Oregon, with my partner and our Australian Labradoodle, Mara.
 						</p>
 					</div>
 				</div>
@@ -78,33 +75,31 @@ const interests = [
 					
 					<ol class="relative border-s border-gray-200 dark:border-gray-700">
 						<WorkExperienceItem
-							title="Senior Software Engineer"
-							company="Tech Innovations Inc."
-							startDate="January 2022"
-							location="San Francisco, CA"
-							description="Led the development of multiple full-stack applications using modern technologies. Collaborated with cross-functional teams to deliver high-quality software solutions."
+							title="Group Manager, Data Platform Engineering"
+							company="LegalZoom"
+							startDate="March 2023"
+							location="Remote"
 							isCurrent={true}
-							skills={["React", "Node.js", "TypeScript", "AWS"]}
+							description="Leading the Data Platform team, focused on Snowflake administration, orchestration (Airflow), infrastructure-as-code (Terraform), and data governance enablement. Driving cost optimization, access control automation, and self-service tooling across the organization."
+							skills={["Snowflake", "Airflow", "Terraform", "AWS", "Kubernetes"]}
 						/>
-						
 						<WorkExperienceItem
-							title="Software Engineer"
-							company="WebDev Solutions"
-							startDate="March 2019"
-							endDate="December 2021"
-							location="San Francisco, CA"
-							description="Developed and maintained web applications using JavaScript, React, and Node.js. Implemented responsive designs and improved application performance."
-							skills={["JavaScript", "React", "CSS", "MongoDB"]}
+							title="Principal Data Engineer"
+							company="LegalZoom"
+							startDate="December 2021"
+							endDate="March 2023"
+							location="Remote"
+							description="Modernized the data platform by introducing Airflow on Kubernetes, revamping Snowflake architecture with Terraform, and enabling cost governance practices. Built infrastructure for secure, scalable data processing."
+							skills={["Python", "Airflow", "Terraform", "Snowflake", "Vault"]}
 						/>
-						
 						<WorkExperienceItem
-							title="Junior Developer"
-							company="StartUp Tech"
-							startDate="January 2017"
-							endDate="February 2019"
-							location="San Jose, CA"
-							description="Started my career as a junior developer working on front-end projects. Gained experience with HTML, CSS, and JavaScript frameworks."
-							skills={["HTML", "CSS", "JavaScript", "jQuery"]}
+							title="Senior Data Engineer"
+							company="New Relic"
+							startDate="2019"
+							endDate="2021"
+							location="Portland, OR"
+							description="Worked across analytics and data platform teams to scale ETL pipelines, manage dbt models, and integrate cross-functional product analytics workflows."
+							skills={["dbt", "PostgreSQL", "Looker", "Python", "Kafka"]}
 						/>
 					</ol>
 				</div>
@@ -115,16 +110,10 @@ const interests = [
 					
 					<EducationItem
 						degree="Bachelor of Science in Computer Science"
-						institution="University of Technology"
-						startYear="2013"
-						endYear="2017"
-						location="San Francisco, CA"
-						gpa="3.8/4.0"
-						honors={[
-							"Dean's List (All Semesters)",
-							"Outstanding Computer Science Graduate Award",
-							"ACM Programming Competition Finalist"
-						]}
+						institution="University of Oregon"
+						startYear="2010"
+						endYear="2013"
+						location="Eugene, OR"
 					/>
 				</div>
 				
@@ -137,6 +126,9 @@ const interests = [
 						<SkillsGroup title="Backend" skills={backendSkills} colorScheme="green" />
 						<SkillsGroup title="Database" skills={databaseSkills} colorScheme="purple" />
 						<SkillsGroup title="DevOps" skills={devopsSkills} colorScheme="yellow" />
+						<SkillsGroup title="Data Engineering" skills={['dbt', 'Kafka', 'ETL', 'Data Modeling', 'Batch & Streaming Pipelines']} colorScheme="pink" />
+						<SkillsGroup title="Machine Learning & AI" skills={['LLMs', 'ML Pipelines', 'Prompt Engineering', 'Model Evaluation']} colorScheme="rose" />
+						<SkillsGroup title="Data Governance & Observability" skills={['Data Contracts', 'Monitoring', 'Cost Optimization', 'Data Quality']} colorScheme="gray" />
 					</div>
 				</div>
 				

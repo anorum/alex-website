@@ -22,15 +22,15 @@ const links = [
     </div>
   </div>
   <div class="items-center justify-between flex w-auto order-1" id="navbar-sticky">
-    <ul class="flex flex-row p-0 mt-0 font-medium border-0 space-x-8 rtl:space-x-reverse bg-white dark:bg-gray-900">
+    <ul class="flex flex-row p-0 mt-0 font-medium border-0 space-x-8 rtl:space-x-reverse bg-transparent">
       {links.map((link) => (
       <li>
         <a 
               href={link.href} 
               class={`rounded-full px-2 py-2 sm:px-3 sm:py-2 md:px-4 md:py-3 text-sm font-medium ${
                 Astro.url.pathname === link.href 
-                  ? "bg-gray-900 text-white" 
-                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  ? "bg-gray-900 text-white dark:bg-blue-600" 
+                  : "text-gray-700 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
               }`}
               aria-current={Astro.url.pathname === link.href ? "page" : undefined}
             >
@@ -42,4 +42,3 @@ const links = [
   </div>
   </div>
 </nav>
-

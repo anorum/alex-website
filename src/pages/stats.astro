@@ -1,8 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import MainLayout from '../layouts/MainLayout.astro';
+import SpotifyStats from '../components/SpotifyStats.astro';
 ---
 
-<Layout>
+<MainLayout title="Stats - Alex Norum" description="Personal statistics and data visualizations">
 	<main>
 		<section class="bg-white dark:bg-gray-900">
 			<div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
@@ -17,36 +18,9 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				
 				<!-- Stats Cards -->
-				<div class="grid md:grid-cols-2 gap-8 mb-16">
+				<div class="grid md:grid-cols-1 gap-8 mb-16">
 					<!-- Spotify Stats -->
-					<div class="p-6 bg-white rounded-lg border-l-4 border-green-600 shadow-md dark:bg-gray-800 dark:border-green-500">
-						<div class="flex items-center mb-4">
-							<svg class="w-10 h-10 text-green-600 dark:text-green-400 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.059 14.406c-.192.192-.41.288-.637.288s-.446-.096-.637-.288a.927.927 0 0 1 0-1.274c.341-.341.822-.446 1.254-.271.431.175.71.592.71 1.059 0 .246-.096.47-.29.663zm-3.46-1.494a.927.927 0 0 1 0-1.274.924.924 0 0 1 1.274 0c.351.351.351.923 0 1.274a.924.924 0 0 1-1.274 0zm-3.459 1.493c-.192.192-.41.288-.637.288s-.446-.096-.637-.288a.927.927 0 0 1 0-1.274c.341-.341.822-.446 1.254-.271.431.175.71.592.71 1.059 0 .246-.096.47-.29.663zm8.039-6.892c-1.967-1.25-4.374-1.554-6.427-1.554-2.121 0-4.5.304-6.427 1.554a.922.922 0 0 1-1.262-.304.922.922 0 0 1 .304-1.262c2.121-1.308 4.731-1.721 7.385-1.721s5.264.413 7.385 1.721c.446.275.579.854.304 1.262-.275.446-.854.579-1.262.304zm-1.2 3.056c-1.487-.937-3.397-1.167-5.173-1.167-1.776 0-3.686.23-5.173 1.167a.924.924 0 0 1-1.274-.304.924.924 0 0 1 .304-1.274c1.871-1.138 4.112-1.346 6.143-1.346s4.272.208 6.143 1.346c.446.275.579.828.304 1.274-.275.446-.828.579-1.274.304z"/>
-							</svg>
-							<h2 class="text-3xl font-bold text-gray-900 dark:text-white">Spotify Stats</h2>
-						</div>
-						<p class="text-lg text-gray-500 dark:text-gray-400 mb-6">Coming soon! This section will display your Spotify listening statistics.</p>
-						
-						<div class="grid grid-cols-2 gap-4">
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Top Artists</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Top Tracks</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Listening Time</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Genres</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-						</div>
-					</div>
+					<SpotifyStats defaultYear="2025" />
 					
 					<!-- Strava Stats -->
 					<div class="p-6 bg-white rounded-lg border-l-4 border-orange-600 shadow-md dark:bg-gray-800 dark:border-orange-500">
@@ -121,4 +95,4 @@ import Layout from '../layouts/Layout.astro';
 			</div>
 		</section>
 	</main>
-</Layout>
+</MainLayout>
