@@ -1,15 +1,6 @@
 ---
-interface Props {
-  defaultYear?: string;
-}
-
-const { defaultYear = new Date().getFullYear().toString() } = Astro.props;
-
-// Available years for the dropdown
-const availableYears = ['2025', '2024', '2023', '2022', '2021'];
-
-// Mock data for demonstration purposes
-// In a real implementation, this would be fetched from an API
+// Import types
+// Define interfaces for our data
 interface Artist {
   name: string;
   imageUrl: string;
@@ -37,115 +28,97 @@ interface ListeningTime {
   };
 }
 
-interface YearData {
+interface SpotifyData {
   topArtists: Artist[];
   topTracks: Track[];
   topGenres: Genre[];
   listeningTime: ListeningTime;
 }
 
-interface MockDataType {
-  [key: string]: YearData;
+// Available time ranges for the dropdown
+const timeRanges = [
+  { value: 'short_term', label: '4 Weeks' },
+  { value: 'medium_term', label: '6 Months' },
+  { value: 'long_term', label: 'Year' }
+];
+
+// Spotify API credentials from environment variables
+const refreshToken = import.meta.env.SPOTIFY_REFRESH_TOKEN;
+const clientId = import.meta.env.SPOTIFY_CLIENT_ID;
+const clientSecret = import.meta.env.SPOTIFY_CLIENT_SECRET;
+
+// Function to get a new access token using the refresh token
+async function getAccessToken(): Promise<string | null> {
+  try {
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${btoa(`${clientId}:${clientSecret}`)}`
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken
+      })
+    });
+    
+    if (!tokenResponse.ok) {
+      throw new Error(`Failed to refresh token: ${tokenResponse.status} ${tokenResponse.statusText}`);
+    }
+    
+    const tokenData = await tokenResponse.json();
+    return tokenData.access_token;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return null;
+  }
 }
 
-const mockData: MockDataType = {
-  '2025': {
-    topArtists: [
-      { name: 'Artist 1', imageUrl: 'https://via.placeholder.com/50', count: 120 },
-      { name: 'Artist 2', imageUrl: 'https://via.placeholder.com/50', count: 95 },
-      { name: 'Artist 3', imageUrl: 'https://via.placeholder.com/50', count: 87 },
-      { name: 'Artist 4', imageUrl: 'https://via.placeholder.com/50', count: 76 },
-      { name: 'Artist 5', imageUrl: 'https://via.placeholder.com/50', count: 65 }
-    ],
-    topTracks: [
-      { name: 'Track 1', artist: 'Artist 1', imageUrl: 'https://via.placeholder.com/50', count: 45 },
-      { name: 'Track 2', artist: 'Artist 2', imageUrl: 'https://via.placeholder.com/50', count: 38 },
-      { name: 'Track 3', artist: 'Artist 3', imageUrl: 'https://via.placeholder.com/50', count: 32 },
-      { name: 'Track 4', artist: 'Artist 4', imageUrl: 'https://via.placeholder.com/50', count: 29 },
-      { name: 'Track 5', artist: 'Artist 5', imageUrl: 'https://via.placeholder.com/50', count: 25 }
-    ],
-    topGenres: [
-      { name: 'Rock', count: 250 },
-      { name: 'Pop', count: 180 },
-      { name: 'Hip Hop', count: 150 },
-      { name: 'Electronic', count: 120 },
-      { name: 'Jazz', count: 90 }
-    ],
-    listeningTime: {
-      total: 12500, // minutes
-      average: 34, // minutes per day
-      peak: {
-        day: 'Friday',
-        time: '18:00 - 19:00'
-      }
-    }
-  },
-  '2024': {
-    topArtists: [
-      { name: 'Artist A', imageUrl: 'https://via.placeholder.com/50', count: 110 },
-      { name: 'Artist B', imageUrl: 'https://via.placeholder.com/50', count: 90 },
-      { name: 'Artist C', imageUrl: 'https://via.placeholder.com/50', count: 82 },
-      { name: 'Artist D', imageUrl: 'https://via.placeholder.com/50', count: 71 },
-      { name: 'Artist E', imageUrl: 'https://via.placeholder.com/50', count: 60 }
-    ],
-    topTracks: [
-      { name: 'Track A', artist: 'Artist A', imageUrl: 'https://via.placeholder.com/50', count: 42 },
-      { name: 'Track B', artist: 'Artist B', imageUrl: 'https://via.placeholder.com/50', count: 36 },
-      { name: 'Track C', artist: 'Artist C', imageUrl: 'https://via.placeholder.com/50', count: 30 },
-      { name: 'Track D', artist: 'Artist D', imageUrl: 'https://via.placeholder.com/50', count: 27 },
-      { name: 'Track E', artist: 'Artist E', imageUrl: 'https://via.placeholder.com/50', count: 23 }
-    ],
-    topGenres: [
-      { name: 'Pop', count: 230 },
-      { name: 'Rock', count: 190 },
-      { name: 'Electronic', count: 160 },
-      { name: 'Hip Hop', count: 130 },
-      { name: 'Classical', count: 80 }
-    ],
-    listeningTime: {
-      total: 11800, // minutes
-      average: 32, // minutes per day
-      peak: {
-        day: 'Saturday',
-        time: '20:00 - 21:00'
-      }
-    }
-  },
-  '2023': {
-    topArtists: [
-      { name: 'Artist X', imageUrl: 'https://via.placeholder.com/50', count: 105 },
-      { name: 'Artist Y', imageUrl: 'https://via.placeholder.com/50', count: 88 },
-      { name: 'Artist Z', imageUrl: 'https://via.placeholder.com/50', count: 79 },
-      { name: 'Artist W', imageUrl: 'https://via.placeholder.com/50', count: 68 },
-      { name: 'Artist V', imageUrl: 'https://via.placeholder.com/50', count: 57 }
-    ],
-    topTracks: [
-      { name: 'Track X', artist: 'Artist X', imageUrl: 'https://via.placeholder.com/50', count: 40 },
-      { name: 'Track Y', artist: 'Artist Y', imageUrl: 'https://via.placeholder.com/50', count: 34 },
-      { name: 'Track Z', artist: 'Artist Z', imageUrl: 'https://via.placeholder.com/50', count: 28 },
-      { name: 'Track W', artist: 'Artist W', imageUrl: 'https://via.placeholder.com/50', count: 25 },
-      { name: 'Track V', artist: 'Artist V', imageUrl: 'https://via.placeholder.com/50', count: 21 }
-    ],
-    topGenres: [
-      { name: 'Hip Hop', count: 220 },
-      { name: 'R&B', count: 170 },
-      { name: 'Pop', count: 150 },
-      { name: 'Rock', count: 120 },
-      { name: 'Electronic', count: 100 }
-    ],
-    listeningTime: {
-      total: 10900, // minutes
-      average: 30, // minutes per day
-      peak: {
-        day: 'Sunday',
-        time: '15:00 - 16:00'
-      }
-    }
-  }
-};
+const accessToken = await getAccessToken();
 
-// Default to current year if not available in mock data
-const selectedYearDefault = defaultYear in mockData ? defaultYear : availableYears[0];
+async function fetchWebApi<T>(endpoint: string, method: string, body?: unknown): Promise<T> {
+  const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    method,
+    body:JSON.stringify(body)
+  });
+  return await res.json();
+}
+
+async function getTopTracks(
+  time_range: 'short_term' | 'medium_term' | 'long_term' = 'short_term',
+  limit: number = 10
+): Promise<Track[]> {
+    const endpoint = `v1/me/top/tracks?time_range=${time_range}&limit=${limit}`;
+    const response = await fetchWebApi<{ items: any[] }>(endpoint, 'GET');
+    
+    return response.items.map(item => ({
+      name: item.name,
+      artist: item.artists.map((artist: any) => artist.name).join(', '),
+      imageUrl: item.album?.images?.[0]?.url || '',
+      count: item.popularity || 0
+    }));
+}
+
+async function getTopArtists(
+  time_range: 'short_term' | 'medium_term' | 'long_term' = 'short_term',
+  limit: number = 10
+): Promise<Artist[]> {
+    const endpoint = `v1/me/top/artists?time_range=${time_range}&limit=${limit}`;
+    const response = await fetchWebApi<{ items: any[] }>(endpoint, 'GET');
+    
+    return response.items.map(item => ({
+      name: item.name,
+      imageUrl: item.images?.[0]?.url || '',
+      count: item.popularity || 0
+    }));
+}
+
+let topTracks = await getTopTracks()
+let topArtists = await getTopArtists()
+
 ---
 
 <div class="p-6 bg-white rounded-lg border-l-4 border-green-600 shadow-md dark:bg-gray-800 dark:border-green-500">
@@ -157,135 +130,197 @@ const selectedYearDefault = defaultYear in mockData ? defaultYear : availableYea
       <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Spotify Stats</h2>
     </div>
     
-    <!-- Year Dropdown -->
-    <div class="relative">
-      <select id="year-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 pr-8 appearance-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
-        {availableYears.map(year => (
-          <option value={year} selected={year === selectedYearDefault}>{year}</option>
-        ))}
-      </select>
+    <div class="flex items-center">
+      <!-- Time Range Dropdown -->
+      <div class="flex items-center">
+        <span class="mr-2 text-gray-700 dark:text-gray-300 font-medium">Last:</span>
+        <div class="relative">
+          <select id="time-range-select" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 pr-8 appearance-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
+            {timeRanges.map(range => (
+              <option value={range.value} selected={range.value === 'medium_term'}>{range.label}</option>
+            ))}
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+            <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading Indicator -->
+  <div id="loading-indicator" class="hidden p-4 mb-6 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-700 dark:text-blue-400">
+    <div class="flex items-center">
+      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>Loading Spotify data...</span>
+    </div>
+  </div>
+  
+  <!-- Error Message -->
+  <div id="error-message" class="hidden p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400">
+    <div class="flex items-center">
+      <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+      </svg>
+      <span>Unable to fetch Spotify data. Please check your credentials.</span>
     </div>
   </div>
   
   <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div id="stats-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Top Artists -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Artists</h3>
-      <div id="top-artists-container" class="space-y-3">
-        {Object.keys(mockData).map(year => (
-          <div class={`year-data ${year === selectedYearDefault ? '' : 'hidden'}`} data-year={year}>
-            {mockData[year].topArtists.map((artist, index) => (
-              <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
-                <div class="flex items-center">
-                  <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-                  <img src={artist.imageUrl} alt={artist.name} class="w-10 h-10 rounded-full mx-3" />
-                  <span class="font-medium text-gray-900 dark:text-white">{artist.name}</span>
-                </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">{artist.count} plays</span>
+    {topArtists && (
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Artists</h3>
+        <div id="top-artists-container" class="space-y-3">
+          {topArtists.map((artist, index) => (
+            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+              <div class="flex items-center">
+                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                <img src={artist.imageUrl} alt={artist.name} class="w-10 h-10 rounded-full mx-3" />
+                <span class="font-medium text-gray-900 dark:text-white">{artist.name}</span>
               </div>
-            ))}
-          </div>
-        ))}
+              <span class="text-sm text-gray-500 dark:text-gray-400">Popularity: {artist.count}</span>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    )}
     
     <!-- Top Tracks -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Tracks</h3>
-      <div id="top-tracks-container" class="space-y-3">
-        {Object.keys(mockData).map(year => (
-          <div class={`year-data ${year === selectedYearDefault ? '' : 'hidden'}`} data-year={year}>
-            {mockData[year].topTracks.map((track, index) => (
-              <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
-                <div class="flex items-center">
-                  <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-                  <img src={track.imageUrl} alt={track.name} class="w-10 h-10 rounded mx-3" />
-                  <div>
-                    <p class="font-medium text-gray-900 dark:text-white">{track.name}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">{track.artist}</p>
-                  </div>
+    {topTracks && (
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Tracks</h3>
+        <div id="top-tracks-container" class="space-y-3">
+          {topTracks.map((track, index) => (
+            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+              <div class="flex items-center">
+                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                <img src={track.imageUrl} alt={track.name} class="w-10 h-10 rounded mx-3" />
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">{track.name}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{track.artist}</p>
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">{track.count} plays</span>
               </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-    
-    <!-- Listening Time -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Listening Time</h3>
-      <div id="listening-time-container">
-        {Object.keys(mockData).map(year => (
-          <div class={`year-data ${year === selectedYearDefault ? '' : 'hidden'}`} data-year={year}>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="text-center p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <p class="text-sm text-gray-500 dark:text-gray-400">Total Hours</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{Math.round(mockData[year].listeningTime.total / 60)}</p>
-              </div>
-              <div class="text-center p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-                <p class="text-sm text-gray-500 dark:text-gray-400">Daily Average</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{mockData[year].listeningTime.average} min</p>
-              </div>
+              <span class="text-sm text-gray-500 dark:text-gray-400">Popularity: {track.count}</span>
             </div>
-            <div class="mt-4 p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-              <p class="text-sm text-gray-500 dark:text-gray-400">Peak Listening Time</p>
-              <p class="text-lg font-medium text-gray-900 dark:text-white">
-                {mockData[year].listeningTime.peak.day}s, {mockData[year].listeningTime.peak.time}
-              </p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    )}
     
-    <!-- Top Genres -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Genres</h3>
-      <div id="top-genres-container">
-        {Object.keys(mockData).map(year => (
-          <div class={`year-data ${year === selectedYearDefault ? '' : 'hidden'}`} data-year={year}>
-            {mockData[year].topGenres.map((genre, index) => (
-              <div class="mb-3 last:mb-0">
-                <div class="flex justify-between mb-1">
-                  <span class="text-base font-medium text-gray-900 dark:text-white">{genre.name}</span>
-                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{genre.count} tracks</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                  <div class="bg-green-600 h-2.5 rounded-full" style={`width: ${(genre.count / mockData[year].topGenres[0].count) * 100}%`}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
+    <!-- Placeholder for additional stats that can be added later -->
   </div>
 </div>
 
 <script>
-  // Handle year selection change
+  // Simple client-side script to fetch and update data when dropdown changes
   document.addEventListener('DOMContentLoaded', function() {
-    const yearSelect = document.getElementById('year-select');
-    const yearData = document.querySelectorAll('.year-data');
+    const timeRangeSelect = document.getElementById('time-range-select') as HTMLSelectElement;
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
+    const statsGrid = document.getElementById('stats-grid');
     
-    if (yearSelect) {
-      yearSelect.addEventListener('change', function(this: HTMLSelectElement) {
-        const selectedYear = this.value;
+    // Function to fetch data based on selected time range
+    async function fetchDataForTimeRange(selectedTimeRange: string) {
+      console.log(`Time range changed to: ${selectedTimeRange}`);
+      
+      // Show loading state
+      if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+      if (errorMessage) errorMessage.classList.add('hidden');
+      if (statsGrid) statsGrid.classList.add('opacity-50');
+      
+      try {
+        // Call our API endpoint
+        console.log(`Calling API with timeRange=${selectedTimeRange}`);
+        const response = await fetch(`/api/spotify-stats.json?timeRange=${encodeURIComponent(selectedTimeRange)}`);
         
-        // Hide all year data
-        yearData.forEach(el => {
-          el.classList.add('hidden');
-        });
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`);
+        }
         
-        // Show selected year data
-        const selectedYearData = document.querySelectorAll(`[data-year="${selectedYear}"]`);
-        selectedYearData.forEach(el => {
-          el.classList.remove('hidden');
-        });
+        const data = await response.json();
+        console.log('Data received from API:', data);
+        
+        // Update the UI with the new data
+        console.log('Updating artists with:', data.topArtists);
+        updateTopArtists(data.topArtists);
+        
+        console.log('Updating tracks with:', data.topTracks);
+        updateTopTracks(data.topTracks);
+        
+        // Hide loading indicator
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        if (statsGrid) statsGrid.classList.remove('opacity-50');
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        
+        // Show error message
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        if (errorMessage) errorMessage.classList.remove('hidden');
+        if (statsGrid) statsGrid.classList.remove('opacity-50');
+      }
+    }
+    
+    if (timeRangeSelect) {
+      // Trigger fetch on page load with the default selected value
+      fetchDataForTimeRange(timeRangeSelect.value);
+      
+      // Add change event listener
+      timeRangeSelect.addEventListener('change', function() {
+        fetchDataForTimeRange(this.value);
       });
     }
   });
+  
+  // Simple functions to update the UI
+  function updateTopArtists(artists: any[]) {
+    const container = document.getElementById('top-artists-container');
+    if (!container) return;
+    
+    let html = '';
+    artists.forEach((artist: any, index: number) => {
+      html += `
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+          <div class="flex items-center">
+            <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">${index + 1}</span>
+            <img src="${artist.imageUrl}" alt="${artist.name}" class="w-10 h-10 rounded-full mx-3" />
+            <span class="font-medium text-gray-900 dark:text-white">${artist.name}</span>
+          </div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Popularity: ${artist.count}</span>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
+  
+  function updateTopTracks(tracks: any[]) {
+    const container = document.getElementById('top-tracks-container');
+    if (!container) return;
+    
+    let html = '';
+    tracks.forEach((track: any, index: number) => {
+      html += `
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+          <div class="flex items-center">
+            <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">${index + 1}</span>
+            <img src="${track.imageUrl}" alt="${track.name}" class="w-10 h-10 rounded mx-3" />
+            <div>
+              <p class="font-medium text-gray-900 dark:text-white">${track.name}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">${track.artist}</p>
+            </div>
+          </div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Popularity: ${track.count}</span>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
 </script>

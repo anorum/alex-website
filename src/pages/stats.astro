@@ -1,6 +1,10 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import SpotifyStats from '../components/SpotifyStats.astro';
+
+// Get the time range from the URL query parameter, or default to short_term
+const timeRange = Astro.url.searchParams.get('time_range');
+const defaultTimeRange = timeRange || 'short_term';
 ---
 
 <MainLayout title="Stats - Alex Norum" description="Personal statistics and data visualizations">
@@ -20,7 +24,7 @@ import SpotifyStats from '../components/SpotifyStats.astro';
 				<!-- Stats Cards -->
 				<div class="grid md:grid-cols-1 gap-8 mb-16">
 					<!-- Spotify Stats -->
-					<SpotifyStats defaultYear="2025" />
+					<SpotifyStats defaultTimeRange={defaultTimeRange} />
 					
 					<!-- Strava Stats -->
 					<div class="p-6 bg-white rounded-lg border-l-4 border-orange-600 shadow-md dark:bg-gray-800 dark:border-orange-500">
