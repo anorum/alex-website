@@ -19,7 +19,7 @@ export default function ChainlitCopilot() {
         chainlitServer: "http://localhost:8000",
         theme: "dark",
         button: {
-          imageUrl: "public/logo_light.png",
+          imageUrl: "/public/logo_light.png",
           // containerId: "mara-chat",
           // className: "absolute right-8 bottom-16"      
         }
