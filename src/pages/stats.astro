@@ -1,6 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
 import SpotifyStats from '../components/SpotifyStats.astro';
+import StravaStats from '../components/StravaStats.astro';
 
 // Get the time range from the URL query parameter, or default to short_term
 const timeRange = Astro.url.searchParams.get('time_range');
@@ -27,34 +28,7 @@ const defaultTimeRange = timeRange || 'short_term';
 					<SpotifyStats defaultTimeRange={defaultTimeRange} />
 					
 					<!-- Strava Stats -->
-					<div class="p-6 bg-white rounded-lg border-l-4 border-orange-600 shadow-md dark:bg-gray-800 dark:border-orange-500">
-						<div class="flex items-center mb-4">
-							<svg class="w-10 h-10 text-orange-600 dark:text-orange-400 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
-							</svg>
-							<h2 class="text-3xl font-bold text-gray-900 dark:text-white">Strava Stats</h2>
-						</div>
-						<p class="text-lg text-gray-500 dark:text-gray-400 mb-6">Coming soon! This section will display your Strava activity statistics.</p>
-						
-						<div class="grid grid-cols-2 gap-4">
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Total Distance</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Elevation Gain</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Activity Time</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-							<div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-								<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Recent Activities</h3>
-								<p class="text-gray-500 dark:text-gray-400">Coming soon</p>
-							</div>
-						</div>
-					</div>
+					<StravaStats />
 				</div>
 				
 				<!-- Additional Stats Section -->

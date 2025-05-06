@@ -1,0 +1,512 @@
+---
+// Define interfaces for our data
+interface ActivitySummary {
+  name: string;
+  type: string;
+  distance: number; // in kilometers
+  duration: number; // in minutes
+  elevation: number; // in meters
+  date: string;
+  mapPolyline?: string;
+}
+
+interface ActivityType {
+  name: string;
+  count: number;
+  totalDistance: number;
+}
+
+interface Summary {
+  totalDistance: number;
+  totalElevation: number;
+  totalDuration: number;
+  activityCount: number;
+}
+
+// Available time ranges for the dropdown (not used for Strava but kept for UI consistency)
+const timeRanges = [
+  { value: 'recent', label: 'Recent' },
+  { value: 'ytd', label: 'Year to Date' },
+  { value: 'all', label: 'All Time' }
+];
+
+// Import the functions from the API endpoint
+import { getAccessToken, getAthleteActivities, getAthleteStats } from '../pages/api/strava-stats.json';
+
+// Initialize variables with default values
+let recentActivities: ActivitySummary[] = [];
+let topActivityTypes: ActivityType[] = [];
+let summary: Summary = {
+  totalDistance: 0,
+  totalElevation: 0,
+  totalDuration: 0,
+  activityCount: 0
+};
+let hasError = false;
+let errorMessage = '';
+let isLoading = true;
+
+try {
+  console.log('Initializing Strava Stats component');
+  
+  // Try to get initial data - use absolute URL
+  const baseUrl = import.meta.env.SITE || 'http://localhost:4321';
+  const url = new URL('/api/strava-stats.json', baseUrl);
+  url.searchParams.set('timeRange', 'recent');
+  
+  console.log('Fetching from URL:', url.toString());
+  const response = await fetch(url.toString());
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || `API error: ${response.status}`);
+  }
+  
+  const data = await response.json();
+  
+  // Process the data
+  recentActivities = data.recentActivities || [];
+  topActivityTypes = data.topActivityTypes || [];
+  summary = data.summary || {
+    totalDistance: 0,
+    totalElevation: 0,
+    totalDuration: 0,
+    activityCount: 0
+  };
+  
+  console.log(`Loaded ${recentActivities.length} activities and ${topActivityTypes.length} activity types`);
+  isLoading = false;
+} catch (error) {
+  console.error('Error initializing Strava Stats:', error);
+  hasError = true;
+  errorMessage = error instanceof Error ? error.message : 'Unknown error';
+  
+  // Check if it's a rate limit error
+  if (errorMessage.includes('rate limit exceeded')) {
+    // Set all stats to zero to avoid displaying incorrect data
+    summary = {
+      totalDistance: 0,
+      totalElevation: 0,
+      totalDuration: 0,
+      activityCount: 0
+    };
+  }
+  
+  isLoading = false;
+}
+
+// Determine if we have data to display
+const hasData = recentActivities.length > 0;
+
+// Helper function to format duration
+function formatDuration(minutes: number): string {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+}
+
+// Helper function to get activity icon
+function getActivityIcon(type: string): string {
+  switch (type.toLowerCase()) {
+    case 'run':
+    case 'running':
+      return `<i class="fas fa-running"></i>`;
+    case 'ride':
+    case 'cycling':
+    case 'bikeride':
+    case 'virtualride':
+      return `<i class="fas fa-bicycle"></i>`;
+    case 'swim':
+    case 'swimming':
+      return `<i class="fas fa-swimmer"></i>`;
+    case 'hike':
+    case 'hiking':
+    case 'walk':
+    case 'walking':
+      return `<i class="fas fa-hiking"></i>`;
+    case 'workout':
+    case 'weighttraining':
+    case 'weight_training':
+    case 'weights':
+      return `<i class="fas fa-dumbbell"></i>`;
+    case 'yoga':
+      return `<i class="fas fa-om"></i>`;
+    case 'crossfit':
+    case 'workout':
+    case 'training':
+      return `<i class="fas fa-heartbeat"></i>`;
+    default:
+      return `<i class="fas fa-plus"></i>`;
+  }
+}
+---
+
+<div class="p-6 bg-white rounded-lg border-l-4 border-orange-600 shadow-md dark:bg-gray-800 dark:border-orange-500">
+  <!-- Rate Limit Error Banner -->
+  {errorMessage && errorMessage.includes('rate limit exceeded') && (
+    <div class="p-4 mb-6 text-sm text-orange-800 rounded-lg bg-orange-50 dark:bg-gray-800 dark:text-orange-400 border border-orange-300 dark:border-orange-800">
+      <div class="flex items-center">
+        <svg class="flex-shrink-0 inline w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        </svg>
+        <span class="font-medium">
+          Strava API rate limit exceeded. Stats are temporarily unavailable. Please try again later.
+        </span>
+      </div>
+    </div>
+  )}
+
+  <div class="flex items-center mb-6">
+    <svg class="w-10 h-10 text-orange-600 dark:text-orange-400 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M15.932 10.055a.75.75 0 0 1 1.05.125l2.75 3.5a.75.75 0 0 1-1.175.935L16.432 11.5a.75.75 0 0 1 .125-1.05l-.625-.395ZM5.6 15.25H8a.75.75 0 0 1 0 1.5H5.6a.75.75 0 0 1 0-1.5ZM4 12h6a.75.75 0 0 1 0 1.5H4a.75.75 0 0 1 0-1.5ZM2.4 8.75h11.2a.75.75 0 0 1 0 1.5H2.4a.75.75 0 0 1 0-1.5Z"/>
+      <path d="M9.25 7.25a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
+      <path d="M11.25 1a6.25 6.25 0 0 0-6.25 6.25c0 3.833 2.095 7.385 6.25 10.64 4.155-3.255 6.25-6.807 6.25-10.64A6.25 6.25 0 0 0 11.25 1Zm0 9.5a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5Z"/>
+    </svg>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Strava Stats</h2>
+  </div>
+  
+  <!-- Loading Indicator -->
+  <div id="loading-indicator" class={isLoading ? "p-4 mb-6 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-700 dark:text-blue-400" : "hidden p-4 mb-6 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-700 dark:text-blue-400"}>
+    <div class="flex items-center">
+      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>Loading Strava data...</span>
+    </div>
+  </div>
+  
+  <!-- Error Message -->
+  <div id="error-message" class={hasError ? "p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" : "hidden p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400"}>
+    <div class="flex items-center">
+      <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+      </svg>
+      <span>
+        Unable to fetch Strava data. 
+        {errorMessage && errorMessage.includes('401') 
+          ? "Your Strava token is missing required permissions. Both 'read' and 'activity:read' scopes are needed." 
+          : errorMessage && errorMessage.includes('rate limit exceeded')
+            ? "Strava API rate limit exceeded. Please try again later."
+            : "Please check your credentials."}
+      </span>
+    </div>
+  </div>
+  
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Activities</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white" id="activity-count">{summary.activityCount}</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Distance</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white" id="total-distance">{Math.round(summary.totalDistance * 10) / 10} mi</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Elevation</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white" id="total-elevation">{summary.totalElevation} m</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Duration</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white" id="total-duration">{formatDuration(summary.totalDuration)}</span>
+    </div>
+  </div>
+  
+  <!-- Stats Grid -->
+  <div id="stats-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Recent Activities -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activities</h3>
+      <div id="recent-activities-container" class="space-y-3">
+        {recentActivities && recentActivities.length > 0 ? (
+          recentActivities.map((activity: ActivitySummary, index: number) => (
+            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+              <div class="flex items-center">
+                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                <div class="w-10 h-10 rounded-full mx-3 bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-600 dark:text-orange-300">
+                  <Fragment set:html={getActivityIcon(activity.type)} />
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">{activity.name}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{activity.type} • {activity.date}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="font-medium text-gray-900 dark:text-white">{activity.distance.toFixed(1)} mi</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{formatDuration(activity.duration)}</p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div class="p-4 text-sm text-orange-800 rounded-lg bg-orange-50 dark:bg-gray-800 dark:text-orange-400">
+            <div class="flex items-center">
+              <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+              </svg>
+              <span>
+                Recent activities cannot be displayed. However, summary statistics are still available.
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+    
+    <!-- Activity Types -->
+    {topActivityTypes && topActivityTypes.length > 0 ? (
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Types</h3>
+        <div id="activity-types-container" class="space-y-3">
+          {topActivityTypes.map((activityType: ActivityType) => (
+            <div class="mb-3 last:mb-0">
+              <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-gray-900 dark:text-white">{activityType.name}</span>
+                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{activityType.count} activities • {activityType.totalDistance.toFixed(1)} mi</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div class="bg-orange-600 h-2.5 rounded-full" style={`width: ${(activityType.count / topActivityTypes[0].count) * 100}%`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Types</h3>
+        <div id="activity-types-container">
+          <p class="text-gray-500 dark:text-gray-400">No activity type data available</p>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+
+<script>
+  // Simple client-side script to fetch and update data when dropdown changes
+  document.addEventListener('DOMContentLoaded', function() {
+    const timeRangeSelect = document.getElementById('time-range-select') as HTMLSelectElement;
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
+    const statsGrid = document.getElementById('stats-grid');
+    
+    // Function to fetch data based on selected time range
+    async function fetchDataForTimeRange(selectedTimeRange: string) {
+      console.log(`Time range changed to: ${selectedTimeRange}`);
+      
+      // Show loading state
+      if (loadingIndicator) loadingIndicator.classList.remove('hidden');
+      if (errorMessage) errorMessage.classList.add('hidden');
+      if (statsGrid) statsGrid.classList.add('opacity-50');
+      
+      try {
+        // Call our API endpoint
+        console.log(`Calling API with timeRange=${selectedTimeRange}`);
+        const response = await fetch(`/api/strava-stats.json?timeRange=${encodeURIComponent(selectedTimeRange)}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `API request failed: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Data received from API:', data);
+        
+        // Update the UI with the new data
+        console.log('Updating activities with:', data.recentActivities);
+        updateRecentActivities(data.recentActivities);
+        
+        console.log('Updating activity types with:', data.topActivityTypes);
+        updateActivityTypes(data.topActivityTypes);
+        
+        console.log('Updating summary with:', data.summary);
+        updateSummary(data.summary);
+        
+        // Hide loading indicator and rate limit banner
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        document.querySelectorAll('.rate-limit-banner').forEach(el => el.classList.add('hidden'));
+        if (statsGrid) statsGrid.classList.remove('opacity-50');
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        
+        // Show error message
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        
+        const errorText = error instanceof Error ? error.message : 'Unknown error';
+        
+        // Check for rate limit error
+        if (errorText.includes('rate limit exceeded')) {
+          // Show rate limit banner
+          const existingBanner = document.querySelector('.rate-limit-banner');
+          if (!existingBanner) {
+            const banner = document.createElement('div');
+            banner.className = 'rate-limit-banner p-4 mb-6 text-sm text-orange-800 rounded-lg bg-orange-50 dark:bg-gray-800 dark:text-orange-400 border border-orange-300 dark:border-orange-800';
+            banner.innerHTML = `
+              <div class="flex items-center">
+                <svg class="flex-shrink-0 inline w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                </svg>
+                <span class="font-medium">
+                  Strava API rate limit exceeded. Stats are temporarily unavailable. Please try again later.
+                </span>
+              </div>
+            `;
+            
+            // Insert after the title
+            const title = document.querySelector('.p-6.bg-white h2');
+            if (title && title.parentNode) {
+              title.parentNode.insertBefore(banner, title.nextSibling);
+            }
+          }
+          
+          // Reset stats to zero
+          updateSummary({
+            totalDistance: 0,
+            totalElevation: 0,
+            totalDuration: 0,
+            activityCount: 0
+          });
+        }
+        
+        if (errorMessage) {
+          // Update error message text
+          const errorSpan = errorMessage.querySelector('span');
+          if (errorSpan) {
+            if (errorText.includes('401')) {
+              errorSpan.textContent = "Unable to fetch Strava data. Your Strava token is missing required permissions. Both 'read' and 'activity:read' scopes are needed.";
+            } else if (errorText.includes('rate limit exceeded')) {
+              errorSpan.textContent = "Strava API rate limit exceeded. Please try again later.";
+            } else {
+              errorSpan.textContent = "Unable to fetch Strava data. Please check your credentials.";
+            }
+          }
+          errorMessage.classList.remove('hidden');
+        }
+        
+        if (statsGrid) statsGrid.classList.remove('opacity-50');
+      }
+    }
+    
+    if (timeRangeSelect) {
+      // Trigger fetch on page load with the default selected value
+      fetchDataForTimeRange(timeRangeSelect.value);
+      
+      // Add change event listener
+      timeRangeSelect.addEventListener('change', function() {
+        fetchDataForTimeRange(this.value);
+      });
+    }
+  });
+  
+  // Helper function to format duration
+  function formatDuration(minutes: number): string {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  }
+  
+  // Helper function to get activity icon HTML
+  function getActivityIconHtml(type: string): string {
+    switch (type.toLowerCase()) {
+      case 'run':
+      case 'running':
+        return `<i class="fas fa-running"></i>`;
+      case 'ride':
+      case 'cycling':
+      case 'bikeride':
+      case 'virtualride':
+        return `<i class="fas fa-bicycle"></i>`;
+      case 'swim':
+      case 'swimming':
+        return `<i class="fas fa-swimmer"></i>`;
+      case 'hike':
+      case 'hiking':
+      case 'walk':
+      case 'walking':
+        return `<i class="fas fa-hiking"></i>`;
+      case 'workout':
+      case 'weighttraining':
+      case 'weight_training':
+      case 'weights':
+        return `<i class="fas fa-dumbbell"></i>`;
+      case 'yoga':
+        return `<i class="fas fa-om"></i>`;
+      case 'crossfit':
+      case 'workout':
+      case 'training':
+        return `<i class="fas fa-heartbeat"></i>`;
+      default:
+        return `<i class="fas fa-plus"></i>`;
+    }
+  }
+  
+  // Simple functions to update the UI
+  function updateRecentActivities(activities: any[]) {
+    const container = document.getElementById('recent-activities-container');
+    if (!container) return;
+    
+    let html = '';
+    activities.forEach((activity: any, index: number) => {
+      html += `
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+          <div class="flex items-center">
+            <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">${index + 1}</span>
+            <div class="w-10 h-10 rounded-full mx-3 bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-600 dark:text-orange-300">
+              ${getActivityIconHtml(activity.type)}
+            </div>
+            <div>
+              <p class="font-medium text-gray-900 dark:text-white">${activity.name}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">${activity.type} • ${activity.date}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="font-medium text-gray-900 dark:text-white">${activity.distance.toFixed(1)} mi</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">${formatDuration(activity.duration)}</p>
+          </div>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
+  
+  function updateActivityTypes(activityTypes: any[]) {
+    const container = document.getElementById('activity-types-container');
+    if (!container) return;
+    
+    if (!activityTypes || activityTypes.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No activity type data available</p>';
+      return;
+    }
+    
+    let html = '';
+    activityTypes.forEach((activityType: any) => {
+      const percentage = (activityType.count / activityTypes[0].count) * 100;
+      html += `
+        <div class="mb-3 last:mb-0">
+          <div class="flex justify-between mb-1">
+            <span class="text-base font-medium text-gray-900 dark:text-white">${activityType.name}</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">${activityType.count} activities • ${activityType.totalDistance.toFixed(1)} mi</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div class="bg-orange-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+          </div>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
+  
+  function updateSummary(summary: any) {
+    const activityCount = document.getElementById('activity-count');
+    const totalDistance = document.getElementById('total-distance');
+    const totalElevation = document.getElementById('total-elevation');
+    const totalDuration = document.getElementById('total-duration');
+    
+    if (activityCount) activityCount.textContent = summary.activityCount.toString();
+    if (totalDistance) totalDistance.textContent = `${Math.round(summary.totalDistance * 10) / 10} mi`;
+    if (totalElevation) totalElevation.textContent = `${Math.round(summary.totalElevation)} m`;
+    if (totalDuration) totalDuration.textContent = formatDuration(Math.round(summary.totalDuration));
+  }
+</script>
