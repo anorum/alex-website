@@ -1,0 +1,299 @@
+---
+// Import the date utility
+import { formatDate } from '../utils/date';
+
+// Load the 18Birdies data
+import golfData from '../../public/data/18Birdies_archive.json';
+
+// Process the data
+const userData = golfData.myData.accountData;
+const roundsData = golfData.myData.activityData.rounds;
+const clubsData = golfData.myData.clubData.playedClubs;
+
+// Get total rounds count
+const totalRounds = golfData.myData.activityData.roundCount;
+
+// Get recent rounds (last 5 with valid scores)
+const recentRounds = roundsData
+  .filter((round) => round.strokes > 0)
+  .sort((a, b) => b.timestamp - a.timestamp)
+  .slice(0, 5)
+  .map((round) => {
+    const club = clubsData.find((club) => club.clubId === round.clubId.id);
+    return {
+      id: round.id,
+      date: new Date(round.timestamp),
+      courseName: club ? club.name : 'Unknown Course',
+      score: round.score,
+      strokes: round.strokes,
+      stats: round.stats
+    };
+  });
+
+// Calculate handicap (using the Differential Method - simplified)
+// Get the most recent 20 rounds with valid scores
+const handicapRounds = roundsData
+  .filter((round) => round.strokes > 0 && round.holeStrokes.filter((strokes) => strokes > 0).length >= 9)
+  .sort((a, b) => b.timestamp - a.timestamp)
+  .slice(0, 20);
+
+// Simple handicap calculation (this is a simplified version)
+let handicapIndex = 0;
+if (handicapRounds.length > 0) {
+  // Calculate average score over par for the most recent rounds
+  const totalScoreOverPar = handicapRounds.reduce((sum, round) => sum + round.score, 0);
+  handicapIndex = parseFloat((totalScoreOverPar / handicapRounds.length).toFixed(1));
+}
+
+// Calculate most played courses
+const courseCounts = {};
+roundsData.forEach((round) => {
+  const club = clubsData.find((club) => club.clubId === round.clubId.id);
+  if (club) {
+    courseCounts[club.name] = (courseCounts[club.name] || 0) + 1;
+  }
+});
+
+const mostPlayedCourses = Object.entries(courseCounts)
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
+// Calculate overall stats
+const statsTotal = {
+  aces: 0,
+  eagles: 0,
+  birdies: 0,
+  pars: 0,
+  bogeys: 0,
+  doubleBogeyOrWorse: 0,
+  fairwayHits: 0,
+  fairwayAttempts: 0,
+  girHits: 0,
+  girAttempts: 0
+};
+
+roundsData.forEach((round) => {
+  statsTotal.aces += round.stats.aces || 0;
+  statsTotal.eagles += round.stats.eagles || 0;
+  statsTotal.birdies += round.stats.birdies || 0;
+  statsTotal.pars += round.stats.pars || 0;
+  statsTotal.bogeys += round.stats.bogeys || 0;
+  statsTotal.doubleBogeyOrWorse += round.stats.doubleBogeyOrWorse || 0;
+  
+  // Calculate fairway hits (middle + left + right)
+  const fairwayHits = (round.stats.fairwayMiddles || 0) + 
+                      (round.stats.fairwayLefts || 0) + 
+                      (round.stats.fairwayRights || 0);
+  
+  statsTotal.fairwayHits += fairwayHits;
+  statsTotal.fairwayAttempts += round.stats.fairwayHoleCount || 0;
+  
+  statsTotal.girHits += round.stats.gir || 0;
+  statsTotal.girAttempts += round.stats.girHoleCount || 0;
+});
+
+// Calculate percentages
+const fairwayPercentage = statsTotal.fairwayAttempts > 0 
+  ? Math.round((statsTotal.fairwayHits / statsTotal.fairwayAttempts) * 100) 
+  : 0;
+
+const girPercentage = statsTotal.girAttempts > 0 
+  ? Math.round((statsTotal.girHits / statsTotal.girAttempts) * 100) 
+  : 0;
+
+// Helper function to get golf icon
+function getGolfIcon(type) {
+  switch (type.toLowerCase()) {
+    case 'ace':
+      return `<i class="fas fa-certificate"></i>`;
+    case 'eagle':
+      return `<i class="fas fa-eagle"></i>`;
+    case 'birdie':
+      return `<i class="fas fa-dove"></i>`;
+    case 'par':
+      return `<i class="fas fa-equals"></i>`;
+    case 'bogey':
+      return `<i class="fas fa-plus"></i>`;
+    case 'double':
+      return `<i class="fas fa-plus-circle"></i>`;
+    case 'fairway':
+      return `<i class="fas fa-road"></i>`;
+    case 'gir':
+      return `<i class="fas fa-flag"></i>`;
+    case 'golf':
+      return `<i class="fas fa-golf-ball"></i>`;
+    default:
+      return `<i class="fas fa-golf-ball"></i>`;
+  }
+}
+---
+
+<div class="p-6 bg-white rounded-lg border-l-4 border-green-700 shadow-md dark:bg-gray-800 dark:border-green-600">
+  <div class="flex items-center mb-6">
+    <div class="w-10 h-10 flex items-center justify-center text-green-700 dark:text-green-500 me-4">
+      <i class="fas fa-golf-ball text-3xl"></i>
+    </div>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">18Birdies Stats</h2>
+  </div>
+  
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Handicap</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{handicapIndex}</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Total Rounds</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalRounds}</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Fairways Hit</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{fairwayPercentage}%</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">GIR</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{girPercentage}%</span>
+    </div>
+  </div>
+  
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Recent Rounds -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Rounds</h3>
+      <div class="space-y-3">
+        {recentRounds.map((round, index) => (
+          <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+            <div class="flex items-center">
+              <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+              <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300">
+                <Fragment set:html={getGolfIcon('golf')} />
+              </div>
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white">{round.courseName}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{formatDate(round.date)}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="font-medium text-gray-900 dark:text-white">{round.score > 0 ? `+${round.score}` : round.score}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{round.strokes} strokes</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+    <!-- Most Played Courses -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Most Played Courses</h3>
+      <div class="space-y-3">
+        {mostPlayedCourses.map((course, index) => (
+          <div class="mb-3 last:mb-0">
+            <div class="flex justify-between mb-1">
+              <span class="text-base font-medium text-gray-900 dark:text-white">{course.name}</span>
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{course.count} rounds</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div class="bg-green-700 h-2.5 rounded-full" style={`width: ${(course.count / mostPlayedCourses[0].count) * 100}%`}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+    <!-- Shot Distribution -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Shot Distribution</h3>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full mr-3 bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center text-yellow-600 dark:text-yellow-300">
+              <Fragment set:html={getGolfIcon('eagle')} />
+            </div>
+            <span class="font-medium text-gray-900 dark:text-white">Eagles or Better</span>
+          </div>
+          <span class="text-gray-500 dark:text-gray-400">{statsTotal.eagles + statsTotal.aces}</span>
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full mr-3 bg-red-100 dark:bg-red-900 flex items-center justify-center text-red-600 dark:text-red-300">
+              <Fragment set:html={getGolfIcon('birdie')} />
+            </div>
+            <span class="font-medium text-gray-900 dark:text-white">Birdies</span>
+          </div>
+          <span class="text-gray-500 dark:text-gray-400">{statsTotal.birdies}</span>
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full mr-3 bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300">
+              <Fragment set:html={getGolfIcon('par')} />
+            </div>
+            <span class="font-medium text-gray-900 dark:text-white">Pars</span>
+          </div>
+          <span class="text-gray-500 dark:text-gray-400">{statsTotal.pars}</span>
+        </div>
+        <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full mr-3 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300">
+              <Fragment set:html={getGolfIcon('bogey')} />
+            </div>
+            <span class="font-medium text-gray-900 dark:text-white">Bogeys</span>
+          </div>
+          <span class="text-gray-500 dark:text-gray-400">{statsTotal.bogeys}</span>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full mr-3 bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-400">
+              <Fragment set:html={getGolfIcon('double')} />
+            </div>
+            <span class="font-medium text-gray-900 dark:text-white">Double Bogey+</span>
+          </div>
+          <span class="text-gray-500 dark:text-gray-400">{statsTotal.doubleBogeyOrWorse}</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Accuracy Stats -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Accuracy Stats</h3>
+      <div class="space-y-6">
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-base font-medium text-gray-900 dark:text-white">Fairways Hit</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              {statsTotal.fairwayHits} / {statsTotal.fairwayAttempts} ({fairwayPercentage}%)
+            </span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div class="bg-green-700 h-2.5 rounded-full" style={`width: ${fairwayPercentage}%`}></div>
+          </div>
+        </div>
+        
+        <div>
+          <div class="flex justify-between mb-1">
+            <span class="text-base font-medium text-gray-900 dark:text-white">Greens in Regulation</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+              {statsTotal.girHits} / {statsTotal.girAttempts} ({girPercentage}%)
+            </span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+            <div class="bg-green-700 h-2.5 rounded-full" style={`width: ${girPercentage}%`}></div>
+          </div>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-200 dark:border-gray-600">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            <span class="font-medium">Scoring Breakdown:</span> 
+            {statsTotal.aces > 0 ? `${statsTotal.aces} Aces, ` : ''}
+            {statsTotal.eagles > 0 ? `${statsTotal.eagles} Eagles, ` : ''}
+            {statsTotal.birdies} Birdies, 
+            {statsTotal.pars} Pars, 
+            {statsTotal.bogeys} Bogeys, 
+            {statsTotal.doubleBogeyOrWorse} Double Bogey+
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -157,11 +157,9 @@ function getActivityIcon(type: string): string {
   )}
 
   <div class="flex items-center mb-6">
-    <svg class="w-10 h-10 text-orange-600 dark:text-orange-400 me-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M15.932 10.055a.75.75 0 0 1 1.05.125l2.75 3.5a.75.75 0 0 1-1.175.935L16.432 11.5a.75.75 0 0 1 .125-1.05l-.625-.395ZM5.6 15.25H8a.75.75 0 0 1 0 1.5H5.6a.75.75 0 0 1 0-1.5ZM4 12h6a.75.75 0 0 1 0 1.5H4a.75.75 0 0 1 0-1.5ZM2.4 8.75h11.2a.75.75 0 0 1 0 1.5H2.4a.75.75 0 0 1 0-1.5Z"/>
-      <path d="M9.25 7.25a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
-      <path d="M11.25 1a6.25 6.25 0 0 0-6.25 6.25c0 3.833 2.095 7.385 6.25 10.64 4.155-3.255 6.25-6.807 6.25-10.64A6.25 6.25 0 0 0 11.25 1Zm0 9.5a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5Z"/>
-    </svg>
+    <div class="w-10 h-10 flex items-center justify-center text-orange-600 dark:text-orange-400 me-4">
+      <i class="fab fa-strava text-3xl"></i>
+    </div>
     <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Strava Stats</h2>
   </div>
   

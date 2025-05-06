@@ -2,6 +2,7 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import SpotifyStats from '../components/SpotifyStats.astro';
 import StravaStats from '../components/StravaStats.astro';
+import { default as EighteenBirdiesStats } from '../components/18BirdiesStats.astro';
 
 // Get the time range from the URL query parameter, or default to short_term
 const timeRange = Astro.url.searchParams.get('time_range');
@@ -29,6 +30,9 @@ const defaultTimeRange = timeRange || 'short_term';
 					
 					<!-- Strava Stats -->
 					<StravaStats />
+					
+					<!-- 18Birdies Stats -->
+					<EighteenBirdiesStats />
 				</div>
 				
 				<!-- Additional Stats Section -->
