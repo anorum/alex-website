@@ -6,6 +6,9 @@ import WorkExperienceItem from '../components/WorkExperienceItem.astro';
 import EducationItem from '../components/EducationItem.astro';
 import SkillsGroup from '../components/SkillsGroup.astro';
 import InterestItem from '../components/InterestItem.astro';
+import AboutOptions from '../components/AboutOptions.astro';
+import FullScreenChatbot from '../components/FullScreenChatbot.jsx';
+import MaraCallout from '../components/MaraCallout.astro';
 
 // Define skills data
 const frontendSkills = ['HTML', 'CSS', 'JavaScript', 'Astro', 'React', 'Tailwind CSS'];
@@ -58,18 +61,34 @@ const interests = [
 					</div>
 				</div>
 				
-				<!-- About Section -->
-				<div class="grid md:grid-cols-3 gap-12 mb-16">
-					<div class="col-span-1">
-						<Image class="w-full rounded-lg shadow-lg" width=500 height=500 src={meImage} alt="Alex Norum profile picture">
-					</div>
-					<div class="col-span-2">
+				<!-- Options Section -->
+				<div id="options-section">
+					<AboutOptions />
+				</div>
+				
+				<!-- Traditional Content Section (initially hidden) -->
+				<div id="traditional-content" class="hidden">
+					<!-- About Section -->
+					<div class="grid md:grid-cols-3 gap-12 mb-16">
+						<div class="col-span-1">
+							<Image class="w-full rounded-lg shadow-lg" width=500 height=500 src={meImage} alt="Alex Norum profile picture">
+						</div>
+						<div class="col-span-2">
 						<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
 						<p class="text-lg text-gray-500 dark:text-gray-400 mb-4">
 							I'm a data platform engineering leader with over a decade of experience building scalable, reliable, and self-service infrastructure. I currently lead the Data Platform Engineering team at LegalZoom, where I focus on enabling teams through clean tooling, governance, and cost-efficient architecture. Outside of work, I enjoy trail running, snowboarding, cooking, and exploring side projects involving LLMs and automation. I live in Portland, Oregon, with my partner and our Australian Labradoodle, Mara.
 						</p>
-					</div>
-				</div>
+						
+						<div class="mt-6">
+							<button id="back-to-options" class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-transparent border border-blue-600 rounded-lg hover:bg-blue-50 dark:text-blue-300 dark:border-blue-300 dark:hover:bg-gray-800 transition-colors">
+								<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+								</svg>
+								Back to Options
+							</button>
+						</div>
+						</div>
+					</div> <!-- Close About Section grid -->
 				
 				<!-- Work Experience Section -->
 				<div class="mb-16">
@@ -149,7 +168,61 @@ const interests = [
 						))}
 					</div>
 				</div>
+				</div> <!-- Close traditional-content div -->
 			</div>
 		</section>
 	</main>
+	<FullScreenChatbot client:load />
+	<MaraCallout />
 </MainLayout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    // Handle "View Traditional Content" button click
+    const showTraditionalButton = document.getElementById('show-traditional-content');
+    const traditionalContent = document.getElementById('traditional-content');
+    const optionsSection = document.getElementById('options-section');
+    
+    if (showTraditionalButton && traditionalContent && optionsSection) {
+      showTraditionalButton.addEventListener('click', () => {
+        // Hide options section
+        optionsSection.classList.add('hidden');
+        
+        // Show traditional content with a smooth animation
+        traditionalContent.classList.remove('hidden');
+        traditionalContent.classList.add('animate-fade-in');
+        
+        // Scroll to the content with smooth behavior
+        traditionalContent.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+    
+    // Handle "Back to Options" button click
+    const backToOptionsButton = document.getElementById('back-to-options');
+    
+    if (backToOptionsButton && traditionalContent && optionsSection) {
+      backToOptionsButton.addEventListener('click', () => {
+        // Hide traditional content
+        traditionalContent.classList.add('hidden');
+        
+        // Show options section with a smooth animation
+        optionsSection.classList.remove('hidden');
+        optionsSection.classList.add('animate-fade-in');
+        
+        // Scroll to the options section with smooth behavior
+        optionsSection.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+  });
+</script>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

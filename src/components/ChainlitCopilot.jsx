@@ -19,9 +19,11 @@ export default function ChainlitCopilot() {
         chainlitServer: "http://localhost:8000",
         theme: "dark",
         button: {
-          imageUrl: "/public/logo_light.png",
-          // containerId: "mara-chat",
-          // className: "absolute right-8 bottom-16"      
+          imageUrl: "/mara_logo.png",
+          text: "Chat with Mara",
+          position: "bottom-right",
+          tooltip: "Woof! I'm Mara, Alex's AI assistant. Ask me anything!",
+          className: "shadow-lg hover:shadow-xl transition-shadow"
         }
       });
 

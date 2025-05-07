@@ -1,0 +1,56 @@
+---
+interface Props {
+  showFullDescription?: boolean;
+}
+
+const { showFullDescription = false } = Astro.props;
+---
+
+<div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 rounded-lg p-6 shadow-md border border-blue-100 dark:border-blue-800 mb-8">
+  <div class="flex items-start">
+    <div class="flex-shrink-0">
+      <img src="/mara_logo.png" alt="Mara" class="w-12 h-12 rounded-full" />
+    </div>
+    <div class="ml-4">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Meet Mara, Alex's AI Assistant</h3>
+      <p class="text-base text-gray-600 dark:text-gray-300 mt-2">
+        Have questions about Alex? Chat with Mara, an AI assistant modeled after Alex's Australian Labradoodle. Mara has been trained on Alex's data and can help answer your questions.
+      </p>
+      
+      {showFullDescription && (
+        <div class="mt-4">
+          <h4 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">How can Mara help you?</h4>
+          <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Learn about Alex's professional background and skills</li>
+            <li>Discover Alex's projects and work experience</li>
+            <li>Find out about Alex's interests, hobbies, and recommendations</li>
+            <li>Get insights into Alex's tech stack and preferred tools</li>
+          </ul>
+          
+          <div class="mt-4 flex items-center">
+            <button id="open-chatbot" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+              <img src="/mara_logo.png" alt="" class="w-5 h-5 mr-2 rounded-full" />
+              Chat with Mara
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Script to handle the "Start Chatting" button click
+  document.addEventListener('astro:page-load', () => {
+    const openChatbotButton = document.getElementById('open-chatbot');
+    if (openChatbotButton) {
+      openChatbotButton.addEventListener('click', () => {
+        // Find the chatbot button in the DOM and click it
+        const chatbotButton = document.querySelector('#chainlit-copilot')?.shadowRoot?.querySelector('button');
+        if (chatbotButton) {
+          chatbotButton.click();
+        }
+      });
+    }
+  });
+</script>

@@ -1,5 +1,7 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import FullScreenChatbot from '../components/FullScreenChatbot.jsx';
+import MaraContactSection from '../components/MaraContactSection.astro';
 ---
 
 <MainLayout title="Contact - Alex Norum" description="Get in touch with Alex Norum. Contact information and form.">
@@ -14,6 +16,9 @@ import MainLayout from '../layouts/MainLayout.astro';
 						Have a question or want to work together? Feel free to reach out!
 					</p>
 				</div>
+				
+				<!-- Mara Chatbot Section -->
+				<MaraContactSection />
 				
 				<div class="grid md:grid-cols-2 gap-12 mb-16">
 					<!-- Contact Form -->
@@ -124,4 +129,5 @@ import MainLayout from '../layouts/MainLayout.astro';
 				</div>
 			</div>
 		</section>
+	<FullScreenChatbot client:load />
 </MainLayout>
