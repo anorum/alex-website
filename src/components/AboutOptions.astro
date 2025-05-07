@@ -84,28 +84,34 @@ import meImage from '../assets/me.jpeg';
           </svg>
         </div>
         
-        <!-- Chat bubbles in the image section -->
+        <!-- Chat window in the image section -->
         <div class="absolute inset-0 flex items-center justify-center">
-          <div class="relative z-10 max-w-xs">
-            <div class="flex items-center justify-center">
-              <!-- Mara logo -->
-              <div class="relative">
-                <img src="/mara_logo.png" alt="Mara" class="w-28 h-28 rounded-full border-4 border-white shadow-lg mb-4" />
-                
-                <!-- Chat bubbles -->
-                <div class="mt-4">
-                  <div class="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-md mb-3 transform -rotate-1">
-                    <p class="text-sm text-gray-700 dark:text-gray-300">What projects has Alex worked on?</p>
-                  </div>
-                  
-                  <div class="bg-blue-100 dark:bg-blue-900 rounded-lg p-3 shadow-md ml-8 mb-3 transform rotate-1">
-                    <p class="text-sm text-gray-800 dark:text-gray-200">Alex has led data platform engineering at LegalZoom...</p>
-                  </div>
-                  
-                  <div class="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-md mb-3 transform -rotate-2">
-                    <p class="text-sm text-gray-700 dark:text-gray-300">What technologies does Alex specialize in?</p>
-                  </div>
-                </div>
+          <div class="relative z-10 w-full max-w-sm mx-4 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20 p-4 shadow-lg">
+            <!-- Chat header with Mara logo -->
+            <div class="flex items-center mb-3 pb-2 border-b border-white/20">
+              <img src="/mara_logo.png" alt="Mara" class="w-10 h-10 rounded-full border-2 border-white shadow-md mr-3" />
+              <div>
+                <h3 class="text-white font-medium">Mara</h3>
+                <p class="text-xs text-white/70">Alex's AI Assistant</p>
+              </div>
+            </div>
+            
+            <!-- Chat messages -->
+            <div class="space-y-3 overflow-hidden">
+              <div class="bg-white/90 dark:bg-gray-800 rounded-lg p-2 shadow-md max-w-[80%]">
+                <p class="text-sm text-gray-700 dark:text-gray-300">What projects has Alex worked on?</p>
+              </div>
+              
+              <div class="bg-blue-100/90 dark:bg-blue-900 rounded-lg p-2 shadow-md ml-auto max-w-[80%]">
+                <p class="text-sm text-gray-800 dark:text-gray-200">Alex has led data platform engineering at LegalZoom...</p>
+              </div>
+              
+              <div class="bg-white/90 dark:bg-gray-800 rounded-lg p-2 shadow-md max-w-[80%]">
+                <p class="text-sm text-gray-700 dark:text-gray-300">What technologies does Alex specialize in?</p>
+              </div>
+              
+              <div class="bg-blue-100/90 dark:bg-blue-900 rounded-lg p-2 shadow-md ml-auto max-w-[80%]">
+                <p class="text-sm text-gray-800 dark:text-gray-200">Alex specializes in Python, Snowflake, AWS...</p>
               </div>
             </div>
           </div>
