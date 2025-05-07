@@ -23,6 +23,14 @@ interface Summary {
   activityCount: number;
 }
 
+interface YearlyStat {
+  year: number;
+  activityCount: number;
+  totalDistance: number;
+  totalElevation: number;
+  totalDuration: number;
+}
+
 // Available time ranges for the dropdown (not used for Strava but kept for UI consistency)
 const timeRanges = [
   { value: 'recent', label: 'Recent' },
@@ -36,6 +44,7 @@ import { getAccessToken, getAthleteActivities, getAthleteStats } from '../pages/
 // Initialize variables with default values
 let recentActivities: ActivitySummary[] = [];
 let topActivityTypes: ActivityType[] = [];
+let yearlyStats: YearlyStat[] = [];
 let summary: Summary = {
   totalDistance: 0,
   totalElevation: 0,
@@ -72,6 +81,7 @@ try {
   // Process the data
   recentActivities = data.recentActivities || [];
   topActivityTypes = data.topActivityTypes || [];
+  yearlyStats = data.yearlyStats || [];
   summary = data.summary || {
     totalDistance: 0,
     totalElevation: 0,
@@ -180,20 +190,32 @@ function getActivityIcon(type: string): string {
     </div>
   </div>
   
-  <!-- Error Message -->
-  <div id="error-message" class={hasError ? "p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400" : "hidden p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400"}>
+  <!-- Error Message - Static version that won't be hidden by script -->
+  {hasError && (
+    <div class="p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400">
+      <div class="flex items-center">
+        <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        </svg>
+        <span>
+          Unable to fetch Strava data. 
+          {errorMessage && errorMessage.includes('401') 
+            ? "Your Strava token is missing required permissions. Both 'read' and 'activity:read' scopes are needed." 
+            : errorMessage && (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('529'))
+              ? "Strava API rate limit exceeded. Please try again later."
+              : "Please check your credentials."}
+        </span>
+      </div>
+    </div>
+  )}
+  
+  <!-- Hidden error message for client-side updates -->
+  <div id="error-message" class="hidden p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-700 dark:text-red-400">
     <div class="flex items-center">
       <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
       </svg>
-      <span>
-        Unable to fetch Strava data. 
-        {errorMessage && errorMessage.includes('401') 
-          ? "Your Strava token is missing required permissions. Both 'read' and 'activity:read' scopes are needed." 
-          : errorMessage && errorMessage.includes('rate limit exceeded')
-            ? "Strava API rate limit exceeded. Please try again later."
-            : "Please check your credentials."}
-      </span>
+      <span>Error message will appear here</span>
     </div>
   </div>
   
@@ -286,6 +308,71 @@ function getActivityIcon(type: string): string {
       </div>
     )}
   </div>
+  
+  <!-- Yearly Stats -->
+  {yearlyStats && yearlyStats.length > 0 && (
+    <div class="mt-6">
+      <!-- Activities by Year -->
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activities by Year</h3>
+        <div class="space-y-3">
+          {yearlyStats.map((yearData) => (
+            <div class="mb-3 last:mb-0">
+              <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {yearData.activityCount} activities
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div class="bg-orange-600 h-2.5 rounded-full" style={`width: ${(yearData.activityCount / Math.max(...yearlyStats.map(y => y.activityCount))) * 100}%`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Distance by Year -->
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Distance by Year</h3>
+        <div class="space-y-3">
+          {yearlyStats.map((yearData) => (
+            <div class="mb-3 last:mb-0">
+              <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {Math.round(yearData.totalDistance * 10) / 10} mi
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div class="bg-orange-600 h-2.5 rounded-full" style={`width: ${(yearData.totalDistance / Math.max(...yearlyStats.map(y => y.totalDistance))) * 100}%`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Elevation by Year -->
+      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Elevation by Year</h3>
+        <div class="space-y-3">
+          {yearlyStats.map((yearData) => (
+            <div class="mb-3 last:mb-0">
+              <div class="flex justify-between mb-1">
+                <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {Math.round(yearData.totalElevation)} m
+                </span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div class="bg-orange-600 h-2.5 rounded-full" style={`width: ${(yearData.totalElevation / Math.max(...yearlyStats.map(y => y.totalElevation))) * 100}%`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
 </div>
 
 <script>
@@ -324,6 +411,9 @@ function getActivityIcon(type: string): string {
         
         console.log('Updating activity types with:', data.topActivityTypes);
         updateActivityTypes(data.topActivityTypes);
+        
+        console.log('Updating yearly stats with:', data.yearlyStats);
+        updateYearlyStats(data.yearlyStats);
         
         console.log('Updating summary with:', data.summary);
         updateSummary(data.summary);
@@ -502,6 +592,13 @@ function getActivityIcon(type: string): string {
     });
     
     container.innerHTML = html;
+  }
+  
+  function updateYearlyStats(yearlyStats: any[]) {
+    // This function would update the yearly stats sections
+    // However, since these sections are server-rendered and not dynamically updated,
+    // we don't need to implement this function for now
+    console.log('Yearly stats would be updated here if needed');
   }
   
   function updateSummary(summary: any) {

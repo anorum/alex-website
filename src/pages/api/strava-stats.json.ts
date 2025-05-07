@@ -124,22 +124,65 @@ export async function getAthleteProfile(token: string): Promise<AthleteProfile |
   }
 }
 
-export async function getAthleteActivities(token: string, limit = 10): Promise<ActivitySummary[]> {
+// Cache for storing fetched activities
+interface ActivityCache {
+  activities: ActivitySummary[];
+  timestamp: number;
+}
+
+let activitiesCache: ActivityCache | null = null;
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+export async function getAthleteActivities(token: string, perPage = 200, useCache = true): Promise<ActivitySummary[]> {
   // Per Strava docs: https://developers.strava.com/docs/reference/#api-Activities-getLoggedInAthleteActivities
   // Requires 'activity:read_permission' scope
-  const endpoint = `athlete/activities?per_page=${limit}&page=1`;
+  // Note: Strava API has a limit of 200 activities per page
+  
+  // Check if we have cached data that's still valid
+  const now = Date.now();
+  if (useCache && activitiesCache && (now - activitiesCache.timestamp < CACHE_TTL)) {
+    console.log('Using cached activities data');
+    return activitiesCache.activities;
+  }
   
   try {
-    const activities = await fetchStravaApi<Activity[]>(endpoint, token);
+    let allActivities: Activity[] = [];
+    let page = 1;
+    let shouldContinue = true;
     
-    if (!activities || activities.length === 0) {
-      console.log('No activities found');
-      return [];
+    // Loop through pages until we get fewer than perPage activities
+    while (shouldContinue) {
+      console.log(`Fetching activities page ${page}...`);
+      const endpoint = `athlete/activities?per_page=${perPage}&page=${page}`;
+      
+      const pageActivities = await fetchStravaApi<Activity[]>(endpoint, token);
+      
+      if (!pageActivities || pageActivities.length === 0) {
+        console.log(`No activities found on page ${page}`);
+        break;
+      }
+      
+      allActivities = [...allActivities, ...pageActivities];
+      console.log(`Found ${pageActivities.length} activities on page ${page}`);
+      
+      // If we got fewer than perPage activities, we've reached the end
+      if (pageActivities.length < perPage) {
+        shouldContinue = false;
+      } else {
+        page++;
+      }
+      
+      // Safety check: don't fetch more than 2 pages (400 activities)
+      // Reduced from 3 to 2 to minimize rate limit issues
+      if (page > 2) {
+        console.log('Reached maximum page limit (2 pages)');
+        shouldContinue = false;
+      }
     }
     
-    console.log(`Found ${activities.length} activities`);
+    console.log(`Found a total of ${allActivities.length} activities across ${page} pages`);
     
-    return activities.map(activity => ({
+    const processedActivities = allActivities.map(activity => ({
       name: activity.name,
       type: activity.type,
       distance: Math.round((activity.distance / 1609.34) * 10) / 10, // Convert to miles and round to 1 decimal
@@ -148,6 +191,14 @@ export async function getAthleteActivities(token: string, limit = 10): Promise<A
       date: new Date(activity.start_date).toLocaleDateString(),
       mapPolyline: activity.map?.summary_polyline
     }));
+    
+    // Update the cache
+    activitiesCache = {
+      activities: processedActivities,
+      timestamp: now
+    };
+    
+    return processedActivities;
   } catch (error) {
     // Check if it's a 401 error, which likely means missing scope
     if (error instanceof Error && error.message.includes('401')) {
@@ -232,12 +283,14 @@ export const GET: APIRoute = async ({ request }) => {
       console.warn('No athlete stats found');
     }
     
-    // Step 3: Process activity types
+    // Step 3: Process activity types and yearly stats
     console.log('Step 3: Processing activity data');
     const activityTypes: Record<string, ActivityType> = {};
+    const activitiesByYear: Record<string, ActivitySummary[]> = {};
     
     if (recentActivities && recentActivities.length > 0) {
       recentActivities.forEach(activity => {
+        // Process activity types
         if (!activityTypes[activity.type]) {
           activityTypes[activity.type] = {
             name: activity.type,
@@ -248,12 +301,37 @@ export const GET: APIRoute = async ({ request }) => {
         
         activityTypes[activity.type].count++;
         activityTypes[activity.type].totalDistance += activity.distance;
+        
+        // Group activities by year
+        const activityDate = new Date(activity.date);
+        const year = activityDate.getFullYear().toString();
+        
+        if (!activitiesByYear[year]) {
+          activitiesByYear[year] = [];
+        }
+        
+        activitiesByYear[year].push(activity);
       });
     }
     
     const topActivityTypes = Object.values(activityTypes)
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
+      
+    // Calculate yearly stats
+    const yearlyStats = Object.entries(activitiesByYear).map(([year, activities]) => {
+      const totalDistance = activities.reduce((sum, activity) => sum + activity.distance, 0);
+      const totalElevation = activities.reduce((sum, activity) => sum + activity.elevation, 0);
+      const totalDuration = activities.reduce((sum, activity) => sum + activity.duration, 0);
+      
+      return {
+        year: parseInt(year),
+        activityCount: activities.length,
+        totalDistance,
+        totalElevation,
+        totalDuration
+      };
+    }).sort((a, b) => b.year - a.year); // Sort by year descending
     
     // Step 4: Calculate summary statistics
     console.log('Step 4: Calculating summary statistics');
@@ -302,9 +380,10 @@ export const GET: APIRoute = async ({ request }) => {
     console.log('Step 5: Returning processed data');
     return new Response(JSON.stringify({ 
       athleteProfile: athleteProfile || null,
-      recentActivities: recentActivities || [], 
+      recentActivities: recentActivities.slice(0, 10) || [], // Only return the 10 most recent activities
       athleteStats: athleteStats || {},
       topActivityTypes,
+      yearlyStats,
       summary: {
         totalDistance,
         totalElevation,
