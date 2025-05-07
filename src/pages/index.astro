@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import meImage from '../assets/me.jpeg';
 import MainLayout from '../layouts/MainLayout.astro';
 import WorkExperienceItem from '../components/WorkExperienceItem.astro';
 import EducationItem from '../components/EducationItem.astro';
@@ -59,7 +61,7 @@ const interests = [
 				<!-- About Section -->
 				<div class="grid md:grid-cols-3 gap-12 mb-16">
 					<div class="col-span-1">
-						<img class="w-full rounded-lg shadow-lg" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png" alt="Alex Norum profile picture">
+						<Image class="w-full rounded-lg shadow-lg" width=500 height=500 src={meImage} alt="Alex Norum profile picture">
 					</div>
 					<div class="col-span-2">
 						<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
