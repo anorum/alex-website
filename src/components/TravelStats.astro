@@ -1,0 +1,614 @@
+---
+import { Image } from 'astro:assets';
+import { slide } from 'astro:transitions';
+
+// Define interfaces for our data
+interface TravelLocation {
+  id: string;
+  city: string;
+  country: string;
+  coordinates: [number, number]; // [latitude, longitude]
+  visits: Visit[];
+}
+
+interface Visit {
+  id: string;
+  date: string; // ISO date string
+  notes?: string;
+  imageUrls?: string[]; // Array of image URLs
+}
+
+// For static images that will be optimized by Astro's Image component
+interface VisitWithImage {
+  id: string;
+  date: string;
+  notes?: string;
+  image: ImageMetadata;
+}
+
+// Helper function to generate placeholder image URLs
+function getPlaceholderImage(city: string, year: string): string {
+  // Using placehold.co for placeholder images
+  return `https://placehold.co/800x500/007bff/ffffff?text=${encodeURIComponent(city)}+${year}`;
+}
+
+// For real implementation with Astro's Image component, you would:
+// 1. Create an assets/travel directory with your images
+// 2. Import the images like this:
+// import singaporeImage2016 from '../assets/travel/singapore-2016.jpg';
+// import singaporeImage2017 from '../assets/travel/singapore-2017.jpg';
+// 
+// 3. Then use them in your data structure:
+// const travelData: TravelLocation[] = [
+//   {
+//     id: "singapore",
+//     city: "Singapore",
+//     country: "Singapore",
+//     coordinates: [1.3521, 103.8198],
+//     visits: [
+//       { 
+//         id: "sg-2016", 
+//         date: "2016-05-15", 
+//         notes: "First visit to Singapore", 
+//         image: singaporeImage2016  // Use the imported image object
+//       },
+//       // ...other visits
+//     ]
+//   },
+//   // ...other locations
+// ];
+//
+// 4. Then in your template where you want to display the image:
+// {travelData.map(location => (
+//   location.visits.map(visit => (
+//     <div>
+//       {visit.image && (
+//         <Image 
+//           src={visit.image} 
+//           alt={`Visit to ${location.city}`} 
+//           width={800} 
+//           height={500} 
+//           class="rounded-lg w-full h-auto object-cover" 
+//         />
+//       )}
+//     </div>
+//   ))
+// ))}
+
+// Helper function to generate multiple placeholder images
+function getPlaceholderImages(city: string, year: string, count: number): string[] {
+  const images = [];
+  for (let i = 1; i <= count; i++) {
+    images.push(`https://placehold.co/800x500/007bff/ffffff?text=${encodeURIComponent(city)}+${year}+${i}`);
+  }
+  return images;
+}
+
+// Sample travel data - in a real app, this would come from an API or data file
+const travelData: TravelLocation[] = [
+  {
+    id: "singapore",
+    city: "Singapore",
+    country: "Singapore",
+    coordinates: [1.3521, 103.8198],
+    visits: [
+      { id: "sg-2016", date: "2016-05-15", notes: "First visit to Singapore", imageUrls: getPlaceholderImages("Singapore", "2016", 3) },
+      { id: "sg-2017", date: "2017-08-22", notes: "Business trip", imageUrls: getPlaceholderImages("Singapore", "2017", 2) },
+      { id: "sg-2018", date: "2018-11-10", notes: "Vacation with family", imageUrls: getPlaceholderImages("Singapore", "2018", 4) },
+      { id: "sg-2022", date: "2022-03-05", notes: "Tech conference", imageUrls: getPlaceholderImages("Singapore", "2022", 2) },
+      { id: "sg-2023", date: "2023-12-18", notes: "Year-end holiday", imageUrls: getPlaceholderImages("Singapore", "2023", 3) }
+    ]
+  },
+  {
+    id: "tokyo",
+    city: "Tokyo",
+    country: "Japan",
+    coordinates: [35.6762, 139.6503],
+    visits: [
+      { id: "tk-2019", date: "2019-04-10", notes: "Cherry blossom season", imageUrls: getPlaceholderImages("Tokyo", "2019", 5) },
+      { id: "tk-2022", date: "2022-09-15", notes: "Autumn visit", imageUrls: getPlaceholderImages("Tokyo", "2022", 3) }
+    ]
+  },
+  {
+    id: "london",
+    city: "London",
+    country: "United Kingdom",
+    coordinates: [51.5074, -0.1278],
+    visits: [
+      { id: "ld-2018", date: "2018-06-20", notes: "Summer in London", imageUrls: getPlaceholderImages("London", "2018", 2) },
+      { id: "ld-2021", date: "2021-12-05", notes: "Christmas markets", imageUrls: getPlaceholderImages("London", "2021", 4) }
+    ]
+  },
+  {
+    id: "newyork",
+    city: "New York",
+    country: "United States",
+    coordinates: [40.7128, -74.0060],
+    visits: [
+      { id: "ny-2017", date: "2017-11-23", notes: "Thanksgiving in NYC", imageUrls: getPlaceholderImages("New York", "2017", 3) },
+      { id: "ny-2019", date: "2019-09-30", notes: "Fall in New York", imageUrls: getPlaceholderImages("New York", "2019", 2) },
+      { id: "ny-2023", date: "2023-05-12", notes: "Spring visit", imageUrls: getPlaceholderImages("New York", "2023", 4) }
+    ]
+  },
+  {
+    id: "paris",
+    city: "Paris",
+    country: "France",
+    coordinates: [48.8566, 2.3522],
+    visits: [
+      { id: "pr-2016", date: "2016-08-10", notes: "Summer in Paris", imageUrls: getPlaceholderImages("Paris", "2016", 3) },
+      { id: "pr-2020", date: "2020-02-14", notes: "Valentine's Day weekend", imageUrls: getPlaceholderImages("Paris", "2020", 5) }
+    ]
+  }
+];
+
+// Calculate summary statistics
+const totalLocations = travelData.length;
+const totalVisits = travelData.reduce((sum, location) => sum + location.visits.length, 0);
+const totalCountries = new Set(travelData.map(location => location.country)).size;
+
+// Get most visited location
+const mostVisitedLocation = [...travelData].sort((a, b) => b.visits.length - a.visits.length)[0];
+
+// Format date for display
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+// Helper function to get country flag emoji
+function getCountryFlag(country: string): string {
+  const flagEmojis: Record<string, string> = {
+    "Singapore": "🇸🇬",
+    "Japan": "🇯🇵",
+    "United Kingdom": "🇬🇧",
+    "United States": "🇺🇸",
+    "France": "🇫🇷",
+    // Add more as needed
+  };
+  
+  return flagEmojis[country] || "🏳️";
+}
+---
+
+<div class="p-6 bg-white rounded-lg border-l-4 border-green-500 shadow-md dark:bg-gray-800 dark:border-green-400">
+  <div class="flex items-center mb-6">
+    <div class="w-10 h-10 flex items-center justify-center text-green-500 dark:text-green-400 me-4">
+      <i class="fas fa-globe-americas text-3xl"></i>
+    </div>
+    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Travel Stats</h2>
+  </div>
+  
+  <!-- Summary Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Countries</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalCountries}</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Cities</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalLocations}</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Total Visits</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalVisits}</span>
+    </div>
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+      <span class="text-sm text-gray-500 dark:text-gray-400">Most Visited</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{mostVisitedLocation.city}</span>
+    </div>
+  </div>
+  
+  <!-- Map Container -->
+  <div class="mb-6">
+    <div id="travel-map" class="h-[400px] rounded-lg border border-gray-200 dark:border-gray-600"></div>
+  </div>
+  
+  <!-- Selected Location Details (initially hidden) -->
+  <div id="location-details" class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-700 mb-6" transition:animate="slide">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center">
+        <h3 id="location-title" class="text-lg font-semibold text-gray-900 dark:text-white">Location Name</h3>
+        <span id="location-country" class="text-base font-medium text-gray-500 dark:text-gray-400 ml-2">Country</span>
+      </div>
+      <button id="close-details" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div id="visits-container" class="space-y-4">
+      <!-- Visit items will be inserted here by JavaScript -->
+    </div>
+  </div>
+  
+  <!-- Locations List -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- All Locations -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">All Locations</h3>
+      <div class="space-y-3">
+        {travelData.map((location, index) => (
+          <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 location-item" data-location-id={location.id}>
+            <div class="flex items-center">
+              <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+              <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                <span class="text-xl">{getCountryFlag(location.country)}</span>
+              </div>
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white">{location.city}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{location.country}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="font-medium text-gray-900 dark:text-white">{location.visits.length} visits</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                {formatDate(location.visits[location.visits.length - 1].date)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    
+    <!-- Most Recent Visits -->
+    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Visits</h3>
+      <div class="space-y-3">
+        {travelData
+          .flatMap(location => 
+            location.visits.map(visit => ({
+              locationId: location.id,
+              city: location.city,
+              country: location.country,
+              ...visit
+            }))
+          )
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 5)
+          .map((visit, index) => (
+            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 visit-item" data-location-id={visit.locationId} data-visit-id={visit.id}>
+              <div class="flex items-center">
+                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                  <span class="text-xl">{getCountryFlag(visit.country)}</span>
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900 dark:text-white">{visit.city}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">{formatDate(visit.date)}</p>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Load Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<!-- Custom CSS to fix Leaflet z-index issues -->
+<style is:global>
+  /* Fix for Leaflet map z-index issues */
+  #travel-map {
+    position: relative;
+    z-index: 0 !important;
+  }
+  
+  /* Target all Leaflet elements */
+  .leaflet-pane,
+  .leaflet-tile,
+  .leaflet-marker-icon,
+  .leaflet-marker-shadow,
+  .leaflet-tile-container,
+  .leaflet-pane > svg,
+  .leaflet-pane > canvas,
+  .leaflet-zoom-box,
+  .leaflet-image-layer,
+  .leaflet-layer {
+    z-index: 1 !important;
+  }
+  
+  .leaflet-overlay-pane {
+    z-index: 2 !important;
+  }
+  
+  .leaflet-shadow-pane {
+    z-index: 3 !important;
+  }
+  
+  .leaflet-marker-pane {
+    z-index: 4 !important;
+  }
+  
+  .leaflet-tooltip-pane {
+    z-index: 5 !important;
+  }
+  
+  .leaflet-popup-pane {
+    z-index: 6 !important;
+  }
+  
+  .leaflet-control {
+    z-index: 7 !important;
+  }
+  
+  .leaflet-top, 
+  .leaflet-bottom {
+    z-index: 8 !important;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the travel data from the window object (set by the inline script)
+    const travelData = window.travelData;
+    
+    // Get DOM elements
+    const detailsContainer = document.getElementById('location-details');
+    const closeButton = document.getElementById('close-details');
+    
+    // Add click event to close button
+    closeButton.addEventListener('click', function() {
+      // Simply hide the element - Astro's transitions will handle the animation
+      detailsContainer.classList.add('hidden');
+    });
+    
+    // Initialize the map
+    const map = L.map('travel-map').setView([20, 0], 2);
+    
+    // Add the tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    // Create a marker for each location
+    const markers = {};
+    travelData.forEach(location => {
+      const marker = L.marker(location.coordinates)
+        .addTo(map)
+        .bindTooltip(`${location.city}, ${location.country} (${location.visits.length} visits)`);
+      
+      // Store the marker reference
+      markers[location.id] = marker;
+      
+      // Add click event to the marker
+      marker.on('click', function() {
+        showLocationDetails(location);
+      });
+    });
+    
+    // Function to show location details
+    function showLocationDetails(location) {
+      const detailsContainer = document.getElementById('location-details');
+      const titleElement = document.getElementById('location-title');
+      const countryElement = document.getElementById('location-country');
+      const visitsContainer = document.getElementById('visits-container');
+      
+      // Update the details
+      titleElement.textContent = location.city;
+      countryElement.textContent = location.country;
+      
+      // Clear previous visits
+      visitsContainer.innerHTML = '';
+      
+      // Sort visits by date (newest first)
+      const sortedVisits = [...location.visits].sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      
+      // Add each visit
+      sortedVisits.forEach(visit => {
+        const visitElement = document.createElement('div');
+        visitElement.className = 'p-4 bg-white rounded-lg border border-gray-200 dark:bg-gray-600 dark:border-gray-500';
+        
+        const visitDate = new Date(visit.date);
+        const formattedDate = visitDate.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        
+        let visitContent = `
+          <div class="flex justify-between mb-2">
+            <h4 class="text-md font-medium text-gray-900 dark:text-white">${formattedDate}</h4>
+          </div>
+        `;
+        
+        if (visit.notes) {
+          visitContent += `<p class="text-sm text-gray-500 dark:text-gray-300 mb-3">${visit.notes}</p>`;
+        }
+        
+        if (visit.imageUrls && visit.imageUrls.length > 0) {
+          const carouselId = `carousel-${visit.id}`;
+          
+          visitContent += `
+            <div class="mt-4">
+              <div id="${carouselId}" class="simple-carousel relative w-full">
+                <!-- Carousel wrapper -->
+                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+                  ${visit.imageUrls.map((url, index) => `
+                    <div class="carousel-item ${index === 0 ? 'active' : 'hidden'}" data-index="${index}">
+                      <img src="${url}" alt="Visit to ${location.city} - Image ${index + 1}" 
+                           class="absolute block max-w-full max-h-full object-contain rounded-lg"
+                           style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+                           width="800" height="500" loading="lazy">
+                    </div>
+                  `).join('')}
+                </div>
+                
+                ${visit.imageUrls.length > 1 ? `
+                  <!-- Slider controls -->
+                  <button type="button" class="carousel-prev absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
+                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                      <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                      </svg>
+                      <span class="sr-only">Previous</span>
+                    </span>
+                  </button>
+                  <button type="button" class="carousel-next absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
+                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                      <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                      </svg>
+                      <span class="sr-only">Next</span>
+                    </span>
+                  </button>
+                  
+                  <!-- Slider indicators -->
+                  <div class="carousel-indicators absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+                    ${visit.imageUrls.map((_, index) => `
+                      <button type="button" class="carousel-indicator w-3 h-3 rounded-full${index === 0 ? ' bg-white dark:bg-gray-800' : ' bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800'}" data-index="${index}" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="Slide ${index + 1}"></button>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              </div>
+              ${visit.imageUrls.length > 1 ? `<p class="carousel-counter text-center text-sm text-gray-500 dark:text-gray-400 mt-2">Image 1 of ${visit.imageUrls.length}</p>` : ''}
+            </div>
+          `;
+        }
+        
+        visitElement.innerHTML = visitContent;
+        visitsContainer.appendChild(visitElement);
+      });
+      
+      // Simply show the details container - Astro's transitions will handle the animation
+      detailsContainer.classList.remove('hidden');
+      
+      // Scroll to the details
+      detailsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Initialize carousels
+      initializeCarousels();
+    }
+    
+    // Add click events to location items in the list
+    document.querySelectorAll('.location-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const locationId = this.getAttribute('data-location-id');
+        const location = travelData.find(loc => loc.id === locationId);
+        
+        if (location) {
+          // Center the map on this location
+          map.setView(location.coordinates, 10);
+          
+          // Trigger the marker click
+          markers[locationId].fire('click');
+        }
+      });
+    });
+    
+    // Add click events to visit items in the recent visits list
+    document.querySelectorAll('.visit-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const locationId = this.getAttribute('data-location-id');
+        const location = travelData.find(loc => loc.id === locationId);
+        
+        if (location) {
+          // Center the map on this location
+          map.setView(location.coordinates, 10);
+          
+          // Trigger the marker click
+          markers[locationId].fire('click');
+        }
+      });
+    });
+    
+    // Function to initialize all carousels
+    function initializeCarousels() {
+      // Find all simple carousel elements
+      document.querySelectorAll('.simple-carousel').forEach(carousel => {
+        const items = Array.from(carousel.querySelectorAll('.carousel-item'));
+        const indicators = Array.from(carousel.querySelectorAll('.carousel-indicator'));
+        const prevBtn = carousel.querySelector('.carousel-prev');
+        const nextBtn = carousel.querySelector('.carousel-next');
+        const countDisplay = carousel.nextElementSibling;
+        
+        if (items.length <= 1) return; // No need for carousel controls if only one image
+        
+        let currentIndex = items.findIndex(item => item.classList.contains('active'));
+        if (currentIndex === -1) currentIndex = 0;
+        
+        // Function to show a specific image
+        function showSlide(index) {
+          // Hide all images
+          items.forEach(item => item.classList.add('hidden'));
+          items.forEach(item => item.classList.remove('active'));
+          
+          // Show the selected image
+          items[index].classList.remove('hidden');
+          items[index].classList.add('active');
+          
+          // Update indicators
+          indicators.forEach((indicator, i) => {
+            if (i === index) {
+              indicator.setAttribute('aria-current', 'true');
+              indicator.classList.add('bg-white');
+              indicator.classList.add('dark:bg-gray-800');
+              indicator.classList.remove('bg-white/50');
+              indicator.classList.remove('dark:bg-gray-800/50');
+            } else {
+              indicator.setAttribute('aria-current', 'false');
+              indicator.classList.remove('bg-white');
+              indicator.classList.remove('dark:bg-gray-800');
+              indicator.classList.add('bg-white/50');
+              indicator.classList.add('dark:bg-gray-800/50');
+            }
+          });
+          
+          // Update counter text
+          if (countDisplay && countDisplay.classList.contains('carousel-counter')) {
+            countDisplay.textContent = `Image ${index + 1} of ${items.length}`;
+          }
+          
+          // Update current index
+          currentIndex = index;
+        }
+        
+        // Add click event to previous button
+        if (prevBtn) {
+          prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = items.length - 1; // Loop back to the end
+            showSlide(newIndex);
+          });
+        }
+        
+        // Add click event to next button
+        if (nextBtn) {
+          nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            let newIndex = currentIndex + 1;
+            if (newIndex >= items.length) newIndex = 0; // Loop back to the beginning
+            showSlide(newIndex);
+          });
+        }
+        
+        // Add click events to indicators
+        indicators.forEach((indicator, index) => {
+          indicator.addEventListener('click', function(e) {
+            e.stopPropagation();
+            showSlide(index);
+          });
+        });
+        
+        // Initialize with the first slide
+        showSlide(currentIndex);
+      });
+    }
+  });
+</script>
+
+<!-- Hidden element to pass data to client-side JavaScript -->
+<script is:inline define:vars={{ serializedTravelData: JSON.stringify(travelData) }}>
+  // Make the travel data available to the client-side script
+  document.addEventListener('DOMContentLoaded', function() {
+    window.travelData = JSON.parse(serializedTravelData);
+  });
+</script>

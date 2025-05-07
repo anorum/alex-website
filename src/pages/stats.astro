@@ -4,6 +4,7 @@ import SpotifyStats from '../components/SpotifyStats.astro';
 import StravaStats from '../components/StravaStats.astro';
 import { default as EighteenBirdiesStats } from '../components/18BirdiesStats.astro';
 import GoodreadsStats from '../components/GoodreadsStats.astro';
+import TravelStats from '../components/TravelStats.astro';
 
 // Get the time range from the URL query parameter, or default to short_term
 const timeRange = Astro.url.searchParams.get('time_range');
@@ -29,6 +30,9 @@ const year = Astro.url.searchParams.get('year');
 				
 				<!-- Stats Cards -->
 				<div class="grid md:grid-cols-1 gap-8 mb-16">
+					<!-- Travel Stats -->
+					<TravelStats />
+					
 					<!-- Spotify Stats -->
 					<SpotifyStats defaultTimeRange={defaultTimeRange} />
 					
@@ -40,13 +44,14 @@ const year = Astro.url.searchParams.get('year');
 					
 					<!-- Goodreads Stats -->
 					<GoodreadsStats defaultYear={year} />
+					
 				</div>
 				
 				<!-- Additional Stats Section -->
 				<div class="mb-16">
 					<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Other Platforms</h2>
 					
-					<div class="grid md:grid-cols-3 gap-6">
+					<div class="grid md:grid-cols-2 gap-6">
 						<!-- GitHub Stats -->
 						<div class="p-6 bg-white rounded-lg border-l-4 border-gray-600 shadow-md dark:bg-gray-800 dark:border-gray-500">
 							<div class="flex items-center mb-4">
@@ -67,17 +72,6 @@ const year = Astro.url.searchParams.get('year');
 								<h3 class="text-xl font-semibold text-gray-900 dark:text-white">LinkedIn</h3>
 							</div>
 							<p class="text-gray-500 dark:text-gray-400">Coming soon! Professional network and career statistics.</p>
-						</div>
-						
-						<!-- Travel Stats -->
-						<div class="p-6 bg-white rounded-lg border-l-4 border-green-500 shadow-md dark:bg-gray-800 dark:border-green-400">
-							<div class="flex items-center mb-4">
-								<svg class="w-8 h-8 text-green-500 dark:text-green-400 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-									<path d="M12 2C7.589 2 4 5.589 4 10c0 5.618 7.105 11.671 7.413 11.936a.876.876 0 0 0 1.174 0C12.895 21.671 20 15.618 20 10c0-4.411-3.589-8-8-8zm0 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
-								</svg>
-								<h3 class="text-xl font-semibold text-gray-900 dark:text-white">Travel / Places I've Been</h3>
-							</div>
-							<p class="text-gray-500 dark:text-gray-400">Coming soon! Maps and statistics of countries and cities I've visited around the world.</p>
 						</div>
 					</div>
 				</div>

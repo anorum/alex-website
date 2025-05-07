@@ -1,0 +1,68 @@
+# Using Astro Image Component with Travel Stats
+
+This is a placeholder file to demonstrate where to place your travel images.
+
+## Example Implementation
+
+1. Place your actual travel images in this directory (src/assets/travel/)
+2. Import them in the TravelStats.astro component:
+
+```astro
+---
+import { Image } from 'astro:assets';
+import singaporeImage2016 from '../assets/travel/singapore-2016.jpg';
+import singaporeImage2017 from '../assets/travel/singapore-2017.jpg';
+// Import other images...
+
+// Update the interface to use ImageMetadata
+interface VisitWithImage {
+  id: string;
+  date: string;
+  notes?: string;
+  image: ImageMetadata;
+}
+
+// Use the imported images in your data structure
+const travelDataWithImages = [
+  {
+    id: "singapore",
+    city: "Singapore",
+    country: "Singapore",
+    coordinates: [1.3521, 103.8198],
+    visits: [
+      { 
+        id: "sg-2016", 
+        date: "2016-05-15", 
+        notes: "First visit to Singapore", 
+        image: singaporeImage2016
+      },
+      { 
+        id: "sg-2017", 
+        date: "2017-08-22", 
+        notes: "Business trip", 
+        image: singaporeImage2017
+      },
+      // Add other visits...
+    ]
+  },
+  // Add other locations...
+];
+---
+
+<!-- In your template, use the Image component -->
+{travelDataWithImages.map(location => (
+  location.visits.map(visit => (
+    <div>
+      <Image 
+        src={visit.image} 
+        alt={`Visit to ${location.city}`} 
+        width={800} 
+        height={500} 
+        class="rounded-lg w-full h-auto object-cover" 
+      />
+    </div>
+  ))
+))}
+```
+
+The Astro Image component will automatically optimize your images, convert them to modern formats, and implement lazy loading for better performance.
