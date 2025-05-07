@@ -58,7 +58,12 @@ try {
   const response = await fetch(url.toString());
   
   if (!response.ok) {
-    const errorData = await response.json();
+    // Check specifically for 429 (rate limit) or 529 (extended rate limit) status codes
+    if (response.status === 429 || response.status === 529) {
+      throw new Error('Strava API rate limit exceeded (HTTP 429/529)');
+    }
+    
+    const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.error || `API error: ${response.status}`);
   }
   
@@ -81,8 +86,9 @@ try {
   hasError = true;
   errorMessage = error instanceof Error ? error.message : 'Unknown error';
   
-  // Check if it's a rate limit error
-  if (errorMessage.includes('rate limit exceeded')) {
+  // Check if it's a rate limit error (including 429 and 529)
+  if (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('529')) {
+    errorMessage = 'Strava API rate limit exceeded (HTTP 429/529)';
     // Set all stats to zero to avoid displaying incorrect data
     summary = {
       totalDistance: 0,
@@ -143,14 +149,14 @@ function getActivityIcon(type: string): string {
 
 <div class="p-6 bg-white rounded-lg border-l-4 border-orange-600 shadow-md dark:bg-gray-800 dark:border-orange-500">
   <!-- Rate Limit Error Banner -->
-  {errorMessage && errorMessage.includes('rate limit exceeded') && (
+  {(errorMessage && (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('529'))) && (
     <div class="p-4 mb-6 text-sm text-orange-800 rounded-lg bg-orange-50 dark:bg-gray-800 dark:text-orange-400 border border-orange-300 dark:border-orange-800">
       <div class="flex items-center">
         <svg class="flex-shrink-0 inline w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
         </svg>
         <span class="font-medium">
-          Strava API rate limit exceeded. Stats are temporarily unavailable. Please try again later.
+          Strava API rate limit exceeded (HTTP 429/529). Stats are temporarily unavailable. Please try again later.
         </span>
       </div>
     </div>
@@ -243,7 +249,9 @@ function getActivityIcon(type: string): string {
                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
               </svg>
               <span>
-                Recent activities cannot be displayed. However, summary statistics are still available.
+                {errorMessage && (errorMessage.includes('rate limit') || errorMessage.includes('429') || errorMessage.includes('529')) 
+                  ? "Strava API rate limit exceeded. Activities cannot be displayed. Please try again later."
+                  : "Recent activities cannot be displayed. However, summary statistics are still available."}
               </span>
             </div>
           </div>
@@ -333,7 +341,7 @@ function getActivityIcon(type: string): string {
         const errorText = error instanceof Error ? error.message : 'Unknown error';
         
         // Check for rate limit error
-        if (errorText.includes('rate limit exceeded')) {
+        if (errorText.includes('rate limit') || errorText.includes('429') || errorText.includes('529')) {
           // Show rate limit banner
           const existingBanner = document.querySelector('.rate-limit-banner');
           if (!existingBanner) {
@@ -345,7 +353,7 @@ function getActivityIcon(type: string): string {
                   <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                 </svg>
                 <span class="font-medium">
-                  Strava API rate limit exceeded. Stats are temporarily unavailable. Please try again later.
+                  Strava API rate limit exceeded (HTTP 429/529). Stats are temporarily unavailable. Please try again later.
                 </span>
               </div>
             `;
@@ -372,8 +380,8 @@ function getActivityIcon(type: string): string {
           if (errorSpan) {
             if (errorText.includes('401')) {
               errorSpan.textContent = "Unable to fetch Strava data. Your Strava token is missing required permissions. Both 'read' and 'activity:read' scopes are needed.";
-            } else if (errorText.includes('rate limit exceeded')) {
-              errorSpan.textContent = "Strava API rate limit exceeded. Please try again later.";
+            } else if (errorText.includes('rate limit') || errorText.includes('429') || errorText.includes('529')) {
+              errorSpan.textContent = "Strava API rate limit exceeded (HTTP 429/529). Please try again later.";
             } else {
               errorSpan.textContent = "Unable to fetch Strava data. Please check your credentials.";
             }
