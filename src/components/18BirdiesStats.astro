@@ -59,6 +59,76 @@ const mostPlayedCourses = Object.entries(courseCounts)
   .sort((a, b) => b.count - a.count)
   .slice(0, 5);
 
+// Calculate rounds by year
+const roundsByYear = {};
+const scoresByYear = {};
+const scoreCountByYear = {};
+const handicapByYear = {};
+const handicapCountByYear = {};
+
+roundsData.forEach((round) => {
+  if (round.timestamp) {
+    const date = new Date(round.timestamp);
+    const year = date.getFullYear();
+    
+    // Count rounds per year
+    roundsByYear[year] = (roundsByYear[year] || 0) + 1;
+    
+    // Sum scores per year (for calculating average)
+    if (round.score !== undefined) {
+      scoresByYear[year] = (scoresByYear[year] || 0) + round.score;
+      scoreCountByYear[year] = (scoreCountByYear[year] || 0) + 1;
+    }
+  }
+});
+
+// Calculate handicap by year
+// For simplicity, we'll use a sliding window approach
+// For each year, calculate handicap based on rounds from that year
+const validRounds = roundsData.filter(round => 
+  round.strokes > 0 && round.holeStrokes.filter(strokes => strokes > 0).length >= 9
+);
+
+// Group rounds by year
+const roundsByYearForHandicap = {};
+validRounds.forEach(round => {
+  if (round.timestamp) {
+    const date = new Date(round.timestamp);
+    const year = date.getFullYear();
+    
+    if (!roundsByYearForHandicap[year]) {
+      roundsByYearForHandicap[year] = [];
+    }
+    
+    roundsByYearForHandicap[year].push(round);
+  }
+});
+
+// Calculate handicap for each year
+Object.entries(roundsByYearForHandicap).forEach(([year, yearRounds]) => {
+  if (yearRounds.length > 0) {
+    const totalScoreOverPar = yearRounds.reduce((sum, round) => sum + round.score, 0);
+    handicapByYear[year] = parseFloat((totalScoreOverPar / yearRounds.length).toFixed(1));
+  }
+});
+
+// Create yearly stats arrays
+const yearlyRounds = Object.entries(roundsByYear)
+  .map(([year, count]) => ({ year: parseInt(year), count }))
+  .sort((a, b) => b.year - a.year); // Sort descending by year (newest first)
+
+const yearlyScores = Object.entries(scoresByYear)
+  .map(([year, totalScore]) => {
+    const count = scoreCountByYear[year];
+    const averageScore = count > 0 ? (totalScore / count).toFixed(1) : 0;
+    return { year: parseInt(year), averageScore: parseFloat(averageScore) };
+  })
+  .sort((a, b) => b.year - a.year); // Sort descending by year (newest first)
+
+const yearlyHandicaps = Object.entries(handicapByYear)
+  .map(([year, handicap]) => ({ year: parseInt(year), handicap }))
+  .sort((a, b) => b.year - a.year); // Sort descending by year (newest first)
+
 // Calculate overall stats
 const statsTotal = {
   aces: 0,
@@ -129,9 +199,9 @@ function getGolfIcon(type) {
 }
 ---
 
-<div class="p-6 bg-white rounded-lg border-l-4 border-green-700 shadow-md dark:bg-gray-800 dark:border-green-600">
+<div class="p-6 bg-white rounded-lg border-l-4 border-blue-500 shadow-md dark:bg-gray-800 dark:border-blue-400">
   <div class="flex items-center mb-6">
-    <div class="w-10 h-10 flex items-center justify-center text-green-700 dark:text-green-500 me-4">
+    <div class="w-10 h-10 flex items-center justify-center text-blue-500 dark:text-blue-400 me-4">
       <i class="fas fa-golf-ball text-3xl"></i>
     </div>
     <h2 class="text-3xl font-bold text-gray-900 dark:text-white">18Birdies Stats</h2>
@@ -167,7 +237,7 @@ function getGolfIcon(type) {
           <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
             <div class="flex items-center">
               <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-              <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300">
+              <div class="w-10 h-10 rounded-full mx-3 bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-300">
                 <Fragment set:html={getGolfIcon('golf')} />
               </div>
               <div>
@@ -195,7 +265,7 @@ function getGolfIcon(type) {
               <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{course.count} rounds</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-green-700 h-2.5 rounded-full" style={`width: ${(course.count / mostPlayedCourses[0].count) * 100}%`}></div>
+              <div class="bg-blue-500 h-2.5 rounded-full" style={`width: ${(course.count / mostPlayedCourses[0].count) * 100}%`}></div>
             </div>
           </div>
         ))}
@@ -226,7 +296,7 @@ function getGolfIcon(type) {
         </div>
         <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600">
           <div class="flex items-center">
-            <div class="w-8 h-8 rounded-full mr-3 bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300">
+            <div class="w-8 h-8 rounded-full mr-3 bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-300">
               <Fragment set:html={getGolfIcon('par')} />
             </div>
             <span class="font-medium text-gray-900 dark:text-white">Pars</span>
@@ -266,7 +336,7 @@ function getGolfIcon(type) {
             </span>
           </div>
           <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div class="bg-green-700 h-2.5 rounded-full" style={`width: ${fairwayPercentage}%`}></div>
+            <div class="bg-blue-500 h-2.5 rounded-full" style={`width: ${fairwayPercentage}%`}></div>
           </div>
         </div>
         
@@ -278,7 +348,7 @@ function getGolfIcon(type) {
             </span>
           </div>
           <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-            <div class="bg-green-700 h-2.5 rounded-full" style={`width: ${girPercentage}%`}></div>
+            <div class="bg-blue-500 h-2.5 rounded-full" style={`width: ${girPercentage}%`}></div>
           </div>
         </div>
         
@@ -296,4 +366,70 @@ function getGolfIcon(type) {
       </div>
     </div>
   </div>
+  
+  <!-- Yearly Stats -->
+  {yearlyRounds.length > 0 && (
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rounds Played by Year</h3>
+      <div class="space-y-3">
+        {yearlyRounds.map((yearData) => (
+          <div class="mb-3 last:mb-0">
+            <div class="flex justify-between mb-1">
+              <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {yearData.count} rounds
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div class="bg-blue-500 h-2.5 rounded-full" style={`width: ${(yearData.count / Math.max(...yearlyRounds.map(y => y.count))) * 100}%`}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+  
+  <!-- Handicap by Year -->
+  {yearlyHandicaps.length > 0 && (
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Handicap by Year</h3>
+      <div class="space-y-3">
+        {yearlyHandicaps.map((yearData) => (
+          <div class="mb-3 last:mb-0">
+            <div class="flex justify-between mb-1">
+              <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {yearData.handicap}
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div class="bg-blue-500 h-2.5 rounded-full" style={`width: ${(Math.min(Math.max(yearData.handicap, 0), 30) / 30) * 100}%`}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+  
+  <!-- Average Score by Year -->
+  {yearlyScores.length > 0 && (
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Average Score Over Par by Year</h3>
+      <div class="space-y-3">
+        {yearlyScores.map((yearData) => (
+          <div class="mb-3 last:mb-0">
+            <div class="flex justify-between mb-1">
+              <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {yearData.averageScore > 0 ? `+${yearData.averageScore}` : yearData.averageScore}
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div class="bg-blue-500 h-2.5 rounded-full" style={`width: ${(Math.min(Math.max(yearData.averageScore, 0), 30) / 30) * 100}%`}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
 </div>
