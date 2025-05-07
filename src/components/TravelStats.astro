@@ -344,7 +344,7 @@ function getCountryFlag(country: string): string {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('astro:page-load', function() {
     // Get the travel data from the window object (set by the inline script)
     const travelData = window.travelData;
     
@@ -608,7 +608,7 @@ function getCountryFlag(country: string): string {
 <!-- Hidden element to pass data to client-side JavaScript -->
 <script is:inline define:vars={{ serializedTravelData: JSON.stringify(travelData) }}>
   // Make the travel data available to the client-side script
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('astro:page-load', function() {
     window.travelData = JSON.parse(serializedTravelData);
   });
 </script>
