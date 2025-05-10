@@ -4,156 +4,110 @@ import { slide } from 'astro:transitions';
 
 // Define interfaces for our data
 interface TravelLocation {
-  id: string;
+  location_id: string;
   city: string;
   country: string;
   coordinates: [number, number]; // [latitude, longitude]
-  visits: Visit[];
+  visit_id: string;
+  date: string;
+  notes?: string;
+  image_urls?: string[];
 }
 
 interface Visit {
-  id: string;
-  date: string; // ISO date string
-  notes?: string;
-  imageUrls?: string[]; // Array of image URLs
-}
-
-// For static images that will be optimized by Astro's Image component
-interface VisitWithImage {
-  id: string;
+  location_id: string;
+  city: string;
+  country: string;
+  coordinates: [number, number];
+  visit_id: string;
   date: string;
   notes?: string;
-  image: ImageMetadata;
+  image_urls?: string[];
 }
 
-// Helper function to generate placeholder image URLs
-function getPlaceholderImage(city: string, year: string): string {
-  // Using placehold.co for placeholder images
-  return `https://placehold.co/800x500/007bff/ffffff?text=${encodeURIComponent(city)}+${year}`;
+interface TravelSummary {
+  total_countries: number;
+  total_cities: number;
+  total_visits: number;
+  most_visited_city: string;
+  most_visited_country: string;
 }
 
-// For real implementation with Astro's Image component, you would:
-// 1. Create an assets/travel directory with your images
-// 2. Import the images like this:
-// import singaporeImage2016 from '../assets/travel/singapore-2016.jpg';
-// import singaporeImage2017 from '../assets/travel/singapore-2017.jpg';
-// 
-// 3. Then use them in your data structure:
-// const travelData: TravelLocation[] = [
-//   {
-//     id: "singapore",
-//     city: "Singapore",
-//     country: "Singapore",
-//     coordinates: [1.3521, 103.8198],
-//     visits: [
-//       { 
-//         id: "sg-2016", 
-//         date: "2016-05-15", 
-//         notes: "First visit to Singapore", 
-//         image: singaporeImage2016  // Use the imported image object
-//       },
-//       // ...other visits
-//     ]
-//   },
-//   // ...other locations
-// ];
-//
-// 4. Then in your template where you want to display the image:
-// {travelData.map(location => (
-//   location.visits.map(visit => (
-//     <div>
-//       {visit.image && (
-//         <Image 
-//           src={visit.image} 
-//           alt={`Visit to ${location.city}`} 
-//           width={800} 
-//           height={500} 
-//           class="rounded-lg w-full h-auto object-cover" 
-//         />
-//       )}
-//     </div>
-//   ))
-// ))}
+interface YearlyStat {
+  year: number;
+  visits_count: number;
+  countries_count: number;
+  cities_count: number;
+}
 
-// Helper function to generate multiple placeholder images
-function getPlaceholderImages(city: string, year: string, count: number): string[] {
-  const images = [];
-  for (let i = 1; i <= count; i++) {
-    images.push(`https://placehold.co/800x500/007bff/ffffff?text=${encodeURIComponent(city)}+${year}+${i}`);
+// Define the API URL and key
+const apiUrl = 'http://api.homelab/api/v1/travel/';
+const apiKey = import.meta.env.ALEX_API_KEY;
+
+// Initialize variables with default values
+let travelData: TravelLocation[] = [];
+let recentVisits: Visit[] = [];
+let yearlyStats: YearlyStat[] = [];
+let summary: TravelSummary = {
+  total_countries: 0,
+  total_cities: 0,
+  total_visits: 0,
+  most_visited_city: '',
+  most_visited_country: ''
+};
+
+try {
+  // Fetch data from the API
+  const response = await fetch(apiUrl, {
+    headers: {
+      'X-API-Key': apiKey
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status}`);
   }
-  return images;
-}
-
-// Sample travel data - in a real app, this would come from an API or data file
-const travelData: TravelLocation[] = [
-  {
-    id: "singapore",
-    city: "Singapore",
-    country: "Singapore",
-    coordinates: [1.3521, 103.8198],
-    visits: [
-      { id: "sg-2016", date: "2016-05-15", notes: "First visit to Singapore", imageUrls: getPlaceholderImages("Singapore", "2016", 3) },
-      { id: "sg-2017", date: "2017-08-22", notes: "Business trip", imageUrls: getPlaceholderImages("Singapore", "2017", 2) },
-      { id: "sg-2018", date: "2018-11-10", notes: "Vacation with family", imageUrls: getPlaceholderImages("Singapore", "2018", 4) },
-      { id: "sg-2022", date: "2022-03-05", notes: "Tech conference", imageUrls: getPlaceholderImages("Singapore", "2022", 2) },
-      { id: "sg-2023", date: "2023-12-18", notes: "Year-end holiday", imageUrls: getPlaceholderImages("Singapore", "2023", 3) }
-    ]
-  },
-  {
-    id: "tokyo",
-    city: "Tokyo",
-    country: "Japan",
-    coordinates: [35.6762, 139.6503],
-    visits: [
-      { id: "tk-2019", date: "2019-04-10", notes: "Cherry blossom season", imageUrls: getPlaceholderImages("Tokyo", "2019", 5) },
-      { id: "tk-2022", date: "2022-09-15", notes: "Autumn visit", imageUrls: getPlaceholderImages("Tokyo", "2022", 3) }
-    ]
-  },
-  {
-    id: "london",
-    city: "London",
-    country: "United Kingdom",
-    coordinates: [51.5074, -0.1278],
-    visits: [
-      { id: "ld-2018", date: "2018-06-20", notes: "Summer in London", imageUrls: getPlaceholderImages("London", "2018", 2) },
-      { id: "ld-2021", date: "2021-12-05", notes: "Christmas markets", imageUrls: getPlaceholderImages("London", "2021", 4) }
-    ]
-  },
-  {
-    id: "newyork",
-    city: "New York",
-    country: "United States",
-    coordinates: [40.7128, -74.0060],
-    visits: [
-      { id: "ny-2017", date: "2017-11-23", notes: "Thanksgiving in NYC", imageUrls: getPlaceholderImages("New York", "2017", 3) },
-      { id: "ny-2019", date: "2019-09-30", notes: "Fall in New York", imageUrls: getPlaceholderImages("New York", "2019", 2) },
-      { id: "ny-2023", date: "2023-05-12", notes: "Spring visit", imageUrls: getPlaceholderImages("New York", "2023", 4) }
-    ]
-  },
-  {
-    id: "paris",
-    city: "Paris",
-    country: "France",
-    coordinates: [48.8566, 2.3522],
-    visits: [
-      { id: "pr-2016", date: "2016-08-10", notes: "Summer in Paris", imageUrls: getPlaceholderImages("Paris", "2016", 3) },
-      { id: "pr-2020", date: "2020-02-14", notes: "Valentine's Day weekend", imageUrls: getPlaceholderImages("Paris", "2020", 5) }
-    ]
-  }
-];
-
-// Calculate summary statistics
-const totalLocations = travelData.length;
-const totalVisits = travelData.reduce((sum, location) => sum + location.visits.length, 0);
-const totalCountries = new Set(travelData.map(location => location.country)).size;
-
-// Get most visited location
-const mostVisitedLocation = [...travelData].sort((a, b) => b.visits.length - a.visits.length)[0];
-
-// Format date for display
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  
+  const data = await response.json();
+  
+  // Process the data
+  summary = data.summary || {
+    total_countries: 0,
+    total_cities: 0,
+    total_visits: 0,
+    most_visited_city: '',
+    most_visited_country: ''
+  };
+  
+  recentVisits = data.recent_visits || [];
+  yearlyStats = data.yearly_stats || [];
+  
+  // Process the data to create a format compatible with our map
+  const locationMap = new Map();
+  
+  recentVisits.forEach(visit => {
+    if (!locationMap.has(visit.location_id)) {
+      locationMap.set(visit.location_id, {
+        id: visit.location_id,
+        city: visit.city,
+        country: visit.country,
+        coordinates: visit.coordinates,
+        visits: []
+      });
+    }
+    
+    const location = locationMap.get(visit.location_id);
+    location.visits.push({
+      id: visit.visit_id,
+      date: visit.date,
+      notes: visit.notes,
+      imageUrls: visit.image_urls
+    });
+  });
+  
+  travelData = Array.from(locationMap.values());
+} catch (error) {
+  console.error('Error fetching travel data:', error);
 }
 
 // Helper function to get country flag emoji
@@ -169,6 +123,12 @@ function getCountryFlag(country: string): string {
   
   return flagEmojis[country] || "🏳️";
 }
+
+// Format date for display
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
 ---
 
 <div class="p-6 bg-white rounded-lg border-l-4 border-green-500 shadow-md dark:bg-gray-800 dark:border-green-400">
@@ -183,19 +143,19 @@ function getCountryFlag(country: string): string {
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
       <span class="text-sm text-gray-500 dark:text-gray-400">Countries</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalCountries}</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_countries}</span>
     </div>
     <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
       <span class="text-sm text-gray-500 dark:text-gray-400">Cities</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalLocations}</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_cities}</span>
     </div>
     <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
       <span class="text-sm text-gray-500 dark:text-gray-400">Total Visits</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalVisits}</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_visits}</span>
     </div>
     <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
       <span class="text-sm text-gray-500 dark:text-gray-400">Most Visited</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{mostVisitedLocation.city}</span>
+      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.most_visited_city}</span>
     </div>
   </div>
   
@@ -256,35 +216,45 @@ function getCountryFlag(country: string): string {
     <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Visits</h3>
       <div class="space-y-3">
-        {travelData
-          .flatMap(location => 
-            location.visits.map(visit => ({
-              locationId: location.id,
-              city: location.city,
-              country: location.country,
-              ...visit
-            }))
-          )
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 5)
-          .map((visit, index) => (
-            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 visit-item" data-location-id={visit.locationId} data-visit-id={visit.id}>
-              <div class="flex items-center">
-                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-                <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
-                  <span class="text-xl">{getCountryFlag(visit.country)}</span>
-                </div>
-                <div>
-                  <p class="font-medium text-gray-900 dark:text-white">{visit.city}</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{formatDate(visit.date)}</p>
-                </div>
+        {recentVisits.map((visit, index) => (
+          <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 visit-item" data-location-id={visit.location_id} data-visit-id={visit.visit_id}>
+            <div class="flex items-center">
+              <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+              <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                <span class="text-xl">{getCountryFlag(visit.country)}</span>
+              </div>
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white">{visit.city}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{formatDate(visit.date)}</p>
               </div>
             </div>
-          ))
-        }
+          </div>
+        ))}
       </div>
     </div>
   </div>
+  
+  <!-- Yearly Stats -->
+  {yearlyStats && yearlyStats.length > 0 && (
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Travel by Year</h3>
+      <div class="space-y-3">
+        {yearlyStats.map((yearData) => (
+          <div class="mb-3 last:mb-0">
+            <div class="flex justify-between mb-1">
+              <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {yearData.visits_count} visits • {yearData.countries_count} countries • {yearData.cities_count} cities
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div class="bg-green-500 h-2.5 rounded-full" style={`width: ${(yearData.visits_count / Math.max(...yearlyStats.map(y => y.visits_count))) * 100}%`}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
 </div>
 
 <!-- Load Leaflet CSS and JS -->

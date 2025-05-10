@@ -12,6 +12,9 @@ const defaultTimeRange = timeRange || 'short_term';
 
 // Get the year for Goodreads stats from the URL query parameter
 const year = Astro.url.searchParams.get('year');
+
+// Add a loading state indicator
+let isLoading = false;
 ---
 
 <MainLayout title="Stats - Alex Norum" description="Personal statistics and data visualizations">
@@ -30,21 +33,20 @@ const year = Astro.url.searchParams.get('year');
 				
 				<!-- Stats Cards -->
 				<div class="grid md:grid-cols-1 gap-8 mb-16">
-					<!-- Travel Stats -->
+					<!-- Travel Stats (above the fold, load immediately) -->
 					<TravelStats />
 					
-					<!-- Spotify Stats -->
+					<!-- Spotify Stats (above the fold, load immediately) -->
 					<SpotifyStats defaultTimeRange={defaultTimeRange} />
 					
-					<!-- Strava Stats -->
-					<StravaStats />
+					<!-- Strava Stats (lazy load when visible) -->
+					<StravaStats client:visible />
 					
-					<!-- 18Birdies Stats -->
-					<EighteenBirdiesStats />
+					<!-- 18Birdies Stats (lazy load when visible) -->
+					<EighteenBirdiesStats client:visible />
 					
-					<!-- Goodreads Stats -->
-					<GoodreadsStats defaultYear={year} />
-					
+					<!-- Goodreads Stats (lazy load when visible) -->
+					<GoodreadsStats defaultYear={year} client:visible />
 				</div>
 				
 				<!-- Additional Stats Section -->

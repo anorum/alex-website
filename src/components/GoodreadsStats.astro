@@ -2,175 +2,195 @@
 // Import the date utility
 import { formatDate } from '../utils/date';
 
-// Import CSV data - using a static approach for simplicity
-// In a real app, you might want to use a proper CSV parser or API endpoint
-import goodreadsData from '../../public/data/goodreads_library_export.csv?raw';
+// Define interfaces for our data
+interface Book {
+  title: string;
+  author: string;
+  book_id: string;
+  my_rating?: number;
+  pages?: number;
+  date_read?: string;
+  date_added?: string;
+}
 
-// Better CSV parsing function that handles quoted fields
-function parseCSV(csv) {
-  const lines = csv.split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"(.*)"$/, '$1'));
-  
-  return lines.slice(1)
-    .filter(line => line.trim())
-    .map(line => {
-      // Handle quoted fields with commas
-      const values = [];
-      let inQuotes = false;
-      let currentValue = '';
-      
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          values.push(currentValue);
-          currentValue = '';
-        } else {
-          currentValue += char;
-        }
+interface BookStats {
+  total_books_read: number;
+  total_books_reading: number;
+  total_books_to_read: number;
+  total_pages_read: number;
+  average_rating: number;
+  books_per_year: Record<string, number>;
+  currently_reading: Book[];
+  recently_read: Book[];
+}
+
+interface BookData {
+  stats: BookStats;
+  books: Book[];
+}
+
+interface AuthorCount {
+  name: string;
+  count: number;
+}
+
+interface YearlyData {
+  year: number;
+  count: number;
+}
+
+interface YearlyPageData {
+  year: number;
+  pages: number;
+}
+
+interface YearlyRatingData {
+  year: number;
+  averageRating: number;
+}
+
+// Define the API URL for Goodreads data
+const apiUrl = '/api/goodreads-stats.json';
+
+// Initialize loading state
+let isLoading = true;
+let hasError = false;
+let errorMessage = '';
+
+// Initialize variables
+let totalBooksRead = 0;
+let totalBooksReading = 0;
+let totalBooksToRead = 0;
+let totalPagesRead = 0;
+let averageRating = 0;
+let currentlyReading: Book[] = [];
+let recentlyRead: Book[] = [];
+let favoriteAuthors: AuthorCount[] = [];
+let ratingDistribution = [0, 0, 0, 0, 0, 0]; // Index 0 is for unrated, 1-5 for ratings
+let yearlyReading: YearlyData[] = [];
+let yearlyPages: YearlyPageData[] = [];
+let yearlyRatings: YearlyRatingData[] = [];
+
+// Check if we have cached data in sessionStorage
+let cachedData = null;
+if (typeof window !== 'undefined' && window.sessionStorage) {
+  const cached = sessionStorage.getItem('goodreadsStatsCache');
+  if (cached) {
+    try {
+      const { data, timestamp } = JSON.parse(cached);
+      // Use cache if it's less than 15 minutes old
+      if (Date.now() - timestamp < 15 * 60 * 1000) {
+        cachedData = data;
+        console.log('Using cached Goodreads data');
       }
-      
-      // Add the last value
-      values.push(currentValue);
-      
-      // Create record object
-      const record = {};
-      headers.forEach((header, i) => {
-        let value = values[i] || '';
-        // Clean up quotes
-        value = value.replace(/^"(.*)"$/, '$1');
-        record[header] = value;
-      });
-      
-      return record;
-    });
-}
-
-// Parse the data
-const records = parseCSV(goodreadsData);
-
-// Helper function to parse Goodreads date format (YYYY/MM/DD)
-function parseGoodreadsDate(dateStr) {
-  if (!dateStr || !dateStr.trim()) return null;
-  
-  // Split the date string by '/'
-  const parts = dateStr.trim().split('/');
-  if (parts.length !== 3) return null;
-  
-  // Create a date object (month is 0-indexed in JavaScript)
-  return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-}
-
-// Process the data
-const booksData = records.map(record => {
-  // Parse dates using our helper function
-  const dateRead = parseGoodreadsDate(record['Date Read']);
-  const dateAdded = parseGoodreadsDate(record['Date Added']);
-  
-  // Extract year from dateRead for easier filtering
-  const yearRead = dateRead ? dateRead.getFullYear() : null;
-  
-  return {
-    id: record['Book Id'],
-    title: record['Title'],
-    author: record['Author'],
-    isbn: record['ISBN13'] || record['ISBN'],
-    myRating: parseInt(record['My Rating']) || 0,
-    averageRating: parseFloat(record['Average Rating']) || 0,
-    pages: parseInt(record['Number of Pages']) || 0,
-    yearPublished: parseInt(record['Year Published']) || 0,
-    originalYear: parseInt(record['Original Publication Year']) || 0,
-    dateRead: dateRead,
-    dateAdded: dateAdded,
-    yearRead: yearRead,
-    shelf: record['Exclusive Shelf'] || '',
-    readCount: parseInt(record['Read Count']) || 0
-  };
-});
-
-// Calculate stats
-const totalBooks = booksData.length;
-const readBooks = booksData.filter(book => book.shelf === 'read');
-const currentlyReading = booksData.filter(book => book.shelf === 'currently-reading');
-const toRead = booksData.filter(book => book.shelf === 'to-read');
-
-// Calculate total pages read
-const totalPagesRead = readBooks.reduce((sum, book) => sum + book.pages, 0);
-
-// Calculate average rating given
-const ratedBooks = readBooks.filter(book => book.myRating > 0);
-const averageRating = ratedBooks.length > 0 
-  ? (ratedBooks.reduce((sum, book) => sum + book.myRating, 0) / ratedBooks.length).toFixed(1)
-  : 0;
-
-// Get recently read books (last 5)
-const recentlyRead = [...readBooks]
-  .filter(book => book.dateRead)
-  .sort((a, b) => b.dateRead.getTime() - a.dateRead.getTime())
-  .slice(0, 5);
-
-// Calculate favorite authors (most read)
-const authorCounts = {};
-readBooks.forEach(book => {
-  authorCounts[book.author] = (authorCounts[book.author] || 0) + 1;
-});
-
-const favoriteAuthors = Object.entries(authorCounts)
-  .map(([name, count]) => ({ name, count }))
-  .sort((a, b) => b.count - a.count)
-  .slice(0, 5);
-
-// Calculate rating distribution
-const ratingDistribution = [0, 0, 0, 0, 0, 0]; // Index 0 is for unrated, 1-5 for ratings
-readBooks.forEach(book => {
-  ratingDistribution[book.myRating]++;
-});
-
-// Calculate reading by year
-const readingByYear = {};
-const pagesByYear = {};
-const ratingsByYear = {};
-const ratingCountByYear = {};
-
-readBooks.forEach(book => {
-  if (book.dateRead) {
-    const year = book.dateRead.getFullYear();
-    
-    // Count books read per year
-    readingByYear[year] = (readingByYear[year] || 0) + 1;
-    
-    // Sum pages read per year
-    pagesByYear[year] = (pagesByYear[year] || 0) + (book.pages || 0);
-    
-    // Sum ratings per year (for calculating average)
-    if (book.myRating > 0) {
-      ratingsByYear[year] = (ratingsByYear[year] || 0) + book.myRating;
-      ratingCountByYear[year] = (ratingCountByYear[year] || 0) + 1;
+    } catch (e) {
+      console.error('Error parsing cached Goodreads data:', e);
     }
   }
-});
+}
 
-// Create yearly stats arrays
-const yearlyReading = Object.entries(readingByYear)
-  .map(([year, count]) => ({ year: parseInt(year), count }))
-  .sort((a, b) => b.year - a.year); // Sort descending by year
-
-const yearlyPages = Object.entries(pagesByYear)
-  .map(([year, pages]) => ({ year: parseInt(year), pages }))
-  .sort((a, b) => b.year - a.year); // Sort descending by year
-
-const yearlyRatings = Object.entries(ratingsByYear)
-  .map(([year, totalRating]) => {
-    const count = ratingCountByYear[year];
-    const averageRating = count > 0 ? (totalRating / count).toFixed(1) : 0;
-    return { year: parseInt(year), averageRating: parseFloat(averageRating) };
-  })
-  .sort((a, b) => b.year - a.year); // Sort descending by year
+try {
+  if (cachedData) {
+    // Use cached data
+    const data = cachedData;
+    
+    // Process the data
+    totalBooksRead = data.total_books_read || 0;
+    totalBooksReading = data.total_books_reading || 0;
+    totalBooksToRead = data.total_books_to_read || 0;
+    totalPagesRead = data.total_pages_read || 0;
+    averageRating = data.average_rating || 0;
+    currentlyReading = data.currently_reading || [];
+    recentlyRead = data.recently_read || [];
+    favoriteAuthors = data.favorite_authors || [];
+    ratingDistribution = data.rating_distribution || [0, 0, 0, 0, 0, 0];
+    yearlyReading = data.yearly_reading || [];
+    
+    isLoading = false;
+  } else {
+    // Fetch data from the API
+    const response = await fetch(apiUrl);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Cache the data in sessionStorage
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      sessionStorage.setItem('goodreadsStatsCache', JSON.stringify({
+        data,
+        timestamp: Date.now()
+      }));
+    }
+    
+    // Process the data
+    totalBooksRead = data.total_books_read || 0;
+    totalBooksReading = data.total_books_reading || 0;
+    totalBooksToRead = data.total_books_to_read || 0;
+    totalPagesRead = data.total_pages_read || 0;
+    averageRating = data.average_rating || 0;
+    currentlyReading = data.currently_reading || [];
+    recentlyRead = data.recently_read || [];
+    
+    // Process book data if available
+    if (data.books) {
+      const books = data.books || [];
+      const readBooks = books.filter((book: Book) => book.date_read);
+      
+      // Calculate favorite authors
+      const authorCounts: Record<string, number> = {};
+      readBooks.forEach((book: Book) => {
+        if (book.author) {
+          authorCounts[book.author] = (authorCounts[book.author] || 0) + 1;
+        }
+      });
+      
+      favoriteAuthors = Object.entries(authorCounts)
+        .map(([name, count]): AuthorCount => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+      
+      // Calculate rating distribution
+      ratingDistribution = [0, 0, 0, 0, 0, 0]; // Reset
+      readBooks.forEach((book: Book) => {
+        const rating = book.my_rating || 0;
+        if (rating >= 0 && rating <= 5) {
+          ratingDistribution[rating]++;
+        }
+      });
+    } else {
+      favoriteAuthors = data.favorite_authors || [];
+      ratingDistribution = data.rating_distribution || [0, 0, 0, 0, 0, 0];
+    }
+    
+    // Get yearly data from the API response
+    if (data.books_per_year) {
+      yearlyReading = Object.entries(data.books_per_year)
+        .map(([year, count]): YearlyData => ({ 
+          year: parseInt(year), 
+          count: count as number 
+        }))
+        .sort((a, b) => b.year - a.year);
+    } else {
+      yearlyReading = data.yearly_reading || [];
+    }
+    
+    yearlyPages = data.yearly_pages || [];
+    yearlyRatings = data.yearly_ratings || [];
+    
+    isLoading = false;
+  }
+} catch (error) {
+  console.error('Error fetching book data:', error);
+  isLoading = false;
+  hasError = true;
+  errorMessage = error instanceof Error ? error.message : 'Unknown error';
+}
 
 // Helper function to get book icon
-function getBookIcon(type) {
+function getBookIcon(type: string): string {
   switch (type.toLowerCase()) {
     case 'fiction':
       return `<i class="fas fa-book"></i>`;
@@ -186,13 +206,14 @@ function getBookIcon(type) {
 }
 
 // Format date for display
-function formatReadDate(date) {
-  if (!date) return 'Unknown';
-  return formatDate(date);
+function formatReadDate(dateStr: string | undefined): string {
+  if (!dateStr) return 'Unknown';
+  return formatDate(new Date(dateStr));
 }
 ---
 
 <div class="p-6 bg-white rounded-lg border-l-4 border-amber-600 shadow-md dark:bg-gray-800 dark:border-amber-600">
+  <!-- Component Header - Always visible -->
   <div class="flex items-center mb-6">
     <div class="w-10 h-10 flex items-center justify-center text-amber-600 dark:text-amber-600 me-4">
       <i class="fas fa-book-open text-3xl"></i>
@@ -200,210 +221,236 @@ function formatReadDate(date) {
     <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Goodreads Stats</h2>
   </div>
   
+  <!-- Error Message -->
+  {hasError && (
+    <div class="p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-300 dark:border-red-800">
+      <div class="flex items-center">
+        <svg class="flex-shrink-0 inline w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+        </svg>
+        <span class="font-medium">
+          Error loading book stats: {errorMessage}
+        </span>
+      </div>
+    </div>
+  )}
+      
   <!-- Summary Stats -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Books Read</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{readBooks.length}</span>
-    </div>
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Pages Read</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalPagesRead.toLocaleString()}</span>
-    </div>
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Average Rating</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{averageRating} <span class="text-yellow-500">★</span></span>
-    </div>
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">To Read</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{toRead.length}</span>
-    </div>
+    {isLoading ? (
+      // Skeleton loaders for summary stats
+      Array(4).fill(0).map(() => (
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <div class="w-24 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
+          <div class="w-16 h-8 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
+        </div>
+      ))
+    ) : (
+      <>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Books Read</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalBooksRead}</span>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Pages Read</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalPagesRead.toLocaleString()}</span>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Average Rating</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{averageRating.toFixed(1)} <span class="text-yellow-500">★</span></span>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">To Read</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{totalBooksToRead}</span>
+        </div>
+      </>
+    )}
   </div>
-  
-  <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Recently Read Books -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recently Read Books</h3>
-      <div class="space-y-3">
-        {recentlyRead.length > 0 ? (
-          recentlyRead.map((book, index) => (
-            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
-              <div class="flex items-center">
-                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-                <div class="w-10 h-10 rounded-full mx-3 bg-amber-100 dark:bg-amber-700 flex items-center justify-center text-amber-800 dark:text-amber-300">
-                  <Fragment set:html={getBookIcon('fiction')} />
+      
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Recently Read Books -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recently Read Books</h3>
+          <div class="space-y-3">
+            {recentlyRead.length > 0 ? (
+              recentlyRead.map((book, index) => (
+                <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+                  <div class="flex items-center">
+                    <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                    <div class="w-10 h-10 rounded-full mx-3 bg-amber-100 dark:bg-amber-700 flex items-center justify-center text-amber-800 dark:text-amber-300">
+                      <Fragment set:html={getBookIcon('fiction')} />
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">{book.title}</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">{book.author} • {formatReadDate(book.date_read)}</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-medium text-gray-900 dark:text-white">
+                      {book.my_rating && book.my_rating > 0 ? Array(book.my_rating).fill('★').join('') : 'Unrated'}
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{book.pages || 'Unknown'} pages</p>
+                  </div>
                 </div>
-                <div>
-                  <p class="font-medium text-gray-900 dark:text-white">{book.title}</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{book.author} • {formatReadDate(book.dateRead)}</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <p class="font-medium text-gray-900 dark:text-white">
-                  {book.myRating > 0 ? Array(book.myRating).fill('★').join('') : 'Unrated'}
-                </p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{book.pages} pages</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p class="text-gray-500 dark:text-gray-400">No recently read books found</p>
-        )}
-      </div>
-    </div>
-    
-    <!-- Currently Reading -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Currently Reading</h3>
-      <div class="space-y-3">
-        {currentlyReading.length > 0 ? (
-          currentlyReading.map((book, index) => (
-            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
-              <div class="flex items-center">
-                <div class="w-10 h-10 rounded-full mx-3 bg-amber-100 dark:bg-amber-700 flex items-center justify-center text-amber-800 dark:text-amber-300">
-                  <Fragment set:html={getBookIcon('currently')} />
-                </div>
-                <div>
-                  <p class="font-medium text-gray-900 dark:text-white">{book.title}</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{book.author}</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <p class="text-sm text-gray-500 dark:text-gray-400">{book.pages} pages</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Added {formatReadDate(book.dateAdded)}</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p class="text-gray-500 dark:text-gray-400">No books currently being read</p>
-        )}
-      </div>
-    </div>
-    
-    <!-- Favorite Authors -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Favorite Authors</h3>
-      <div class="space-y-3">
-        {favoriteAuthors.length > 0 ? (
-          favoriteAuthors.map((author) => (
-            <div class="mb-3 last:mb-0">
-              <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-gray-900 dark:text-white">{author.name}</span>
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{author.count} books</span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(author.count / favoriteAuthors[0].count) * 100}%`}></div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p class="text-gray-500 dark:text-gray-400">No favorite authors data available</p>
-        )}
-      </div>
-    </div>
-    
-    <!-- Rating Distribution -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rating Distribution</h3>
-      <div class="space-y-3">
-        {[5, 4, 3, 2, 1].map((rating) => (
-          <div class="mb-3 last:mb-0">
-            <div class="flex justify-between mb-1">
-              <span class="text-base font-medium text-gray-900 dark:text-white">
-                {rating} {rating === 1 ? 'Star' : 'Stars'} 
-                <span class="text-yellow-500">{Array(rating).fill('★').join('')}</span>
-              </span>
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                {ratingDistribution[rating]} books
-              </span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(ratingDistribution[rating] / Math.max(...ratingDistribution)) * 100}%`}></div>
-            </div>
+              ))
+            ) : (
+              <p class="text-gray-500 dark:text-gray-400">No recently read books found</p>
+            )}
           </div>
-        ))}
+        </div>
         
-        {ratingDistribution[0] > 0 && (
-          <div class="mb-3 last:mb-0">
-            <div class="flex justify-between mb-1">
-              <span class="text-base font-medium text-gray-900 dark:text-white">Unrated</span>
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                {ratingDistribution[0]} books
-              </span>
+        <!-- Currently Reading -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Currently Reading</h3>
+          <div class="space-y-3">
+            {currentlyReading.length > 0 ? (
+              currentlyReading.map((book, index) => (
+                <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full mx-3 bg-amber-100 dark:bg-amber-700 flex items-center justify-center text-amber-800 dark:text-amber-300">
+                      <Fragment set:html={getBookIcon('currently')} />
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">{book.title}</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">{book.author}</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{book.pages || 'Unknown'} pages</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Added {formatReadDate(book.date_added)}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p class="text-gray-500 dark:text-gray-400">No books currently being read</p>
+            )}
+          </div>
+        </div>
+        
+        <!-- Favorite Authors -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Favorite Authors</h3>
+          <div class="space-y-3">
+            {favoriteAuthors.length > 0 ? (
+              favoriteAuthors.map((author) => (
+                <div class="mb-3 last:mb-0">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-base font-medium text-gray-900 dark:text-white">{author.name}</span>
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{author.count} books</span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${favoriteAuthors.length > 0 ? (author.count / favoriteAuthors[0].count) * 100 : 0}%`}></div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p class="text-gray-500 dark:text-gray-400">No favorite authors data available</p>
+            )}
+          </div>
+        </div>
+        
+        <!-- Rating Distribution -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Rating Distribution</h3>
+          <div class="space-y-3">
+            {[5, 4, 3, 2, 1].map((rating) => (
+              <div class="mb-3 last:mb-0">
+                <div class="flex justify-between mb-1">
+                  <span class="text-base font-medium text-gray-900 dark:text-white">
+                    {rating} {rating === 1 ? 'Star' : 'Stars'} 
+                    <span class="text-yellow-500">{Array(rating).fill('★').join('')}</span>
+                  </span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {ratingDistribution[rating]} books
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(ratingDistribution[rating] / Math.max(...ratingDistribution)) * 100}%`}></div>
+                </div>
+              </div>
+            ))}
+            
+            {ratingDistribution[0] > 0 && (
+              <div class="mb-3 last:mb-0">
+                <div class="flex justify-between mb-1">
+                  <span class="text-base font-medium text-gray-900 dark:text-white">Unrated</span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {ratingDistribution[0]} books
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div class="bg-gray-400 h-2.5 rounded-full" style={`width: ${(ratingDistribution[0] / Math.max(...ratingDistribution)) * 100}%`}></div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <!-- Books Read by Year -->
+        {yearlyReading.length > 0 && (
+          <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Books Read by Year</h3>
+            <div class="space-y-3">
+              {yearlyReading.map((yearData) => (
+                <div class="mb-3 last:mb-0">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      {yearData.count} books
+                    </span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(yearData.count / Math.max(...yearlyReading.map(y => y.count))) * 100}%`}></div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-gray-400 h-2.5 rounded-full" style={`width: ${(ratingDistribution[0] / Math.max(...ratingDistribution)) * 100}%`}></div>
+          </div>
+        )}
+        
+        <!-- Pages Read by Year -->
+        {yearlyPages.length > 0 && (
+          <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pages Read by Year</h3>
+            <div class="space-y-3">
+              {yearlyPages.map((yearData) => (
+                <div class="mb-3 last:mb-0">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      {yearData.pages.toLocaleString()} pages
+                    </span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(yearData.pages / Math.max(...yearlyPages.map(y => y.pages))) * 100}%`}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <!-- Average Rating by Year -->
+        {yearlyRatings.length > 0 && (
+          <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Average Rating by Year</h3>
+            <div class="space-y-3">
+              {yearlyRatings.map((yearData) => (
+                <div class="mb-3 last:mb-0">
+                  <div class="flex justify-between mb-1">
+                    <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      {yearData.averageRating} <span class="text-yellow-500">★</span>
+                    </span>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                    <div class="bg-yellow-500 h-2.5 rounded-full" style={`width: ${(yearData.averageRating / 5) * 100}%`}></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
       </div>
-    </div>
-    
-    <!-- Books Read by Year -->
-    {yearlyReading.length > 0 && (
-      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Books Read by Year</h3>
-        <div class="space-y-3">
-          {yearlyReading.map((yearData) => (
-            <div class="mb-3 last:mb-0">
-              <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {yearData.count} books
-                </span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(yearData.count / Math.max(...yearlyReading.map(y => y.count))) * 100}%`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Pages Read by Year -->
-    {yearlyPages.length > 0 && (
-      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pages Read by Year</h3>
-        <div class="space-y-3">
-          {yearlyPages.map((yearData) => (
-            <div class="mb-3 last:mb-0">
-              <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {yearData.pages.toLocaleString()} pages
-                </span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div class="bg-amber-600 h-2.5 rounded-full" style={`width: ${(yearData.pages / Math.max(...yearlyPages.map(y => y.pages))) * 100}%`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- Average Rating by Year -->
-    {yearlyRatings.length > 0 && (
-      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 md:col-span-2">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Average Rating by Year</h3>
-        <div class="space-y-3">
-          {yearlyRatings.map((yearData) => (
-            <div class="mb-3 last:mb-0">
-              <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {yearData.averageRating} <span class="text-yellow-500">★</span>
-                </span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div class="bg-yellow-500 h-2.5 rounded-full" style={`width: ${(yearData.averageRating / 5) * 100}%`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
-  </div>
 </div>
