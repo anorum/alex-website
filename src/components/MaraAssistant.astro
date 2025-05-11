@@ -1,0 +1,178 @@
+---
+---
+
+<div class="mara-assistant-container">
+  <div class="mara-assistant-content">
+    <div class="mara-avatar-container">
+      <img src="/mara_logo.png" alt="Mara" class="mara-avatar" />
+      <div class="mara-status-indicator"></div>
+    </div>
+    <div class="mara-info">
+      <h3>Chat with Mara</h3>
+      <p>Hi! I'm Mara, Alex's AI assistant (and virtual Labradoodle). Ask me anything about Alex's work, skills, or interests!</p>
+      <button id="chat-with-mara" class="mara-chat-button">
+        <span>Start chatting</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const chatButton = document.getElementById('chat-with-mara');
+    if (chatButton) {
+      chatButton.addEventListener('click', () => {
+        // Find the chatbot button in the DOM and click it
+        const chatbotButton = document.querySelector('#chainlit-copilot')?.shadowRoot?.querySelector('button');
+        if (chatbotButton) {
+          chatbotButton.click();
+        }
+      });
+    }
+  });
+</script>
+
+<style>
+  .mara-assistant-container {
+    position: relative;
+    margin: 3rem 0;
+    transition: all 0.3s ease;
+  }
+  
+  .mara-assistant-content {
+    background: linear-gradient(135deg, rgba(230, 177, 126, 0.2) 0%, rgba(119, 100, 123, 0.2) 100%);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .mara-assistant-content::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    z-index: 1;
+  }
+  
+  .mara-assistant-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+  }
+  
+  .mara-avatar-container {
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .mara-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .mara-assistant-content:hover .mara-avatar {
+    transform: scale(1.05);
+  }
+  
+  .mara-status-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 12px;
+    height: 12px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+  }
+  
+  .mara-info {
+    flex: 1;
+  }
+  
+  .mara-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+  }
+  
+  .mara-info p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+  
+  .mara-chat-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mara-chat-button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .mara-chat-button i {
+    transition: transform 0.3s ease;
+  }
+  
+  .mara-chat-button:hover i {
+    transform: translateX(3px);
+  }
+  
+  @media (max-width: 640px) {
+    .mara-assistant-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+    
+    .mara-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
