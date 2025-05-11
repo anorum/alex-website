@@ -1,0 +1,2961 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Alex API",
+        "description": "A FastAPI project for golf data\n    \n    ## Authentication\n    \n    This API uses API key authentication.\n    \n    To access protected endpoints:\n    \n    1. Include your API key in the X-API-Key header of your requests: `X-API-Key: your-api-key`\n    ",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Root",
+                "description": "Root endpoint that returns a welcome message.",
+                "operationId": "root__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "summary": "Health Check",
+                "description": "Health check endpoint.",
+                "operationId": "health_check_health_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hello": {
+            "get": {
+                "summary": "Hello",
+                "description": "Sample endpoint that returns a greeting.",
+                "operationId": "hello_api_v1_hello_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/golf/": {
+            "get": {
+                "tags": [
+                    "golf"
+                ],
+                "summary": "Get Golf Data",
+                "description": "Get all golf data including cumulative stats, rounds, and clubs.",
+                "operationId": "get_golf_data_api_v1_golf__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GolfData"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/golf/stats": {
+            "get": {
+                "tags": [
+                    "golf"
+                ],
+                "summary": "Get Golf Stats",
+                "description": "Get cumulative golf statistics.",
+                "operationId": "get_golf_stats_api_v1_golf_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CumulativeStats"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/golf/rounds": {
+            "get": {
+                "tags": [
+                    "golf"
+                ],
+                "summary": "Get Golf Rounds",
+                "description": "Get a list of golf rounds with optional filtering and pagination.",
+                "operationId": "get_golf_rounds_api_v1_golf_rounds_get",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Limit the number of rounds returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of rounds returned"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Offset for pagination",
+                            "default": 0,
+                            "title": "Offset"
+                        },
+                        "description": "Offset for pagination"
+                    },
+                    {
+                        "name": "club_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter by club ID",
+                            "title": "Club Id"
+                        },
+                        "description": "Filter by club ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/GolfRound"
+                                    },
+                                    "title": "Response Get Golf Rounds Api V1 Golf Rounds Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/golf/rounds/{round_id}": {
+            "get": {
+                "tags": [
+                    "golf"
+                ],
+                "summary": "Get Golf Round",
+                "description": "Get a specific golf round by ID.",
+                "operationId": "get_golf_round_api_v1_golf_rounds__round_id__get",
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "round_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the golf round",
+                            "title": "Round Id"
+                        },
+                        "description": "The ID of the golf round"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GolfRound"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/golf/clubs": {
+            "get": {
+                "tags": [
+                    "golf"
+                ],
+                "summary": "Get Golf Clubs",
+                "description": "Get a list of golf clubs.",
+                "operationId": "get_golf_clubs_api_v1_golf_clubs_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/GolfClub"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Golf Clubs Api V1 Golf Clubs Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "APIKeyHeader": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/books/": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get Books Overview",
+                "description": "Get an overview of books data including key statistics.",
+                "operationId": "get_books_overview_api_v1_books__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Books Overview Api V1 Books  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/books/data": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get Books Data",
+                "description": "Get all books data including statistics and book list.",
+                "operationId": "get_books_data_api_v1_books_data_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookData"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/books/stats": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get Books Stats",
+                "description": "Get book statistics.",
+                "operationId": "get_books_stats_api_v1_books_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookStats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/books/list": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get Books List",
+                "description": "Get a list of books with optional filtering and pagination.",
+                "operationId": "get_books_list_api_v1_books_list_get",
+                "parameters": [
+                    {
+                        "name": "shelf",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter by shelf (read, currently-reading, to-read)",
+                            "title": "Shelf"
+                        },
+                        "description": "Filter by shelf (read, currently-reading, to-read)"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Limit the number of books returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of books returned"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Offset for pagination",
+                            "default": 0,
+                            "title": "Offset"
+                        },
+                        "description": "Offset for pagination"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Book"
+                                    },
+                                    "title": "Response Get Books List Api V1 Books List Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/books/search": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Search Books",
+                "description": "Search books by title or author.",
+                "operationId": "search_books_api_v1_books_search_get",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Search query for book title or author",
+                            "title": "Query"
+                        },
+                        "description": "Search query for book title or author"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Book"
+                                    },
+                                    "title": "Response Search Books Api V1 Books Search Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/books/{book_id}": {
+            "get": {
+                "tags": [
+                    "books"
+                ],
+                "summary": "Get Book",
+                "description": "Get a specific book by ID.",
+                "operationId": "get_book_api_v1_books__book_id__get",
+                "parameters": [
+                    {
+                        "name": "book_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the book",
+                            "title": "Book Id"
+                        },
+                        "description": "The ID of the book"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Book"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Spotify Overview",
+                "description": "Get an overview of Spotify data including recently played tracks, top artists, and top tracks.",
+                "operationId": "get_spotify_overview_api_v1_spotify__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Spotify Overview Api V1 Spotify  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/data": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Spotify Data",
+                "description": "Get comprehensive Spotify data including top artists, tracks, recently played, and stats.",
+                "operationId": "get_spotify_data_api_v1_spotify_data_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SpotifyData"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/stats": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Spotify Stats",
+                "description": "Get Spotify listening statistics and preferences analysis.",
+                "operationId": "get_spotify_stats_api_v1_spotify_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SpotifyStats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/recently-played": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Recently Played",
+                "description": "Get the user's recently played tracks.",
+                "operationId": "get_recently_played_api_v1_spotify_recently_played_get",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "description": "Limit the number of tracks returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of tracks returned"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Track"
+                                    },
+                                    "title": "Response Get Recently Played Api V1 Spotify Recently Played Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/top-artists": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Top Artists",
+                "description": "Get the user's top artists.",
+                "operationId": "get_top_artists_api_v1_spotify_top_artists_get",
+                "parameters": [
+                    {
+                        "name": "time_range",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Time range: short_term (4 weeks), medium_term (6 months), long_term (all time)",
+                            "default": "medium_term",
+                            "title": "Time Range"
+                        },
+                        "description": "Time range: short_term (4 weeks), medium_term (6 months), long_term (all time)"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "description": "Limit the number of artists returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of artists returned"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Artist"
+                                    },
+                                    "title": "Response Get Top Artists Api V1 Spotify Top Artists Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/top-tracks": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Top Tracks",
+                "description": "Get the user's top tracks.",
+                "operationId": "get_top_tracks_api_v1_spotify_top_tracks_get",
+                "parameters": [
+                    {
+                        "name": "time_range",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Time range: short_term (4 weeks), medium_term (6 months), long_term (all time)",
+                            "default": "medium_term",
+                            "title": "Time Range"
+                        },
+                        "description": "Time range: short_term (4 weeks), medium_term (6 months), long_term (all time)"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "description": "Limit the number of tracks returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of tracks returned"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Track"
+                                    },
+                                    "title": "Response Get Top Tracks Api V1 Spotify Top Tracks Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/playlists": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Get Playlists",
+                "description": "Get the user's playlists.",
+                "operationId": "get_playlists_api_v1_spotify_playlists_get",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "description": "Limit the number of playlists returned",
+                            "default": 20,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of playlists returned"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Playlist"
+                                    },
+                                    "title": "Response Get Playlists Api V1 Spotify Playlists Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/spotify/search": {
+            "get": {
+                "tags": [
+                    "spotify"
+                ],
+                "summary": "Search Spotify",
+                "description": "Search for items on Spotify.",
+                "operationId": "search_spotify_api_v1_spotify_search_get",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Search query",
+                            "title": "Query"
+                        },
+                        "description": "Search query"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Type of item to search for: track, artist, album, playlist",
+                            "default": "track",
+                            "title": "Type"
+                        },
+                        "description": "Type of item to search for: track, artist, album, playlist"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "description": "Limit the number of results returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of results returned"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchResult"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Strava Overview",
+                "description": "Get an overview of Strava data including athlete profile, recent activities, and stats.",
+                "operationId": "get_strava_overview_api_v1_strava__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Strava Overview Api V1 Strava  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/data": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Strava Data",
+                "description": "Get comprehensive Strava data including athlete profile, activities, and stats.",
+                "operationId": "get_strava_data_api_v1_strava_data_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StravaData"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/profile": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Athlete Profile",
+                "description": "Get the authenticated athlete's profile.",
+                "operationId": "get_athlete_profile_api_v1_strava_profile_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/AthleteProfile"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "title": "Response Get Athlete Profile Api V1 Strava Profile Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/activities": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Athlete Activities",
+                "description": "Get the authenticated athlete's activities.",
+                "operationId": "get_athlete_activities_api_v1_strava_activities_get",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 200,
+                            "minimum": 1,
+                            "description": "Limit the number of activities returned",
+                            "default": 10,
+                            "title": "Limit"
+                        },
+                        "description": "Limit the number of activities returned"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActivitySummary"
+                                    },
+                                    "title": "Response Get Athlete Activities Api V1 Strava Activities Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/stats": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Athlete Stats",
+                "description": "Get the authenticated athlete's statistics.",
+                "operationId": "get_athlete_stats_api_v1_strava_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "anyOf": [
+                                        {
+                                            "$ref": "#/components/schemas/AthleteStats"
+                                        },
+                                        {
+                                            "type": "null"
+                                        }
+                                    ],
+                                    "title": "Response Get Athlete Stats Api V1 Strava Stats Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/activity-types": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Activity Types",
+                "description": "Get the athlete's activity types summary.",
+                "operationId": "get_activity_types_api_v1_strava_activity_types_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActivityType"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Activity Types Api V1 Strava Activity Types Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/yearly-stats": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Yearly Stats",
+                "description": "Get the athlete's yearly activity summaries.",
+                "operationId": "get_yearly_stats_api_v1_strava_yearly_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/app__models__strava__YearlySummary"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Yearly Stats Api V1 Strava Yearly Stats Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/strava/summary": {
+            "get": {
+                "tags": [
+                    "strava"
+                ],
+                "summary": "Get Summary",
+                "description": "Get a summary of the athlete's Strava data.",
+                "operationId": "get_summary_api_v1_strava_summary_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Summary Api V1 Strava Summary Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Travel Overview",
+                "description": "Get an overview of travel data including summary statistics and recent visits.",
+                "operationId": "get_travel_overview_api_v1_travel__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Travel Overview Api V1 Travel  Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/data": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Travel Data",
+                "description": "Get comprehensive travel data including locations, visits, and statistics.",
+                "operationId": "get_travel_data_api_v1_travel_data_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TravelData"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/locations": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get All Locations",
+                "description": "Get all travel locations.",
+                "operationId": "get_all_locations_api_v1_travel_locations_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/TravelLocation"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get All Locations Api V1 Travel Locations Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/locations/{location_id}": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Location",
+                "description": "Get a specific travel location by ID.",
+                "operationId": "get_location_api_v1_travel_locations__location_id__get",
+                "parameters": [
+                    {
+                        "name": "location_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the location to get",
+                            "title": "Location Id"
+                        },
+                        "description": "The ID of the location to get"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TravelLocation"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/visits/recent": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Recent Visits",
+                "description": "Get the most recent visits across all locations.",
+                "operationId": "get_recent_visits_api_v1_travel_visits_recent_get",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 20,
+                            "minimum": 1,
+                            "description": "The maximum number of visits to return",
+                            "default": 5,
+                            "title": "Limit"
+                        },
+                        "description": "The maximum number of visits to return"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    },
+                                    "title": "Response Get Recent Visits Api V1 Travel Visits Recent Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/stats": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Travel Stats",
+                "description": "Get travel statistics.",
+                "operationId": "get_travel_stats_api_v1_travel_stats_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TravelStats"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/stats/yearly": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Yearly Stats",
+                "description": "Get yearly travel summaries.",
+                "operationId": "get_yearly_stats_api_v1_travel_stats_yearly_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/app__models__travel__YearlySummary"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Yearly Stats Api V1 Travel Stats Yearly Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/stats/countries": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Country Stats",
+                "description": "Get country travel summaries.",
+                "operationId": "get_country_stats_api_v1_travel_stats_countries_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/CountrySummary"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Country Stats Api V1 Travel Stats Countries Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/images/{image_filename}": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Image",
+                "description": "Get a travel image by filename.",
+                "operationId": "get_image_api_v1_travel_images__image_filename__get",
+                "parameters": [
+                    {
+                        "name": "image_filename",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The filename of the image to get",
+                            "title": "Image Filename"
+                        },
+                        "description": "The filename of the image to get"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/map-data": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Map Data",
+                "description": "Get data for displaying locations on a map.",
+                "operationId": "get_map_data_api_v1_travel_map_data_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "additionalProperties": true,
+                                        "type": "object"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Map Data Api V1 Travel Map Data Get"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/travel/map-popup/{location_id}": {
+            "get": {
+                "tags": [
+                    "travel"
+                ],
+                "summary": "Get Map Popup Data",
+                "description": "Get data for displaying in a map popup when a location is clicked.\nThis optimizes the UI flow by returning all necessary data in a single request.",
+                "operationId": "get_map_popup_data_api_v1_travel_map_popup__location_id__get",
+                "parameters": [
+                    {
+                        "name": "location_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "The ID of the location to get popup data for",
+                            "title": "Location Id"
+                        },
+                        "description": "The ID of the location to get popup data for"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Get Map Popup Data Api V1 Travel Map Popup  Location Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ActivitySummary": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "distance": {
+                        "type": "number",
+                        "title": "Distance"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "title": "Duration"
+                    },
+                    "elevation": {
+                        "type": "number",
+                        "title": "Elevation"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "map_polyline": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Map Polyline"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "type",
+                    "distance",
+                    "duration",
+                    "elevation",
+                    "date"
+                ],
+                "title": "ActivitySummary",
+                "description": "Model representing a summarized Strava activity."
+            },
+            "ActivityType": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "count": {
+                        "type": "integer",
+                        "title": "Count"
+                    },
+                    "total_distance": {
+                        "type": "number",
+                        "title": "Total Distance"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name",
+                    "count",
+                    "total_distance"
+                ],
+                "title": "ActivityType",
+                "description": "Model representing a Strava activity type summary."
+            },
+            "Artist": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "genres": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Genres",
+                        "default": []
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "title": "Popularity",
+                        "default": 0
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "title": "Artist",
+                "description": "Model representing a Spotify artist."
+            },
+            "AthleteProfile": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "username": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Username"
+                    },
+                    "firstname": {
+                        "type": "string",
+                        "title": "Firstname"
+                    },
+                    "lastname": {
+                        "type": "string",
+                        "title": "Lastname"
+                    },
+                    "profile": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Profile"
+                    },
+                    "city": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "City"
+                    },
+                    "state": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "State"
+                    },
+                    "country": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Country"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "firstname",
+                    "lastname"
+                ],
+                "title": "AthleteProfile",
+                "description": "Model representing a Strava athlete profile."
+            },
+            "AthleteStats": {
+                "properties": {
+                    "total_distance": {
+                        "type": "number",
+                        "title": "Total Distance",
+                        "default": 0
+                    },
+                    "total_elevation_gain": {
+                        "type": "number",
+                        "title": "Total Elevation Gain",
+                        "default": 0
+                    },
+                    "total_moving_time": {
+                        "type": "integer",
+                        "title": "Total Moving Time",
+                        "default": 0
+                    },
+                    "total_activity_count": {
+                        "type": "integer",
+                        "title": "Total Activity Count",
+                        "default": 0
+                    },
+                    "recent_ride_totals": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Recent Ride Totals",
+                        "default": {}
+                    },
+                    "recent_run_totals": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Recent Run Totals",
+                        "default": {}
+                    },
+                    "ytd_ride_totals": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Ytd Ride Totals",
+                        "default": {}
+                    },
+                    "ytd_run_totals": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Ytd Run Totals",
+                        "default": {}
+                    },
+                    "all_ride_totals": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "All Ride Totals",
+                        "default": {}
+                    },
+                    "all_run_totals": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "All Run Totals",
+                        "default": {}
+                    }
+                },
+                "type": "object",
+                "title": "AthleteStats",
+                "description": "Model representing Strava athlete statistics."
+            },
+            "Book": {
+                "properties": {
+                    "book_id": {
+                        "type": "string",
+                        "title": "Book Id"
+                    },
+                    "title": {
+                        "type": "string",
+                        "title": "Title"
+                    },
+                    "author": {
+                        "type": "string",
+                        "title": "Author"
+                    },
+                    "isbn": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Isbn"
+                    },
+                    "isbn13": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Isbn13"
+                    },
+                    "my_rating": {
+                        "type": "number",
+                        "title": "My Rating",
+                        "default": 0
+                    },
+                    "average_rating": {
+                        "type": "number",
+                        "title": "Average Rating",
+                        "default": 0
+                    },
+                    "publisher": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Publisher"
+                    },
+                    "binding": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Binding"
+                    },
+                    "num_pages": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Num Pages"
+                    },
+                    "year_published": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Year Published"
+                    },
+                    "original_publication_year": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Original Publication Year"
+                    },
+                    "date_read": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Date Read"
+                    },
+                    "date_added": {
+                        "type": "string",
+                        "title": "Date Added"
+                    },
+                    "shelf": {
+                        "type": "string",
+                        "title": "Shelf"
+                    },
+                    "read_count": {
+                        "type": "integer",
+                        "title": "Read Count",
+                        "default": 0
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "book_id",
+                    "title",
+                    "author",
+                    "date_added",
+                    "shelf"
+                ],
+                "title": "Book",
+                "description": "Model representing a book."
+            },
+            "BookData": {
+                "properties": {
+                    "books": {
+                        "items": {
+                            "$ref": "#/components/schemas/Book"
+                        },
+                        "type": "array",
+                        "title": "Books"
+                    },
+                    "stats": {
+                        "$ref": "#/components/schemas/BookStats"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "books",
+                    "stats"
+                ],
+                "title": "BookData",
+                "description": "Model representing book data."
+            },
+            "BookStats": {
+                "properties": {
+                    "total_books_read": {
+                        "type": "integer",
+                        "title": "Total Books Read",
+                        "default": 0
+                    },
+                    "total_books_reading": {
+                        "type": "integer",
+                        "title": "Total Books Reading",
+                        "default": 0
+                    },
+                    "total_books_to_read": {
+                        "type": "integer",
+                        "title": "Total Books To Read",
+                        "default": 0
+                    },
+                    "total_pages_read": {
+                        "type": "integer",
+                        "title": "Total Pages Read",
+                        "default": 0
+                    },
+                    "average_rating": {
+                        "type": "number",
+                        "title": "Average Rating",
+                        "default": 0
+                    },
+                    "books_per_year": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "type": "object",
+                        "title": "Books Per Year",
+                        "default": {}
+                    },
+                    "authors_read": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "type": "object",
+                        "title": "Authors Read",
+                        "default": {}
+                    },
+                    "top_rated_books": {
+                        "items": {
+                            "$ref": "#/components/schemas/Book"
+                        },
+                        "type": "array",
+                        "title": "Top Rated Books",
+                        "default": []
+                    },
+                    "currently_reading": {
+                        "items": {
+                            "$ref": "#/components/schemas/Book"
+                        },
+                        "type": "array",
+                        "title": "Currently Reading",
+                        "default": []
+                    },
+                    "recently_read": {
+                        "items": {
+                            "$ref": "#/components/schemas/Book"
+                        },
+                        "type": "array",
+                        "title": "Recently Read",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "title": "BookStats",
+                "description": "Model representing book statistics."
+            },
+            "CountrySummary": {
+                "properties": {
+                    "country": {
+                        "type": "string",
+                        "title": "Country"
+                    },
+                    "visits_count": {
+                        "type": "integer",
+                        "title": "Visits Count"
+                    },
+                    "cities_visited": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Cities Visited"
+                    },
+                    "last_visit_date": {
+                        "type": "string",
+                        "title": "Last Visit Date"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "country",
+                    "visits_count",
+                    "cities_visited",
+                    "last_visit_date"
+                ],
+                "title": "CountrySummary",
+                "description": "Model representing country travel summary."
+            },
+            "CumulativeStats": {
+                "properties": {
+                    "total_birdies": {
+                        "type": "integer",
+                        "title": "Total Birdies",
+                        "default": 0
+                    },
+                    "total_pars": {
+                        "type": "integer",
+                        "title": "Total Pars",
+                        "default": 0
+                    },
+                    "total_bogeys": {
+                        "type": "integer",
+                        "title": "Total Bogeys",
+                        "default": 0
+                    },
+                    "total_eagles": {
+                        "type": "integer",
+                        "title": "Total Eagles",
+                        "default": 0
+                    },
+                    "total_aces": {
+                        "type": "integer",
+                        "title": "Total Aces",
+                        "default": 0
+                    },
+                    "total_double_bogey_or_worse": {
+                        "type": "integer",
+                        "title": "Total Double Bogey Or Worse",
+                        "default": 0
+                    },
+                    "total_fairways_missed_left": {
+                        "type": "integer",
+                        "title": "Total Fairways Missed Left",
+                        "default": 0
+                    },
+                    "total_fairways_missed_right": {
+                        "type": "integer",
+                        "title": "Total Fairways Missed Right",
+                        "default": 0
+                    },
+                    "total_fairways_missed_short": {
+                        "type": "integer",
+                        "title": "Total Fairways Missed Short",
+                        "default": 0
+                    },
+                    "total_fairways_missed_long": {
+                        "type": "integer",
+                        "title": "Total Fairways Missed Long",
+                        "default": 0
+                    },
+                    "total_fairways_hit": {
+                        "type": "integer",
+                        "title": "Total Fairways Hit",
+                        "default": 0
+                    },
+                    "total_gir": {
+                        "type": "integer",
+                        "title": "Total Gir",
+                        "default": 0
+                    },
+                    "total_missed_greens_left": {
+                        "type": "integer",
+                        "title": "Total Missed Greens Left",
+                        "default": 0
+                    },
+                    "total_missed_greens_right": {
+                        "type": "integer",
+                        "title": "Total Missed Greens Right",
+                        "default": 0
+                    },
+                    "total_missed_greens_short": {
+                        "type": "integer",
+                        "title": "Total Missed Greens Short",
+                        "default": 0
+                    },
+                    "total_missed_greens_long": {
+                        "type": "integer",
+                        "title": "Total Missed Greens Long",
+                        "default": 0
+                    },
+                    "total_rounds": {
+                        "type": "integer",
+                        "title": "Total Rounds",
+                        "default": 0
+                    },
+                    "total_strokes": {
+                        "type": "integer",
+                        "title": "Total Strokes",
+                        "default": 0
+                    },
+                    "total_holes_played": {
+                        "type": "integer",
+                        "title": "Total Holes Played",
+                        "default": 0
+                    },
+                    "total_golf_clubs_played": {
+                        "type": "integer",
+                        "title": "Total Golf Clubs Played",
+                        "default": 0
+                    },
+                    "total_over_par": {
+                        "type": "integer",
+                        "title": "Total Over Par",
+                        "default": 0
+                    },
+                    "total_rounds_eighteen_holes_played": {
+                        "type": "integer",
+                        "title": "Total Rounds Eighteen Holes Played",
+                        "default": 0
+                    },
+                    "total_rounds_nine_holes_played": {
+                        "type": "integer",
+                        "title": "Total Rounds Nine Holes Played",
+                        "default": 0
+                    },
+                    "lowest_score": {
+                        "type": "integer",
+                        "title": "Lowest Score",
+                        "default": 0
+                    },
+                    "lowest_score_date": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Lowest Score Date"
+                    },
+                    "lowest_score_club": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Lowest Score Club"
+                    },
+                    "highest_score": {
+                        "type": "integer",
+                        "title": "Highest Score",
+                        "default": 0
+                    },
+                    "highest_score_date": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Highest Score Date"
+                    },
+                    "highest_score_club": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Highest Score Club"
+                    },
+                    "average_score": {
+                        "type": "number",
+                        "title": "Average Score",
+                        "default": 0.0
+                    },
+                    "average_strokes": {
+                        "type": "number",
+                        "title": "Average Strokes",
+                        "default": 0.0
+                    }
+                },
+                "type": "object",
+                "title": "CumulativeStats",
+                "description": "Model representing cumulative golf statistics."
+            },
+            "GolfClub": {
+                "properties": {
+                    "club_id": {
+                        "type": "string",
+                        "title": "Club Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "club_id",
+                    "name"
+                ],
+                "title": "GolfClub",
+                "description": "Model representing a golf club."
+            },
+            "GolfData": {
+                "properties": {
+                    "cumulative_stats": {
+                        "$ref": "#/components/schemas/CumulativeStats"
+                    },
+                    "rounds": {
+                        "items": {
+                            "$ref": "#/components/schemas/GolfRound"
+                        },
+                        "type": "array",
+                        "title": "Rounds"
+                    },
+                    "clubs": {
+                        "items": {
+                            "$ref": "#/components/schemas/GolfClub"
+                        },
+                        "type": "array",
+                        "title": "Clubs"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "cumulative_stats",
+                    "rounds",
+                    "clubs"
+                ],
+                "title": "GolfData",
+                "description": "Model representing golf data."
+            },
+            "GolfRound": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "title": "Timestamp"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "club": {
+                        "type": "string",
+                        "title": "Club"
+                    },
+                    "club_id": {
+                        "type": "string",
+                        "title": "Club Id"
+                    },
+                    "score": {
+                        "type": "integer",
+                        "title": "Score"
+                    },
+                    "strokes": {
+                        "type": "integer",
+                        "title": "Strokes"
+                    },
+                    "hole_strokes": {
+                        "items": {
+                            "type": "integer"
+                        },
+                        "type": "array",
+                        "title": "Hole Strokes"
+                    },
+                    "stats": {
+                        "$ref": "#/components/schemas/GolfRoundStats"
+                    },
+                    "holes_played": {
+                        "type": "integer",
+                        "title": "Holes Played"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "timestamp",
+                    "date",
+                    "club",
+                    "club_id",
+                    "score",
+                    "strokes",
+                    "hole_strokes",
+                    "stats",
+                    "holes_played"
+                ],
+                "title": "GolfRound",
+                "description": "Model representing a golf round."
+            },
+            "GolfRoundStats": {
+                "properties": {
+                    "aces": {
+                        "type": "integer",
+                        "title": "Aces",
+                        "default": 0
+                    },
+                    "double_eagle_or_better": {
+                        "type": "integer",
+                        "title": "Double Eagle Or Better",
+                        "default": 0
+                    },
+                    "eagles": {
+                        "type": "integer",
+                        "title": "Eagles",
+                        "default": 0
+                    },
+                    "birdies": {
+                        "type": "integer",
+                        "title": "Birdies",
+                        "default": 0
+                    },
+                    "pars": {
+                        "type": "integer",
+                        "title": "Pars",
+                        "default": 0
+                    },
+                    "bogeys": {
+                        "type": "integer",
+                        "title": "Bogeys",
+                        "default": 0
+                    },
+                    "double_bogey_or_worse": {
+                        "type": "integer",
+                        "title": "Double Bogey Or Worse",
+                        "default": 0
+                    },
+                    "fairway_lefts": {
+                        "type": "integer",
+                        "title": "Fairway Lefts",
+                        "default": 0
+                    },
+                    "fairway_middles": {
+                        "type": "integer",
+                        "title": "Fairway Middles",
+                        "default": 0
+                    },
+                    "fairway_rights": {
+                        "type": "integer",
+                        "title": "Fairway Rights",
+                        "default": 0
+                    },
+                    "fairway_shorts": {
+                        "type": "integer",
+                        "title": "Fairway Shorts",
+                        "default": 0
+                    },
+                    "fairway_longs": {
+                        "type": "integer",
+                        "title": "Fairway Longs",
+                        "default": 0
+                    },
+                    "fairway_hole_count": {
+                        "type": "integer",
+                        "title": "Fairway Hole Count",
+                        "default": 0
+                    },
+                    "gir": {
+                        "type": "integer",
+                        "title": "Gir",
+                        "default": 0
+                    },
+                    "gir_lefts": {
+                        "type": "integer",
+                        "title": "Gir Lefts",
+                        "default": 0
+                    },
+                    "gir_rights": {
+                        "type": "integer",
+                        "title": "Gir Rights",
+                        "default": 0
+                    },
+                    "gir_shorts": {
+                        "type": "integer",
+                        "title": "Gir Shorts",
+                        "default": 0
+                    },
+                    "gir_longs": {
+                        "type": "integer",
+                        "title": "Gir Longs",
+                        "default": 0
+                    },
+                    "gir_no_chances": {
+                        "type": "integer",
+                        "title": "Gir No Chances",
+                        "default": 0
+                    },
+                    "gir_hole_count": {
+                        "type": "integer",
+                        "title": "Gir Hole Count",
+                        "default": 0
+                    },
+                    "stroke_gain_overall": {
+                        "type": "integer",
+                        "title": "Stroke Gain Overall",
+                        "default": 0
+                    },
+                    "stroke_gain_tee_to_green": {
+                        "type": "integer",
+                        "title": "Stroke Gain Tee To Green",
+                        "default": 0
+                    }
+                },
+                "type": "object",
+                "title": "GolfRoundStats",
+                "description": "Model representing statistics for a golf round."
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "Playlist": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "tracks": {
+                        "type": "integer",
+                        "title": "Tracks",
+                        "default": 0
+                    },
+                    "public": {
+                        "type": "boolean",
+                        "title": "Public",
+                        "default": false
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "title": "Playlist",
+                "description": "Model representing a Spotify playlist."
+            },
+            "SearchResult": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "title": "Type"
+                    },
+                    "items": {
+                        "items": {},
+                        "type": "array",
+                        "title": "Items",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "type"
+                ],
+                "title": "SearchResult",
+                "description": "Model representing a Spotify search result."
+            },
+            "SpotifyData": {
+                "properties": {
+                    "top_artists": {
+                        "items": {
+                            "$ref": "#/components/schemas/Artist"
+                        },
+                        "type": "array",
+                        "title": "Top Artists",
+                        "default": []
+                    },
+                    "top_tracks": {
+                        "items": {
+                            "$ref": "#/components/schemas/Track"
+                        },
+                        "type": "array",
+                        "title": "Top Tracks",
+                        "default": []
+                    },
+                    "recently_played": {
+                        "items": {
+                            "$ref": "#/components/schemas/Track"
+                        },
+                        "type": "array",
+                        "title": "Recently Played",
+                        "default": []
+                    },
+                    "playlists": {
+                        "items": {
+                            "$ref": "#/components/schemas/Playlist"
+                        },
+                        "type": "array",
+                        "title": "Playlists",
+                        "default": []
+                    },
+                    "stats": {
+                        "$ref": "#/components/schemas/SpotifyStats"
+                    }
+                },
+                "type": "object",
+                "title": "SpotifyData",
+                "description": "Model representing Spotify data."
+            },
+            "SpotifyStats": {
+                "properties": {
+                    "top_genres": {
+                        "items": {
+                            "additionalProperties": true,
+                            "type": "object"
+                        },
+                        "type": "array",
+                        "title": "Top Genres",
+                        "default": []
+                    },
+                    "average_artist_popularity": {
+                        "type": "number",
+                        "title": "Average Artist Popularity",
+                        "default": 0
+                    },
+                    "average_track_popularity": {
+                        "type": "number",
+                        "title": "Average Track Popularity",
+                        "default": 0
+                    },
+                    "mainstream_factor": {
+                        "type": "number",
+                        "title": "Mainstream Factor",
+                        "default": 0
+                    },
+                    "top_artists": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Top Artists",
+                        "default": []
+                    },
+                    "top_tracks": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Top Tracks",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "title": "SpotifyStats",
+                "description": "Model representing Spotify statistics."
+            },
+            "StravaData": {
+                "properties": {
+                    "athlete_profile": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/AthleteProfile"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "recent_activities": {
+                        "items": {
+                            "$ref": "#/components/schemas/ActivitySummary"
+                        },
+                        "type": "array",
+                        "title": "Recent Activities",
+                        "default": []
+                    },
+                    "athlete_stats": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/AthleteStats"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "top_activity_types": {
+                        "items": {
+                            "$ref": "#/components/schemas/ActivityType"
+                        },
+                        "type": "array",
+                        "title": "Top Activity Types",
+                        "default": []
+                    },
+                    "yearly_stats": {
+                        "items": {
+                            "$ref": "#/components/schemas/app__models__strava__YearlySummary"
+                        },
+                        "type": "array",
+                        "title": "Yearly Stats",
+                        "default": []
+                    },
+                    "summary": {
+                        "additionalProperties": true,
+                        "type": "object",
+                        "title": "Summary",
+                        "default": {}
+                    }
+                },
+                "type": "object",
+                "title": "StravaData",
+                "description": "Model representing comprehensive Strava data."
+            },
+            "Track": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "artists": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Artists",
+                        "default": []
+                    },
+                    "album": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Album"
+                    },
+                    "popularity": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Popularity"
+                    },
+                    "played_at": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Played At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "title": "Track",
+                "description": "Model representing a Spotify track."
+            },
+            "TravelData": {
+                "properties": {
+                    "locations": {
+                        "items": {
+                            "$ref": "#/components/schemas/TravelLocation"
+                        },
+                        "type": "array",
+                        "title": "Locations",
+                        "default": []
+                    },
+                    "stats": {
+                        "$ref": "#/components/schemas/TravelStats"
+                    },
+                    "recent_visits": {
+                        "items": {
+                            "additionalProperties": true,
+                            "type": "object"
+                        },
+                        "type": "array",
+                        "title": "Recent Visits",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "title": "TravelData",
+                "description": "Model representing comprehensive travel data."
+            },
+            "TravelLocation": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "city": {
+                        "type": "string",
+                        "title": "City"
+                    },
+                    "country": {
+                        "type": "string",
+                        "title": "Country"
+                    },
+                    "coordinates": {
+                        "prefixItems": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "number"
+                            }
+                        ],
+                        "type": "array",
+                        "maxItems": 2,
+                        "minItems": 2,
+                        "title": "Coordinates"
+                    },
+                    "visits": {
+                        "items": {
+                            "$ref": "#/components/schemas/Visit"
+                        },
+                        "type": "array",
+                        "title": "Visits",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "city",
+                    "country",
+                    "coordinates"
+                ],
+                "title": "TravelLocation",
+                "description": "Model representing a travel location."
+            },
+            "TravelStats": {
+                "properties": {
+                    "total_countries": {
+                        "type": "integer",
+                        "title": "Total Countries"
+                    },
+                    "total_cities": {
+                        "type": "integer",
+                        "title": "Total Cities"
+                    },
+                    "total_visits": {
+                        "type": "integer",
+                        "title": "Total Visits"
+                    },
+                    "most_visited_city": {
+                        "type": "string",
+                        "title": "Most Visited City"
+                    },
+                    "most_visited_country": {
+                        "type": "string",
+                        "title": "Most Visited Country"
+                    },
+                    "yearly_summaries": {
+                        "items": {
+                            "$ref": "#/components/schemas/app__models__travel__YearlySummary"
+                        },
+                        "type": "array",
+                        "title": "Yearly Summaries",
+                        "default": []
+                    },
+                    "country_summaries": {
+                        "items": {
+                            "$ref": "#/components/schemas/CountrySummary"
+                        },
+                        "type": "array",
+                        "title": "Country Summaries",
+                        "default": []
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "total_countries",
+                    "total_cities",
+                    "total_visits",
+                    "most_visited_city",
+                    "most_visited_country"
+                ],
+                "title": "TravelStats",
+                "description": "Model representing travel statistics."
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            },
+            "Visit": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Id"
+                    },
+                    "date": {
+                        "type": "string",
+                        "title": "Date"
+                    },
+                    "notes": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Notes"
+                    },
+                    "image_urls": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Image Urls"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "id",
+                    "date"
+                ],
+                "title": "Visit",
+                "description": "Model representing a visit to a location."
+            },
+            "app__models__strava__YearlySummary": {
+                "properties": {
+                    "year": {
+                        "type": "integer",
+                        "title": "Year"
+                    },
+                    "activity_count": {
+                        "type": "integer",
+                        "title": "Activity Count"
+                    },
+                    "total_distance": {
+                        "type": "number",
+                        "title": "Total Distance"
+                    },
+                    "total_elevation_gain": {
+                        "type": "number",
+                        "title": "Total Elevation Gain"
+                    },
+                    "total_duration": {
+                        "type": "integer",
+                        "title": "Total Duration"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "year",
+                    "activity_count",
+                    "total_distance",
+                    "total_elevation_gain",
+                    "total_duration"
+                ],
+                "title": "YearlySummary",
+                "description": "Model representing yearly activity summary."
+            },
+            "app__models__travel__YearlySummary": {
+                "properties": {
+                    "year": {
+                        "type": "integer",
+                        "title": "Year"
+                    },
+                    "visits_count": {
+                        "type": "integer",
+                        "title": "Visits Count"
+                    },
+                    "countries_visited": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Countries Visited"
+                    },
+                    "cities_visited": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Cities Visited"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "year",
+                    "visits_count",
+                    "countries_visited",
+                    "cities_visited"
+                ],
+                "title": "YearlySummary",
+                "description": "Model representing yearly travel summary."
+            }
+        },
+        "securitySchemes": {
+            "APIKeyHeader": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Key"
+            }
+        }
+    }
+}

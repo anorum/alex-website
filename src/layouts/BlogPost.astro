@@ -1,5 +1,5 @@
 ---
-import MainLayout from './MainLayout.astro';
+import Layout from './Layout.astro';
 
 const { frontmatter } = Astro.props;
 const { title, description, pubDate, updatedDate, author, image, tags, category } = frontmatter;
@@ -14,7 +14,7 @@ function formatDate(date: Date): string {
 }
 ---
 
-<MainLayout title={`${title} - Alex Norum`} description={description}>
+<Layout title={`${title} - Alex Norum`} description={description}>
     <article class="bg-white dark:bg-gray-900">
       <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
         <!-- Header -->
@@ -85,4 +85,4 @@ function formatDate(date: Date): string {
         </div>
       </div>
     </article>
-</MainLayout>
+</Layout>

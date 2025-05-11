@@ -25,6 +25,20 @@ interface Visit {
   image_urls?: string[];
 }
 
+// Interface for processed location data used in the map
+interface ProcessedLocation {
+  id: string;
+  city: string;
+  country: string;
+  coordinates: [number, number];
+  visits: Array<{
+    id: string;
+    date: string;
+    notes?: string;
+    imageUrls?: string[];
+  }>;
+}
+
 interface TravelSummary {
   total_countries: number;
   total_cities: number;
@@ -44,8 +58,13 @@ interface YearlyStat {
 const apiUrl = 'http://api.homelab/api/v1/travel/';
 const apiKey = import.meta.env.ALEX_API_KEY;
 
+// Initialize loading state and error state
+let isLoading = true;
+let hasError = false;
+let errorMessage = '';
+
 // Initialize variables with default values
-let travelData: TravelLocation[] = [];
+let travelData: ProcessedLocation[] = [];
 let recentVisits: Visit[] = [];
 let yearlyStats: YearlyStat[] = [];
 let summary: TravelSummary = {
@@ -56,59 +75,7 @@ let summary: TravelSummary = {
   most_visited_country: ''
 };
 
-try {
-  // Fetch data from the API
-  const response = await fetch(apiUrl, {
-    headers: {
-      'X-API-Key': apiKey
-    }
-  });
-  
-  if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
-  }
-  
-  const data = await response.json();
-  
-  // Process the data
-  summary = data.summary || {
-    total_countries: 0,
-    total_cities: 0,
-    total_visits: 0,
-    most_visited_city: '',
-    most_visited_country: ''
-  };
-  
-  recentVisits = data.recent_visits || [];
-  yearlyStats = data.yearly_stats || [];
-  
-  // Process the data to create a format compatible with our map
-  const locationMap = new Map();
-  
-  recentVisits.forEach(visit => {
-    if (!locationMap.has(visit.location_id)) {
-      locationMap.set(visit.location_id, {
-        id: visit.location_id,
-        city: visit.city,
-        country: visit.country,
-        coordinates: visit.coordinates,
-        visits: []
-      });
-    }
-    
-    const location = locationMap.get(visit.location_id);
-    location.visits.push({
-      id: visit.visit_id,
-      date: visit.date,
-      notes: visit.notes,
-      imageUrls: visit.image_urls
-    });
-  });
-  
-  travelData = Array.from(locationMap.values());
-} catch (error) {
-  console.error('Error fetching travel data:', error);
-}
+// The data fetching will be done client-side
 
 // Helper function to get country flag emoji
 function getCountryFlag(country: string): string {
@@ -139,122 +106,142 @@ function formatDate(dateString: string): string {
     <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Travel Stats</h2>
   </div>
   
-  <!-- Summary Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Countries</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_countries}</span>
+  <div id="travel-stats-content">
+    <!-- Initial loading state - this will be shown immediately -->
+    <div id="loading-indicator" class="flex items-center justify-center p-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
     </div>
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Cities</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_cities}</span>
-    </div>
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Total Visits</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_visits}</span>
-    </div>
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-      <span class="text-sm text-gray-500 dark:text-gray-400">Most Visited</span>
-      <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.most_visited_city}</span>
-    </div>
-  </div>
-  
-  <!-- Map Container -->
-  <div class="mb-6">
-    <div id="travel-map" class="h-[400px] rounded-lg border border-gray-200 dark:border-gray-600"></div>
-  </div>
-  
-  <!-- Selected Location Details (initially hidden) -->
-  <div id="location-details" class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-700 mb-6" transition:animate="slide">
-    <div class="flex items-center justify-between mb-4">
+    
+    <!-- Error message container - initially hidden -->
+    <div id="error-message" class="hidden p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-300 dark:border-red-800">
       <div class="flex items-center">
-        <h3 id="location-title" class="text-lg font-semibold text-gray-900 dark:text-white">Location Name</h3>
-        <span id="location-country" class="text-base font-medium text-gray-500 dark:text-gray-400 ml-2">Country</span>
-      </div>
-      <button id="close-details" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <svg class="flex-shrink-0 inline w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
         </svg>
-      </button>
-    </div>
-    
-    <div id="visits-container" class="space-y-4">
-      <!-- Visit items will be inserted here by JavaScript -->
-    </div>
-  </div>
-  
-  <!-- Locations List -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- All Locations -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">All Locations</h3>
-      <div class="space-y-3">
-        {travelData.map((location, index) => (
-          <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 location-item" data-location-id={location.id}>
-            <div class="flex items-center">
-              <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-              <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
-                <span class="text-xl">{getCountryFlag(location.country)}</span>
-              </div>
-              <div>
-                <p class="font-medium text-gray-900 dark:text-white">{location.city}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{location.country}</p>
-              </div>
-            </div>
-            <div class="text-right">
-              <p class="font-medium text-gray-900 dark:text-white">{location.visits.length} visits</p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
-                {formatDate(location.visits[location.visits.length - 1].date)}
-              </p>
-            </div>
-          </div>
-        ))}
+        <span id="error-text" class="font-medium">Error loading travel stats</span>
       </div>
     </div>
     
-    <!-- Most Recent Visits -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Visits</h3>
-      <div class="space-y-3">
-        {recentVisits.map((visit, index) => (
-          <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 visit-item" data-location-id={visit.location_id} data-visit-id={visit.visit_id}>
-            <div class="flex items-center">
-              <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-              <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
-                <span class="text-xl">{getCountryFlag(visit.country)}</span>
-              </div>
-              <div>
-                <p class="font-medium text-gray-900 dark:text-white">{visit.city}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{formatDate(visit.date)}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+    <!-- Content container - initially hidden -->
+    <div id="stats-container" class="hidden">
+      <!-- Summary Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Countries</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_countries}</span>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Cities</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_cities}</span>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Total Visits</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.total_visits}</span>
+        </div>
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+          <span class="text-sm text-gray-500 dark:text-gray-400">Most Visited</span>
+          <span class="text-2xl font-bold text-gray-900 dark:text-white">{summary.most_visited_city}</span>
+        </div>
       </div>
+  
+      <!-- Map Container -->
+      <div class="mb-6">
+        <div id="travel-map" class="h-[400px] rounded-lg border border-gray-200 dark:border-gray-600"></div>
+      </div>
+      
+      <!-- Selected Location Details (initially hidden) -->
+      <div id="location-details" class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-700 mb-6" transition:animate="slide">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center">
+            <h3 id="location-title" class="text-lg font-semibold text-gray-900 dark:text-white">Location Name</h3>
+            <span id="location-country" class="text-base font-medium text-gray-500 dark:text-gray-400 ml-2">Country</span>
+          </div>
+          <button id="close-details" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div id="visits-container" class="space-y-4">
+          <!-- Visit items will be inserted here by JavaScript -->
+        </div>
+      </div>
+  
+      <!-- Locations List -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- All Locations -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">All Locations</h3>
+          <div class="space-y-3">
+            {travelData.map((location, index) => (
+              <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 location-item" data-location-id={location.id}>
+                <div class="flex items-center">
+                  <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                  <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                    <span class="text-xl">{getCountryFlag(location.country)}</span>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">{location.city}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{location.country}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="font-medium text-gray-900 dark:text-white">{location.visits.length} visits</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {formatDate(location.visits[location.visits.length - 1].date)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <!-- Most Recent Visits -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Visits</h3>
+          <div class="space-y-3">
+            {recentVisits.map((visit, index) => (
+              <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 visit-item" data-location-id={visit.location_id} data-visit-id={visit.visit_id}>
+                <div class="flex items-center">
+                  <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
+                  <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                    <span class="text-xl">{getCountryFlag(visit.country)}</span>
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900 dark:text-white">{visit.city}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{formatDate(visit.date)}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      <!-- Yearly Stats -->
+      {yearlyStats && yearlyStats.length > 0 && (
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Travel by Year</h3>
+          <div class="space-y-3">
+            {yearlyStats.map((yearData) => (
+              <div class="mb-3 last:mb-0">
+                <div class="flex justify-between mb-1">
+                  <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
+                  <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {yearData.visits_count} visits • {yearData.countries_count} countries • {yearData.cities_count} cities
+                  </span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div class="bg-green-500 h-2.5 rounded-full" style={`width: ${(yearData.visits_count / Math.max(...yearlyStats.map(y => y.visits_count))) * 100}%`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </div>
-  
-  <!-- Yearly Stats -->
-  {yearlyStats && yearlyStats.length > 0 && (
-    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Travel by Year</h3>
-      <div class="space-y-3">
-        {yearlyStats.map((yearData) => (
-          <div class="mb-3 last:mb-0">
-            <div class="flex justify-between mb-1">
-              <span class="text-base font-medium text-gray-900 dark:text-white">{yearData.year}</span>
-              <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                {yearData.visits_count} visits • {yearData.countries_count} countries • {yearData.cities_count} cities
-              </span>
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-              <div class="bg-green-500 h-2.5 rounded-full" style={`width: ${(yearData.visits_count / Math.max(...yearlyStats.map(y => y.visits_count))) * 100}%`}></div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
 </div>
 
 <!-- Load Leaflet CSS and JS -->
@@ -314,31 +301,112 @@ function formatDate(dateString: string): string {
 </style>
 
 <script>
-  document.addEventListener('astro:page-load', function() {
-    // Get the travel data from the window object (set by the inline script)
-    const travelData = window.travelData;
+  // Define the ProcessedLocation interface for client-side use
+  interface ProcessedLocation {
+    id: string;
+    city: string;
+    country: string;
+    coordinates: [number, number];
+    visits: Array<{
+      id: string;
+      date: string;
+      notes?: string;
+      imageUrls?: string[];
+    }>;
+  }
+
+  interface Visit {
+    location_id: string;
+    city: string;
+    country: string;
+    coordinates: [number, number];
+    visit_id: string;
+    date: string;
+    notes?: string;
+    image_urls?: string[];
+  }
+
+  interface TravelSummary {
+    total_countries: number;
+    total_cities: number;
+    total_visits: number;
+    most_visited_city: string;
+    most_visited_country: string;
+  }
+
+  interface YearlyStat {
+    year: number;
+    visits_count: number;
+    countries_count: number;
+    cities_count: number;
+  }
+
+  // Add TypeScript interface for window object
+  declare global {
+    interface Window {
+      travelData: any[];
+    }
+  }
+
+  // Helper function to get country flag emoji
+  function getCountryFlag(country: string): string {
+    const flagEmojis: Record<string, string> = {
+      "Singapore": "🇸🇬",
+      "Japan": "🇯🇵",
+      "United Kingdom": "🇬🇧",
+      "United States": "🇺🇸",
+      "France": "🇫🇷",
+      // Add more as needed
+    };
+    
+    return flagEmojis[country] || "🏳️";
+  }
+
+  // Format date for display
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // Initialize the map
+  function initializeMap() {
+    // Skip map initialization if the map container doesn't exist
+    if (document.querySelector('#travel-map') === null) return;
+    
+    // Get the travel data from the window object
+    const travelData = window.travelData || [];
+    
+    // If no data, don't try to initialize the map
+    if (!travelData || travelData.length === 0) return;
     
     // Get DOM elements
     const detailsContainer = document.getElementById('location-details');
     const closeButton = document.getElementById('close-details');
     
     // Add click event to close button
-    closeButton.addEventListener('click', function() {
-      // Simply hide the element - Astro's transitions will handle the animation
-      detailsContainer.classList.add('hidden');
-    });
+    if (closeButton) {
+      closeButton.addEventListener('click', function() {
+        // Simply hide the element - Astro's transitions will handle the animation
+        if (detailsContainer) {
+          detailsContainer.classList.add('hidden');
+        }
+      });
+    }
     
     // Initialize the map
+    // @ts-ignore - Leaflet is loaded from CDN
     const map = L.map('travel-map').setView([20, 0], 2);
     
     // Add the tile layer (OpenStreetMap)
+    // @ts-ignore - Leaflet is loaded from CDN
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     
     // Create a marker for each location
-    const markers = {};
-    travelData.forEach(location => {
+    const markers: Record<string, any> = {};
+    travelData.forEach((location: ProcessedLocation) => {
+      // @ts-ignore - Leaflet is loaded from CDN
       const marker = L.marker(location.coordinates)
         .addTo(map)
         .bindTooltip(`${location.city}, ${location.country} (${location.visits.length} visits)`);
@@ -353,232 +421,471 @@ function formatDate(dateString: string): string {
     });
     
     // Function to show location details
-    function showLocationDetails(location) {
+    function showLocationDetails(location: ProcessedLocation) {
       const detailsContainer = document.getElementById('location-details');
       const titleElement = document.getElementById('location-title');
       const countryElement = document.getElementById('location-country');
       const visitsContainer = document.getElementById('visits-container');
       
       // Update the details
-      titleElement.textContent = location.city;
-      countryElement.textContent = location.country;
+      if (titleElement) titleElement.textContent = location.city;
+      if (countryElement) countryElement.textContent = location.country;
       
       // Clear previous visits
-      visitsContainer.innerHTML = '';
+      if (visitsContainer) visitsContainer.innerHTML = '';
       
-      // Sort visits by date (newest first)
-      const sortedVisits = [...location.visits].sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-      
-      // Add each visit
-      sortedVisits.forEach(visit => {
-        const visitElement = document.createElement('div');
-        visitElement.className = 'p-4 bg-white rounded-lg border border-gray-200 dark:bg-gray-600 dark:border-gray-500';
+      if (visitsContainer) {
+        // Sort visits by date (newest first)
+        const sortedVisits = [...location.visits].sort((a, b) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
         
-        const visitDate = new Date(visit.date);
-        const formattedDate = visitDate.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        });
-        
-        let visitContent = `
-          <div class="flex justify-between mb-2">
-            <h4 class="text-md font-medium text-gray-900 dark:text-white">${formattedDate}</h4>
-          </div>
-        `;
-        
-        if (visit.notes) {
-          visitContent += `<p class="text-sm text-gray-500 dark:text-gray-300 mb-3">${visit.notes}</p>`;
-        }
-        
-        if (visit.imageUrls && visit.imageUrls.length > 0) {
-          const carouselId = `carousel-${visit.id}`;
+        // Add each visit
+        sortedVisits.forEach(visit => {
+          const visitElement = document.createElement('div');
+          visitElement.className = 'p-4 bg-white rounded-lg border border-gray-200 dark:bg-gray-600 dark:border-gray-500';
           
-          visitContent += `
-            <div class="mt-4">
-              <div id="${carouselId}" class="simple-carousel relative w-full">
-                <!-- Carousel wrapper -->
-                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-                  ${visit.imageUrls.map((url, index) => `
-                    <div class="carousel-item ${index === 0 ? 'active' : 'hidden'}" data-index="${index}">
-                      <img src="${url}" alt="Visit to ${location.city} - Image ${index + 1}" 
-                           class="absolute block max-w-full max-h-full object-contain rounded-lg"
-                           style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
-                           width="800" height="500" loading="lazy">
-                    </div>
-                  `).join('')}
-                </div>
-                
-                ${visit.imageUrls.length > 1 ? `
-                  <!-- Slider controls -->
-                  <button type="button" class="carousel-prev absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                      <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                      </svg>
-                      <span class="sr-only">Previous</span>
-                    </span>
-                  </button>
-                  <button type="button" class="carousel-next absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                      <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                      </svg>
-                      <span class="sr-only">Next</span>
-                    </span>
-                  </button>
-                  
+          const visitDate = new Date(visit.date);
+          const formattedDate = visitDate.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          });
+          
+          let visitContent = `
+            <div class="flex justify-between mb-2">
+              <h4 class="text-md font-medium text-gray-900 dark:text-white">${formattedDate}</h4>
+            </div>
+          `;
+          
+          if (visit.notes) {
+            visitContent += `
+              <div class="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                ${visit.notes}
+              </div>
+            `;
+          }
+          
+          if (visit.imageUrls && visit.imageUrls.length > 0) {
+            const carouselId = `carousel-${visit.id}`;
+            
+            visitContent += `
+              <div class="mt-4">
+                <div id="${carouselId}" class="simple-carousel relative w-full">
+                  <!-- Carousel wrapper -->
+                  <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+                    ${visit.imageUrls.map((url: string, index: number) => `
+                      <div class="carousel-item ${index === 0 ? 'active' : 'hidden'}" data-index="${index}">
+                        <img src="${url}" alt="Visit to ${location.city} - Image ${index + 1}" 
+                             class="absolute block max-w-full max-h-full object-contain rounded-lg"
+                             style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+                             width="800" height="500" loading="lazy">
+                      </div>
+                    `).join('')}
+                  </div>
+                    
                   <!-- Slider indicators -->
                   <div class="carousel-indicators absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-                    ${visit.imageUrls.map((_, index) => `
+                    ${visit.imageUrls.map((_: string, index: number) => `
                       <button type="button" class="carousel-indicator w-3 h-3 rounded-full${index === 0 ? ' bg-white dark:bg-gray-800' : ' bg-white/50 dark:bg-gray-800/50 hover:bg-white dark:hover:bg-gray-800'}" data-index="${index}" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="Slide ${index + 1}"></button>
                     `).join('')}
                   </div>
-                ` : ''}
+                </div>
               </div>
-              ${visit.imageUrls.length > 1 ? `<p class="carousel-counter text-center text-sm text-gray-500 dark:text-gray-400 mt-2">Image 1 of ${visit.imageUrls.length}</p>` : ''}
-            </div>
-          `;
-        }
+            `;
+          }
+          
+          visitElement.innerHTML = visitContent;
+          visitsContainer.appendChild(visitElement);
+        });
         
-        visitElement.innerHTML = visitContent;
-        visitsContainer.appendChild(visitElement);
-      });
+        // Initialize carousels
+        initializeCarousels();
+      }
       
       // Simply show the details container - Astro's transitions will handle the animation
-      detailsContainer.classList.remove('hidden');
-      
-      // Scroll to the details
-      detailsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
-      // Initialize carousels
-      initializeCarousels();
+      if (detailsContainer) {
+        detailsContainer.classList.remove('hidden');
+        
+        // Scroll to the details
+        detailsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
     
     // Add click events to location items in the list
     document.querySelectorAll('.location-item').forEach(item => {
-      item.addEventListener('click', function() {
+      item.addEventListener('click', function(this: HTMLElement) {
         const locationId = this.getAttribute('data-location-id');
-        const location = travelData.find(loc => loc.id === locationId);
+        const location = travelData.find((loc: ProcessedLocation) => loc.id === locationId);
         
         if (location) {
           // Center the map on this location
           map.setView(location.coordinates, 10);
           
           // Trigger the marker click
-          markers[locationId].fire('click');
+          if (locationId && markers[locationId]) {
+            markers[locationId].fire('click');
+          }
         }
       });
     });
     
     // Add click events to visit items in the recent visits list
     document.querySelectorAll('.visit-item').forEach(item => {
-      item.addEventListener('click', function() {
+      item.addEventListener('click', function(this: HTMLElement) {
         const locationId = this.getAttribute('data-location-id');
-        const location = travelData.find(loc => loc.id === locationId);
+        const location = travelData.find((loc: ProcessedLocation) => loc.id === locationId);
         
         if (location) {
           // Center the map on this location
           map.setView(location.coordinates, 10);
           
           // Trigger the marker click
-          markers[locationId].fire('click');
+          if (locationId && markers[locationId]) {
+            markers[locationId].fire('click');
+          }
         }
       });
     });
+  }
+
+  // Initialize carousels
+  function initializeCarousels() {
+    document.querySelectorAll('.simple-carousel').forEach(carousel => {
+      const items = carousel.querySelectorAll('.carousel-item');
+      const indicators = carousel.querySelectorAll('.carousel-indicator');
+      
+      if (items.length <= 1) return; // No need for carousel controls if only one item
+      
+      // Add click events to indicators
+      indicators.forEach(indicator => {
+        indicator.addEventListener('click', function(this: HTMLElement) {
+          const index = parseInt(this.getAttribute('data-index') || '0');
+          showSlide(index);
+        });
+      });
+      
+      // Function to show a specific image
+      function showSlide(index: number) {
+        // Hide all items
+        items.forEach(item => {
+          item.classList.add('hidden');
+          item.classList.remove('active');
+        });
+        
+        // Show the selected item
+        items[index].classList.remove('hidden');
+        items[index].classList.add('active');
+        
+        // Update indicators
+        indicators.forEach(ind => {
+          ind.classList.remove('bg-white', 'dark:bg-gray-800');
+          ind.classList.add('bg-white/50', 'dark:bg-gray-800/50');
+          ind.setAttribute('aria-current', 'false');
+        });
+        
+        indicators[index].classList.remove('bg-white/50', 'dark:bg-gray-800/50');
+        indicators[index].classList.add('bg-white', 'dark:bg-gray-800');
+        indicators[index].setAttribute('aria-current', 'true');
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', async function() {
+    // Get DOM elements
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
+    const errorText = document.getElementById('error-text');
+    const statsContainer = document.getElementById('stats-container');
     
-    // Function to initialize all carousels
-    function initializeCarousels() {
-      // Find all simple carousel elements
-      document.querySelectorAll('.simple-carousel').forEach(carousel => {
-        const items = Array.from(carousel.querySelectorAll('.carousel-item'));
-        const indicators = Array.from(carousel.querySelectorAll('.carousel-indicator'));
-        const prevBtn = carousel.querySelector('.carousel-prev');
-        const nextBtn = carousel.querySelector('.carousel-next');
-        const countDisplay = carousel.nextElementSibling;
-        
-        if (items.length <= 1) return; // No need for carousel controls if only one image
-        
-        let currentIndex = items.findIndex(item => item.classList.contains('active'));
-        if (currentIndex === -1) currentIndex = 0;
-        
-        // Function to show a specific image
-        function showSlide(index) {
-          // Hide all images
-          items.forEach(item => item.classList.add('hidden'));
-          items.forEach(item => item.classList.remove('active'));
-          
-          // Show the selected image
-          items[index].classList.remove('hidden');
-          items[index].classList.add('active');
-          
-          // Update indicators
-          indicators.forEach((indicator, i) => {
-            if (i === index) {
-              indicator.setAttribute('aria-current', 'true');
-              indicator.classList.add('bg-white');
-              indicator.classList.add('dark:bg-gray-800');
-              indicator.classList.remove('bg-white/50');
-              indicator.classList.remove('dark:bg-gray-800/50');
-            } else {
-              indicator.setAttribute('aria-current', 'false');
-              indicator.classList.remove('bg-white');
-              indicator.classList.remove('dark:bg-gray-800');
-              indicator.classList.add('bg-white/50');
-              indicator.classList.add('dark:bg-gray-800/50');
+    // Initialize variables
+    let travelData: ProcessedLocation[] = [];
+    let recentVisits: Visit[] = [];
+    let yearlyStats: YearlyStat[] = [];
+    let summary: TravelSummary = {
+      total_countries: 0,
+      total_cities: 0,
+      total_visits: 0,
+      most_visited_city: '',
+      most_visited_country: ''
+    };
+    
+    try {
+      // Check if we have cached data in sessionStorage
+      let cachedData = null;
+      if (window.sessionStorage) {
+        const cached = sessionStorage.getItem('travelStatsCache');
+        if (cached) {
+          try {
+            const { data, timestamp } = JSON.parse(cached);
+            // Use cache if it's less than 15 minutes old
+            if (Date.now() - timestamp < 15 * 60 * 1000) {
+              cachedData = data;
+              console.log('Using cached Travel data');
             }
-          });
-          
-          // Update counter text
-          if (countDisplay && countDisplay.classList.contains('carousel-counter')) {
-            countDisplay.textContent = `Image ${index + 1} of ${items.length}`;
+          } catch (e) {
+            console.error('Error parsing cached Travel data:', e);
+          }
+        }
+      }
+      
+      if (cachedData) {
+        // Use cached data
+        const data = cachedData;
+        
+        // Process the data
+        summary = data.summary || {
+          total_countries: 0,
+          total_cities: 0,
+          total_visits: 0,
+          most_visited_city: '',
+          most_visited_country: ''
+        };
+        
+        recentVisits = data.recent_visits || [];
+        yearlyStats = data.yearly_stats || [];
+        
+        // Process the data to create a format compatible with our map
+        const locationMap = new Map();
+        
+        recentVisits.forEach(visit => {
+          if (!locationMap.has(visit.location_id)) {
+            locationMap.set(visit.location_id, {
+              id: visit.location_id,
+              city: visit.city,
+              country: visit.country,
+              coordinates: visit.coordinates,
+              visits: []
+            });
           }
           
-          // Update current index
-          currentIndex = index;
-        }
-        
-        // Add click event to previous button
-        if (prevBtn) {
-          prevBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            let newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = items.length - 1; // Loop back to the end
-            showSlide(newIndex);
-          });
-        }
-        
-        // Add click event to next button
-        if (nextBtn) {
-          nextBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            let newIndex = currentIndex + 1;
-            if (newIndex >= items.length) newIndex = 0; // Loop back to the beginning
-            showSlide(newIndex);
-          });
-        }
-        
-        // Add click events to indicators
-        indicators.forEach((indicator, index) => {
-          indicator.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showSlide(index);
+          const location = locationMap.get(visit.location_id);
+          location.visits.push({
+            id: visit.visit_id,
+            date: visit.date,
+            notes: visit.notes,
+            imageUrls: visit.image_urls
           });
         });
         
-        // Initialize with the first slide
-        showSlide(currentIndex);
-      });
+        travelData = Array.from(locationMap.values());
+      } else {
+        // Fetch data from the API with a timeout
+        const apiUrl = 'http://api.homelab/api/v1/travel/';
+        const apiKey = document.querySelector('meta[name="api-key"]')?.getAttribute('content') || '';
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        try {
+          const response = await fetch(apiUrl, {
+            headers: {
+              'X-API-Key': apiKey
+            },
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Cache the data in sessionStorage
+          if (window.sessionStorage) {
+            sessionStorage.setItem('travelStatsCache', JSON.stringify({
+              data,
+              timestamp: Date.now()
+            }));
+          }
+          
+          // Process the data
+          summary = data.summary || {
+            total_countries: 0,
+            total_cities: 0,
+            total_visits: 0,
+            most_visited_city: '',
+            most_visited_country: ''
+          };
+          
+          recentVisits = data.recent_visits || [];
+          yearlyStats = data.yearly_stats || [];
+          
+          // Process the data to create a format compatible with our map
+          const locationMap = new Map<string, ProcessedLocation>();
+          
+          recentVisits.forEach(visit => {
+            if (!locationMap.has(visit.location_id)) {
+              locationMap.set(visit.location_id, {
+                id: visit.location_id,
+                city: visit.city,
+                country: visit.country,
+                coordinates: visit.coordinates,
+                visits: []
+              });
+            }
+            
+            const location = locationMap.get(visit.location_id);
+            if (location) {
+              location.visits.push({
+                id: visit.visit_id,
+                date: visit.date,
+                notes: visit.notes,
+                imageUrls: visit.image_urls
+              });
+            }
+          });
+          
+          travelData = Array.from(locationMap.values());
+        } catch (error) {
+          if (error instanceof Error && error.name === 'AbortError') {
+            throw new Error('Request timed out. Please try again later.');
+          }
+          throw error;
+        }
+      }
+      
+      // Render the content
+      if (statsContainer) {
+        statsContainer.innerHTML = `
+          <!-- Summary Stats -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+              <span class="text-sm text-gray-500 dark:text-gray-400">Countries</span>
+              <span class="text-2xl font-bold text-gray-900 dark:text-white">${summary.total_countries}</span>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+              <span class="text-sm text-gray-500 dark:text-gray-400">Cities</span>
+              <span class="text-2xl font-bold text-gray-900 dark:text-white">${summary.total_cities}</span>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+              <span class="text-sm text-gray-500 dark:text-gray-400">Total Visits</span>
+              <span class="text-2xl font-bold text-gray-900 dark:text-white">${summary.total_visits}</span>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
+              <span class="text-sm text-gray-500 dark:text-gray-400">Most Visited</span>
+              <span class="text-2xl font-bold text-gray-900 dark:text-white">${summary.most_visited_city}</span>
+            </div>
+          </div>
+      
+          <!-- Map Container -->
+          <div class="mb-6">
+            <div id="travel-map" class="h-[400px] rounded-lg border border-gray-200 dark:border-gray-600"></div>
+          </div>
+          
+          <!-- Selected Location Details (initially hidden) -->
+          <div id="location-details" class="hidden p-4 bg-gray-50 rounded-lg dark:bg-gray-700 mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <h3 id="location-title" class="text-lg font-semibold text-gray-900 dark:text-white">Location Name</h3>
+                <span id="location-country" class="text-base font-medium text-gray-500 dark:text-gray-400 ml-2">Country</span>
+              </div>
+              <button id="close-details" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div id="visits-container" class="space-y-4">
+              <!-- Visit items will be inserted here by JavaScript -->
+            </div>
+          </div>
+          
+          <!-- Locations List -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- All Locations -->
+            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">All Locations</h3>
+              <div class="space-y-3">
+                ${travelData.map((location, index) => `
+                  <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 location-item" data-location-id="${location.id}">
+                    <div class="flex items-center">
+                      <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">${index + 1}</span>
+                      <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                        <span class="text-xl">${getCountryFlag(location.country)}</span>
+                      </div>
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">${location.city}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${location.country}</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="font-medium text-gray-900 dark:text-white">${location.visits.length} visits</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">
+                        ${formatDate(location.visits[location.visits.length - 1].date)}
+                      </p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            
+            <!-- Most Recent Visits -->
+            <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Visits</h3>
+              <div class="space-y-3">
+                ${recentVisits.map((visit, index) => `
+                  <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0 visit-item" data-location-id="${visit.location_id}" data-visit-id="${visit.visit_id}">
+                    <div class="flex items-center">
+                      <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">${index + 1}</span>
+                      <div class="w-10 h-10 rounded-full mx-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300">
+                        <span class="text-xl">${getCountryFlag(visit.country)}</span>
+                      </div>
+                      <div>
+                        <p class="font-medium text-gray-900 dark:text-white">${visit.city}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${formatDate(visit.date)}</p>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          
+          ${yearlyStats && yearlyStats.length > 0 ? `
+            <!-- Yearly Stats -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Travel by Year</h3>
+              <div class="space-y-3">
+                ${yearlyStats.map((yearData) => `
+                  <div class="mb-3 last:mb-0">
+                    <div class="flex justify-between mb-1">
+                      <span class="text-base font-medium text-gray-900 dark:text-white">${yearData.year}</span>
+                      <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        ${yearData.visits_count} visits • ${yearData.countries_count} countries • ${yearData.cities_count} cities
+                      </span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div class="bg-green-500 h-2.5 rounded-full" style="width: ${(yearData.visits_count / Math.max(...yearlyStats.map(y => y.visits_count))) * 100}%"></div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        `;
+        
+        // Show the content and hide the loading indicator
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
+        statsContainer.classList.remove('hidden');
+        
+        // Make the travel data available to the map initialization
+        window.travelData = travelData;
+        
+        // Initialize the map
+        initializeMap();
+      }
+    } catch (error) {
+      console.error('Error loading travel stats:', error);
+      
+      // Show error message and hide loading indicator
+      if (loadingIndicator) loadingIndicator.classList.add('hidden');
+      if (errorMessage && errorText) {
+        errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading travel stats';
+        errorMessage.classList.remove('hidden');
+      }
     }
   });
-</script>
-
-<!-- Hidden element to pass data to client-side JavaScript -->
-<script is:inline define:vars={{ serializedTravelData: JSON.stringify(travelData) }}>
-  // Make the travel data available to the client-side script
-  document.addEventListener('astro:page-load', function() {
-    window.travelData = JSON.parse(serializedTravelData);
-  });
-</script>
