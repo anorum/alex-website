@@ -28,35 +28,7 @@ let isLoading = false;
 				
 				<!-- Stats Cards -->
 				<div class="grid md:grid-cols-1 gap-8 mb-16 animate-fade-in">
-					<!-- Travel Stats -->
-					<div class="stats-card">
-						<h2 class="mb-6">Travel Stats</h2>
-						<TravelStats client:load />
-					</div>
-					
-					<!-- Spotify Stats -->
-					<div class="stats-card">
-						<h2 class="mb-6">Spotify Stats</h2>
-						<SpotifyStats defaultTimeRange={defaultTimeRange} client:load />
-					</div>
-					
-					<!-- Strava Stats -->
-					<div class="stats-card">
-						<h2 class="mb-6">Strava Stats</h2>
-						<StravaStats client:visible />
-					</div>
-					
-					<!-- 18Birdies Stats -->
-					<div class="stats-card">
-						<h2 class="mb-6">Golf Stats</h2>
-						<EighteenBirdiesStats client:visible />
-					</div>
-					
-					<!-- Goodreads Stats -->
-					<div class="stats-card">
-						<h2 class="mb-6">Reading Stats</h2>
-						<GoodreadsStats defaultYear={year} client:visible />
-					</div>
+					<TravelStats />	
 				</div>
 				
 				<!-- Additional Stats Section -->
