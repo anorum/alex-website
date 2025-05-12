@@ -15,14 +15,17 @@ export default function ChainlitCopilot() {
         callback("You sent: " + args.msg);
       });
       
-      // Configure the Chainlit widget with styling that matches the website
+      // Configure the Chainlit widget with custom CSS
       window.mountChainlitWidget({
         chainlitServer: "http://localhost:8000",
         theme: "dark",
+        customCssUrl: "/chainlit-custom.css",
         button: {
           imageUrl: "/mara_logo.png",
-          // Use button-compatible Tailwind classes that match the website's updated color scheme
-          className: "bg-opacity-10 bg-white hover:bg-[#77647b] border border-white/10 hover:border-[#8fb996] rounded-full p-1 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+          position: "bottom-right",
+          text: "Chat with Mara",
+          tooltip: "Chat with Mara, Alex's AI Assistant",
+          className: "border-2 border-[#8fb996] rounded-full p-4"
         }
       });
 
@@ -40,7 +43,12 @@ export default function ChainlitCopilot() {
           const watermark = shadowRoot.querySelector("a.watermark");
           if (watermark) {
             watermark.style.display = "none";
-            console.log("Watermark hidden");
+          }
+          
+          // Add title attribute to button for tooltip
+          const button = shadowRoot.querySelector("#chainlit-copilot-button");
+          if (button) {
+            button.setAttribute("title", "Chat with Mara, Alex's AI Assistant");
           }
         };
 
