@@ -62,7 +62,7 @@ export default function TravelSummary({ summary = {} }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {statItems.map((item, index) => (
-        <div key={index} className="stats-card p-3 flex flex-col items-center text-center">
+        <div key={index} className="stats-card p-2 sm:p-3 flex flex-col items-center text-center">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.bgColor} ${item.textColor} mb-2`}>
             {item.icon}
           </div>

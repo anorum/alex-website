@@ -284,7 +284,7 @@ export default function TravelStatsReact({
       {/* Summary Stats */}
       <div className="mb-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="stats-card flex items-center p-4 bg-opacity-20">
+          <div className="stats-card flex items-center p-0.5 sm:p-2 md:p-4 bg-opacity-20">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 mr-4">
               <GlobeAltIcon className="h-6 w-6" />
             </div>
@@ -294,7 +294,7 @@ export default function TravelStatsReact({
             </div>
           </div>
           
-          <div className="stats-card flex items-center p-4 bg-opacity-20">
+          <div className="stats-card flex items-center p-0.5 sm:p-2 md:p-4 bg-opacity-20">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 mr-4">
               <MapIcon className="h-6 w-6" />
             </div>
@@ -304,7 +304,7 @@ export default function TravelStatsReact({
             </div>
           </div>
           
-          <div className="stats-card flex items-center p-4 bg-opacity-20">
+          <div className="stats-card flex items-center p-0.5 sm:p-2 md:p-4 bg-opacity-20">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 mr-4">
               <CalendarIcon className="h-6 w-6" />
             </div>
@@ -314,7 +314,7 @@ export default function TravelStatsReact({
             </div>
           </div>
           
-          <div className="stats-card flex items-center p-4 bg-opacity-20">
+          <div className="stats-card flex items-center p-0.5 sm:p-2 md:p-4 bg-opacity-20">
             <div className="w-12 h-12 rounded-full flex items-center justify-center bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400 mr-4">
               <UserGroupIcon className="h-6 w-6" />
             </div>
@@ -329,7 +329,7 @@ export default function TravelStatsReact({
       {/* Main Dashboard Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Yearly Stats */}
-        <div className="stats-card p-6">
+        <div className="stats-card p-0.5 sm:p-2 md:p-4">
           <h3 className="text-xl font-bold mb-4 flex items-center">
             <CalendarIcon className="h-6 w-6 mr-2 text-secondary-color" />
             Travel by Year
@@ -340,7 +340,7 @@ export default function TravelStatsReact({
         </div>
         
         {/* Countries Distribution */}
-        <div className="stats-card p-6">
+        <div className="stats-card p-0.5 sm:p-2 md:p-4">
           <h3 className="text-xl font-bold mb-4 flex items-center">
             <GlobeAltIcon className="h-6 w-6 mr-2 text-secondary-color" />
             Countries Distribution
@@ -353,7 +353,7 @@ export default function TravelStatsReact({
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Cities Distribution */}
-        <div className="stats-card p-6">
+        <div className="stats-card p-0.5 sm:p-2 md:p-4">
           <h3 className="text-xl font-bold mb-4 flex items-center">
             <MapPinIcon className="h-6 w-6 mr-2 text-secondary-color" />
             Top Cities
@@ -364,7 +364,7 @@ export default function TravelStatsReact({
         </div>
         
         {/* Recent Visits */}
-        <div className="stats-card p-6">
+        <div className="stats-card p-0.5 sm:p-2 md:p-4">
           <h3 className="text-xl font-bold mb-4 flex items-center">
             <ClockIcon className="h-6 w-6 mr-2 text-secondary-color" />
             Recent Activity

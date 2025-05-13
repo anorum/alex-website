@@ -20,7 +20,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
   
   if (!stats || stats.length === 0) {
     return (
-      <div className="stats-card p-4">
+      <div className="stats-card p-2 sm:p-4">
         <h3 className="text-lg font-semibold flex items-center mb-2">
           <CalendarIcon className="h-5 w-5 mr-2 text-secondary-color" />
           Travel by Year
@@ -41,7 +41,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
   const maxVisits = Math.max(...processedStats.map(stat => stat.visits_count));
   
   return (
-    <div className="stats-card p-4">
+    <div className="stats-card p-2 sm:p-4">
       <h3 className="text-lg font-semibold flex items-center mb-4">
         <CalendarIcon className="h-5 w-5 mr-2 text-secondary-color" />
         Travel by Year

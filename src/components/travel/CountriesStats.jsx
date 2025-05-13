@@ -21,7 +21,7 @@ export default function CountriesStats({ countriesData = [] }) {
   
   if (!countries || countries.length === 0) {
     return (
-      <div className="stats-card p-4">
+      <div className="stats-card p-2 sm:p-4">
         <h3 className="text-lg font-semibold flex items-center mb-2">
           <GlobeAltIcon className="h-5 w-5 mr-2 text-secondary-color" />
           Countries
@@ -37,7 +37,7 @@ export default function CountriesStats({ countriesData = [] }) {
   const totalVisits = sortedCountries.reduce((sum, country) => sum + country.value, 0);
   
   return (
-    <div className="stats-card p-4">
+    <div className="stats-card p-2 sm:p-4">
       <h3 className="text-lg font-semibold flex items-center mb-4">
         <GlobeAltIcon className="h-5 w-5 mr-2 text-secondary-color" />
         Countries

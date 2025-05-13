@@ -20,7 +20,7 @@ export default function CitiesStats({ citiesData = [] }) {
   
   if (!cities || cities.length === 0) {
     return (
-      <div className="stats-card p-4">
+      <div className="stats-card p-2 sm:p-4">
         <h3 className="text-lg font-semibold flex items-center mb-2">
           <MapPinIcon className="h-5 w-5 mr-2 text-secondary-color" />
           Cities
@@ -35,7 +35,7 @@ export default function CitiesStats({ citiesData = [] }) {
   const maxVisits = sortedCities[0].value;
   
   return (
-    <div className="stats-card p-4">
+    <div className="stats-card p-2 sm:p-4">
       <h3 className="text-lg font-semibold flex items-center mb-4">
         <MapPinIcon className="h-5 w-5 mr-2 text-secondary-color" />
         Top Cities

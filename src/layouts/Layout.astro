@@ -22,7 +22,7 @@ const {
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<meta name="description" content={description} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
@@ -57,7 +57,7 @@ const {
 		<ChainlitCopilot client:load />
 		<Navigation />
 		<div id="content-container" class="animate-fade-in">
-			<main class="container mx-auto px-4 py-8">
+			<main class="container mx-auto px-2 sm:px-3 md:px-4 py-4 sm:py-8">
 				<slot />
 			</main>
 		</div>
@@ -85,6 +85,12 @@ const {
 		flex: 1;
 		width: 100%;
 		margin: 0 auto;
-		padding: 5rem 1rem 2rem; /* Added top padding to account for fixed navigation */
+		padding: 5rem 0.5rem 2rem; /* Reduced side padding for mobile */
+	}
+	
+	@media (min-width: 640px) {
+		#content-container {
+			padding: 5rem 1rem 2rem;
+		}
 	}
 </style>

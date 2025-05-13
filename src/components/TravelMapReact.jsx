@@ -160,6 +160,8 @@ export default function TravelMapReact({ travelData: initialData }) {
   const mapRef = useRef(null);
   const [travelData, setTravelData] = useState(initialData || []);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [loadedImages, setLoadedImages] = useState({});
+  const [isLoadingImages, setIsLoadingImages] = useState(false);
   
   // Center the map on a location when clicked from outside
   const centerMapOnLocation = (locationId, coordinates) => {
@@ -205,6 +207,7 @@ export default function TravelMapReact({ travelData: initialData }) {
               
               // Open the location detail view
               setSelectedLocation(location);
+              preloadImages(location);
             }
           }
         };
@@ -237,14 +240,184 @@ export default function TravelMapReact({ travelData: initialData }) {
       ]
     : [20, 0]; // Default center if no data
   
+  // Preload images for a location
+  const preloadImages = (location) => {
+    if (!location || !location.visits) return;
+    
+    // Check if we've already loaded images for this location
+    if (loadedImages[location.id]) return;
+    
+    setIsLoadingImages(true);
+    
+    // Create a map to track loaded images
+    const newLoadedImages = { ...loadedImages };
+    newLoadedImages[location.id] = {};
+    
+    // Count total images to load
+    let totalImages = 0;
+    let loadedCount = 0;
+    
+    location.visits.forEach(visit => {
+      if (visit.imageUrls && visit.imageUrls.length > 0) {
+        totalImages += visit.imageUrls.length;
+        
+        // Initialize the visit's loaded images tracking
+        if (!newLoadedImages[location.id][visit.id]) {
+          newLoadedImages[location.id][visit.id] = {};
+        }
+      }
+    });
+    
+    // If no images to load, mark as loaded and return
+    if (totalImages === 0) {
+      setLoadedImages(newLoadedImages);
+      setIsLoadingImages(false);
+      return;
+    }
+    
+    // Load each image
+    location.visits.forEach(visit => {
+      if (visit.imageUrls && visit.imageUrls.length > 0) {
+        visit.imageUrls.forEach((url, index) => {
+          const img = new Image();
+          
+          img.onload = () => {
+            // Mark this image as loaded
+            newLoadedImages[location.id][visit.id][index] = true;
+            loadedCount++;
+            
+            // If all images are loaded, update state
+            if (loadedCount === totalImages) {
+              setLoadedImages(newLoadedImages);
+              setIsLoadingImages(false);
+            }
+          };
+          
+          img.onerror = () => {
+            // Mark as loaded even if there was an error
+            newLoadedImages[location.id][visit.id][index] = 'error';
+            loadedCount++;
+            
+            // If all images are loaded, update state
+            if (loadedCount === totalImages) {
+              setLoadedImages(newLoadedImages);
+              setIsLoadingImages(false);
+            }
+          };
+          
+          // Start loading the image
+          img.src = url;
+        });
+      }
+    });
+  };
+  
   // Open location detail view
   const openLocationDetail = (location) => {
     setSelectedLocation(location);
+    preloadImages(location);
   };
   
   // Close location detail view
   const closeLocationDetail = () => {
     setSelectedLocation(null);
+  };
+  
+  // Function to create a fullscreen image viewer
+  const createFullscreenViewer = (visit, imgIndex) => {
+    // Create a fullscreen image viewer with carousel
+    const fullscreenDiv = document.createElement('div');
+    fullscreenDiv.className = 'fixed inset-0 z-50 bg-[#2a4535]/95 flex items-center justify-center p-4 backdrop-blur-md';
+    
+    // Create container for image and controls
+    const container = document.createElement('div');
+    container.className = 'relative max-w-4xl max-h-full backdrop-blur-md';
+    container.onclick = (e) => e.stopPropagation();
+    
+    // Create image element
+    const img = document.createElement('img');
+    img.src = visit.imageUrls[imgIndex];
+    img.className = 'max-w-full max-h-[80vh] object-contain rounded-md';
+    
+    // Create close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'absolute top-2 right-2 bg-[#77647b] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#77647b]/80 transition-colors';
+    closeBtn.innerHTML = '×';
+    closeBtn.onclick = () => document.body.removeChild(fullscreenDiv);
+    
+    // Add navigation buttons if there are multiple images
+    if (visit.imageUrls.length > 1) {
+      // Current image index
+      let currentIdx = imgIndex;
+      
+      // Create dots container
+      const dotsContainer = document.createElement('div');
+      dotsContainer.className = 'absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2';
+      
+      // Create counter
+      const counter = document.createElement('div');
+      counter.className = 'absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white text-sm';
+      counter.textContent = `${currentIdx + 1} / ${visit.imageUrls.length}`;
+      
+      // Update image function
+      const updateImage = () => {
+        img.src = visit.imageUrls[currentIdx];
+        counter.textContent = `${currentIdx + 1} / ${visit.imageUrls.length}`;
+        
+        // Update dots
+        Array.from(dotsContainer.children).forEach((dot, idx) => {
+          if (idx === currentIdx) {
+            dot.className = 'w-3 h-3 rounded-full bg-white';
+          } else {
+            dot.className = 'w-3 h-3 rounded-full bg-gray-400';
+          }
+        });
+      };
+      
+      // Previous button
+      const prevBtn = document.createElement('button');
+      prevBtn.className = 'absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors';
+      prevBtn.innerHTML = '←';
+      prevBtn.onclick = (e) => {
+        e.stopPropagation();
+        currentIdx = (currentIdx - 1 + visit.imageUrls.length) % visit.imageUrls.length;
+        updateImage();
+      };
+      
+      // Next button
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors';
+      nextBtn.innerHTML = '→';
+      nextBtn.onclick = (e) => {
+        e.stopPropagation();
+        currentIdx = (currentIdx + 1) % visit.imageUrls.length;
+        updateImage();
+      };
+      
+      // Add dots for each image
+      visit.imageUrls.forEach((_, idx) => {
+        const dot = document.createElement('span');
+        dot.className = idx === currentIdx ? 'w-3 h-3 rounded-full bg-white' : 'w-3 h-3 rounded-full bg-gray-400';
+        dotsContainer.appendChild(dot);
+      });
+      
+      // Add navigation elements to container
+      container.appendChild(prevBtn);
+      container.appendChild(nextBtn);
+      container.appendChild(dotsContainer);
+      container.appendChild(counter);
+    }
+    
+    // Add elements to container
+    container.appendChild(img);
+    container.appendChild(closeBtn);
+    
+    // Add close functionality to background
+    fullscreenDiv.onclick = () => document.body.removeChild(fullscreenDiv);
+    
+    // Append to body
+    fullscreenDiv.appendChild(container);
+    document.body.appendChild(fullscreenDiv);
   };
   
   return (
@@ -287,106 +460,48 @@ export default function TravelMapReact({ travelData: initialData }) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {visit.imageUrls.map((url, imgIndex) => (
                         <div key={imgIndex} className="relative aspect-video rounded-lg overflow-hidden shadow-md">
-                          <img 
-                            src={url} 
-                            alt={`Visit to ${selectedLocation.city} - Image ${imgIndex + 1}`}
-                            className="w-full h-full object-cover cursor-pointer"
-                            onClick={() => {
-                              // Create a fullscreen image viewer with carousel
-                              const fullscreenDiv = document.createElement('div');
-                              fullscreenDiv.className = 'fixed inset-0 z-50 bg-[#2a4535]/95 flex items-center justify-center p-4 backdrop-blur-md';
-                              
-                              // Create container for image and controls
-                              const container = document.createElement('div');
-                              container.className = 'relative max-w-4xl max-h-full backdrop-blur-md';
-                              container.onclick = (e) => e.stopPropagation();
-                              
-                              // Create image element
-                              const img = document.createElement('img');
-                              img.src = visit.imageUrls[imgIndex];
-                              img.className = 'max-w-full max-h-[80vh] object-contain rounded-md';
-                              
-                              // Create close button
-                              const closeBtn = document.createElement('button');
-                              closeBtn.className = 'absolute top-2 right-2 bg-[#77647b] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#77647b]/80 transition-colors';
-                              closeBtn.innerHTML = '×';
-                              closeBtn.onclick = () => document.body.removeChild(fullscreenDiv);
-                              
-                              // Add navigation buttons if there are multiple images
-                              if (visit.imageUrls.length > 1) {
-                                // Current image index
-                                let currentIdx = imgIndex;
-                                
-                                // Update image function
-                                const updateImage = () => {
-                                  img.src = visit.imageUrls[currentIdx];
-                                  counter.textContent = `${currentIdx + 1} / ${visit.imageUrls.length}`;
-                                  
-                                  // Update dots
-                                  Array.from(dotsContainer.children).forEach((dot, idx) => {
-                                    if (idx === currentIdx) {
-                                      dot.className = 'w-3 h-3 rounded-full bg-white';
-                                    } else {
-                                      dot.className = 'w-3 h-3 rounded-full bg-gray-400';
-                                    }
-                                  });
-                                };
-                                
-                                // Previous button
-                                const prevBtn = document.createElement('button');
-                                prevBtn.className = 'absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors';
-                                prevBtn.innerHTML = '←';
-                                prevBtn.onclick = (e) => {
-                                  e.stopPropagation();
-                                  currentIdx = (currentIdx - 1 + visit.imageUrls.length) % visit.imageUrls.length;
-                                  updateImage();
-                                };
-                                
-                                // Next button
-                                const nextBtn = document.createElement('button');
-                                nextBtn.className = 'absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors';
-                                nextBtn.innerHTML = '→';
-                                nextBtn.onclick = (e) => {
-                                  e.stopPropagation();
-                                  currentIdx = (currentIdx + 1) % visit.imageUrls.length;
-                                  updateImage();
-                                };
-                                
-                                // Create dots container
-                                const dotsContainer = document.createElement('div');
-                                dotsContainer.className = 'absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2';
-                                
-                                // Add dots for each image
-                                visit.imageUrls.forEach((_, idx) => {
-                                  const dot = document.createElement('span');
-                                  dot.className = idx === currentIdx ? 'w-3 h-3 rounded-full bg-white' : 'w-3 h-3 rounded-full bg-gray-400';
-                                  dotsContainer.appendChild(dot);
-                                });
-                                
-                                // Create counter
-                                const counter = document.createElement('div');
-                                counter.className = 'absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white text-sm';
-                                counter.textContent = `${currentIdx + 1} / ${visit.imageUrls.length}`;
-                                
-                                // Add navigation elements to container
-                                container.appendChild(prevBtn);
-                                container.appendChild(nextBtn);
-                                container.appendChild(dotsContainer);
-                                container.appendChild(counter);
-                              }
-                              
-                              // Add elements to container
-                              container.appendChild(img);
-                              container.appendChild(closeBtn);
-                              
-                              // Add close functionality to background
-                              fullscreenDiv.onclick = () => document.body.removeChild(fullscreenDiv);
-                              
-                              // Append to body
-                              fullscreenDiv.appendChild(container);
-                              document.body.appendChild(fullscreenDiv);
-                            }}
-                          />
+                          <div className="w-full h-full relative">
+                            {/* Show loading placeholder if image is not yet loaded */}
+                            {(!loadedImages[selectedLocation.id] || 
+                              !loadedImages[selectedLocation.id][visit.id] || 
+                              !loadedImages[selectedLocation.id][visit.id][imgIndex]) && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                                <div className="animate-pulse flex space-x-4">
+                                  <div className="flex-1 space-y-4 py-1">
+                                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+                                    <div className="space-y-2">
+                                      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                                      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            
+                            <img 
+                              src={url} 
+                              alt={`Visit to ${selectedLocation.city} - Image ${imgIndex + 1}`}
+                              className="w-full h-full object-cover cursor-pointer"
+                              style={{ 
+                                opacity: loadedImages[selectedLocation.id] && 
+                                        loadedImages[selectedLocation.id][visit.id] && 
+                                        loadedImages[selectedLocation.id][visit.id][imgIndex] ? 1 : 0 
+                              }}
+                              onLoad={() => {
+                                // Mark this image as loaded when it finishes loading
+                                const newLoadedImages = { ...loadedImages };
+                                if (!newLoadedImages[selectedLocation.id]) {
+                                  newLoadedImages[selectedLocation.id] = {};
+                                }
+                                if (!newLoadedImages[selectedLocation.id][visit.id]) {
+                                  newLoadedImages[selectedLocation.id][visit.id] = {};
+                                }
+                                newLoadedImages[selectedLocation.id][visit.id][imgIndex] = true;
+                                setLoadedImages(newLoadedImages);
+                              }}
+                              onClick={() => createFullscreenViewer(visit, imgIndex)}
+                            />
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -400,13 +515,32 @@ export default function TravelMapReact({ travelData: initialData }) {
       
       <MapContainer 
         center={center} 
-        zoom={2} 
-        style={{ height: '500px', width: '100%' }}
+        zoom={1} 
+        style={{ height: '350px', width: '100%' }}
         ref={mapRef}
         className="z-0"
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
         worldCopyJump={false}
+        whenCreated={(map) => {
+          // Add a debounce to zoom events to reduce unnecessary re-renders
+          let zoomDebounce;
+          map.on('zoom', () => {
+            clearTimeout(zoomDebounce);
+            zoomDebounce = setTimeout(() => {
+              // This is intentionally empty to just debounce the zoom event
+            }, 300);
+          });
+          
+          // Also debounce pan events
+          let panDebounce;
+          map.on('move', () => {
+            clearTimeout(panDebounce);
+            panDebounce = setTimeout(() => {
+              // This is intentionally empty to just debounce the pan event
+            }, 300);
+          });
+        }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

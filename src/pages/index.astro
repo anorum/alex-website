@@ -70,22 +70,22 @@ const principles = [
 <Layout title="Alex Norum - Software Engineer" description="Personal website of Alex Norum, Software Engineer and Technology Enthusiast">
     <!-- Hero Section -->
     <section class="hero">
-      <h1>I'm Alex.</h1>
-      <p>Data Platform Engineer & Technology Enthusiast</p>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl">I'm Alex.</h1>
+      <p class="text-lg sm:text-xl md:text-2xl">Data Platform Engineer & Technology Enthusiast</p>
       <div class="profile animate-fade-in">
         <Image 
           src={meImage} 
           alt="Alex Norum" 
           width={300}
           height={300}
-          class="profile-image"
+          class="profile-image w-[200px] h-[200px] md:w-[300px] md:h-[300px]"
         />
         <div class="profile-content">
-          <h2>I'm a Data Platform Engineer working remotely from Portland, Oregon.</h2>
-          <p>
+          <h2 class="text-xl sm:text-2xl md:text-3xl">I'm a Data Platform Engineer working remotely from Portland, Oregon.</h2>
+          <p class="text-sm sm:text-base md:text-lg">
             Over the past decade, I've worked in various areas of data engineering, including ETL pipelines, data modeling, and platform architecture. I currently lead the Data Platform Engineering team at LegalZoom, where I focus on enabling teams through clean tooling, governance, and cost-efficient architecture.
           </p>
-          <p>
+          <p class="text-sm sm:text-base md:text-lg">
             I'm passionate about creating scalable, efficient data solutions that help businesses make better decisions. My approach combines technical expertise with a focus on collaboration and accessibility.
           </p>
         </div>
@@ -117,18 +117,18 @@ const principles = [
               <div class="relative pl-8 border-l-2 border-secondary-color ml-6 mt-6">
                 <div class="experience-timeline-item mb-8">
                   <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex justify-between items-center mb-2">
-                    <h4 class="text-xl">Group Manager, Data Platform Engineering</h4>
-                    <span class="experience-date">23-Present</span>
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                    <h4 class="text-lg sm:text-xl">Group Manager, Data Platform Engineering</h4>
+                    <span class="experience-date text-sm sm:text-base">23-Present</span>
                   </div>
                   <p class="text-sm opacity-80 leading-relaxed">Leading the Data Platform team, focused on Snowflake administration, orchestration (Airflow), infrastructure-as-code (Terraform), and data governance enablement.</p>
                 </div>
                 
                 <div class="experience-timeline-item">
                   <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex justify-between items-center mb-2">
-                    <h4 class="text-xl">Principal Data Engineer</h4>
-                    <span class="experience-date">21-23</span>
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                    <h4 class="text-lg sm:text-xl">Principal Data Engineer</h4>
+                    <span class="experience-date text-sm sm:text-base">21-23</span>
                   </div>
                   <p class="text-sm opacity-80 leading-relaxed">Modernized the data platform by introducing Airflow on Kubernetes, revamping Snowflake architecture with Terraform, and enabling cost governance practices.</p>
                 </div>
@@ -155,9 +155,9 @@ const principles = [
               <div class="relative pl-8 border-l-2 border-secondary-color ml-6 mt-6">
                 <div class="experience-timeline-item">
                   <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex justify-between items-center mb-2">
-                    <h4 class="text-xl">Senior Data Engineer</h4>
-                    <span class="experience-date">19-21</span>
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                    <h4 class="text-lg sm:text-xl">Senior Data Engineer</h4>
+                    <span class="experience-date text-sm sm:text-base">19-21</span>
                   </div>
                   <p class="text-sm opacity-80 leading-relaxed">Worked across analytics and data platform teams to scale ETL pipelines, manage dbt models, and integrate cross-functional product analytics workflows.</p>
                 </div>
@@ -184,18 +184,18 @@ const principles = [
               <div class="relative pl-8 border-l-2 border-secondary-color ml-6 mt-6">
                 <div class="experience-timeline-item mb-8">
                   <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex justify-between items-center mb-2">
-                    <h4 class="text-xl">Senior Data Engineer</h4>
-                    <span class="experience-date">17-19</span>
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                    <h4 class="text-lg sm:text-xl">Senior Data Engineer</h4>
+                    <span class="experience-date text-sm sm:text-base">17-19</span>
                   </div>
                   <p class="text-sm opacity-80 leading-relaxed">Led development of enterprise data pipelines and analytics solutions for Oracle's cloud services.</p>
                 </div>
                 
                 <div class="experience-timeline-item">
                   <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex justify-between items-center mb-2">
-                    <h4 class="text-xl">Data Engineer</h4>
-                    <span class="experience-date">13-17</span>
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                    <h4 class="text-lg sm:text-xl">Data Engineer</h4>
+                    <span class="experience-date text-sm sm:text-base">13-17</span>
                   </div>
                   <p class="text-sm opacity-80 leading-relaxed">Built and maintained data pipelines and analytics solutions for enterprise database systems.</p>
                 </div>

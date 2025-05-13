@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 export default function RecentTrips({ recentVisits: initialVisits = [] }) {
   const [recentVisits, setRecentVisits] = useState(initialVisits);
+  const [isMobile, setIsMobile] = useState(false);
   
-  // Listen for data updates
+  // Listen for data updates and check window size
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Check if mobile on initial load
+      setIsMobile(window.innerWidth < 640);
+      
+      // Listen for data updates
       const handleDataReady = (event) => {
         if (event.detail?.recentVisits) {
           console.log("RecentTrips received data:", event.detail.recentVisits);
@@ -13,8 +18,18 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
         }
       };
       
+      // Listen for window resize
+      const handleResize = () => {
+        setIsMobile(window.innerWidth < 640);
+      };
+      
       document.addEventListener('travel-data-ready', handleDataReady);
-      return () => document.removeEventListener('travel-data-ready', handleDataReady);
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        document.removeEventListener('travel-data-ready', handleDataReady);
+        window.removeEventListener('resize', handleResize);
+      };
     }
   }, []);
   if (!recentVisits || recentVisits.length === 0) {
@@ -36,7 +51,8 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
     <div className="bg-white/10 dark:bg-white/5 rounded-lg p-4 shadow-md backdrop-blur-md">
       <h3 className="text-xl font-semibold mb-4">Recent Trips</h3>
       
-      <div className="overflow-x-auto">
+      {/* Desktop view - table */}
+      <div className="hidden sm:block">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-white/10">
@@ -53,13 +69,10 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                 key={visit.visit_id} 
                 className="border-b border-white/10 hover:bg-white/5 transition-colors cursor-pointer"
                 onClick={() => {
-                  // Find the location on the map
                   const event = new CustomEvent('view-location-on-map', {
                     detail: { locationId: visit.location_id }
                   });
                   document.dispatchEvent(event);
-                  
-                  // Scroll to the map
                   document.getElementById('travel-map-container')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -108,8 +121,65 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
         </table>
       </div>
       
+      {/* Mobile view - cards */}
+      <div className="sm:hidden space-y-4">
+        {recentVisits.map((visit) => (
+          <div 
+            key={visit.visit_id}
+            className="bg-white/5 rounded-lg p-3 cursor-pointer hover:bg-white/10 transition-colors"
+            onClick={() => {
+              const event = new CustomEvent('view-location-on-map', {
+                detail: { locationId: visit.location_id }
+              });
+              document.dispatchEvent(event);
+              document.getElementById('travel-map-container')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <span className="text-2xl mr-2">{visit.flag}</span>
+                <div>
+                  <h4 className="font-medium">{visit.city}</h4>
+                  <p className="text-sm text-white/70">{visit.country}</p>
+                </div>
+              </div>
+              <div className="text-sm text-white/70">
+                {formatDate(visit.date)}
+              </div>
+            </div>
+            
+            {visit.imageUrls && visit.imageUrls.length > 0 && (
+              <div className="flex -space-x-2 mb-2">
+                {visit.imageUrls.slice(0, 3).map((url, index) => (
+                  <div 
+                    key={index} 
+                    className="w-8 h-8 rounded-full overflow-hidden border border-white/20 shadow-sm"
+                    style={{ zIndex: 3 - index }}
+                  >
+                    <img 
+                      src={url.startsWith('/api/v1') ? `/api/alexapi${url}` : url} 
+                      alt={`${visit.city} photo ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+                {visit.imageUrls.length > 3 && (
+                  <div className="w-8 h-8 rounded-full bg-[#77647b] flex items-center justify-center text-xs text-white border border-white/20 shadow-sm" style={{ zIndex: 0 }}>
+                    +{visit.imageUrls.length - 3}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {visit.notes && (
+              <p className="text-sm text-white/80 line-clamp-2">{visit.notes}</p>
+            )}
+          </div>
+        ))}
+      </div>
+      
       <div className="mt-4 text-sm text-white/60 italic">
-        Click on any row to view that location on the map
+        Click on any {isMobile ? 'card' : 'row'} to view that location on the map
       </div>
     </div>
   );
