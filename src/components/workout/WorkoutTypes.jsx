@@ -62,7 +62,7 @@ export default function WorkoutTypes({ activityTypes = [] }) {
           <ChartBarIcon className="h-5 w-5 mr-2 text-orange-600 dark:text-orange-400" />
           Activity Types
         </h3>
-        <p className="text-center text-gray-500 dark:text-gray-400 py-4">No activity type data available</p>
+        <p className="text-center py-4">No activity type data available</p>
       </div>
     );
   }

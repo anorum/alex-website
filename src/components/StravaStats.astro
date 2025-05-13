@@ -2,10 +2,9 @@
 import { FireIcon } from '@heroicons/react/24/outline';
 import WorkoutSummary from './workout/WorkoutSummary.jsx';
 import RecentWorkouts from './workout/RecentWorkouts.jsx';
-import WorkoutTypes from './workout/WorkoutTypes.jsx';
 import YearlyWorkouts from './workout/YearlyWorkouts.jsx';
-import YearlyWorkoutsCharts from './workout/YearlyWorkoutsCharts.jsx';
 import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
+import ColumnChartCard from './workout/example'
 ---
 
 <div class="stats-card p-0.5 sm:p-2 md:p-4">
@@ -16,7 +15,7 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
       </div>
       <div>
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workout Stats</h2>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Track your fitness journey</p>
+        <p class="text-sm">Track your fitness journey</p>
       </div>
     </div>
   </div>
@@ -25,7 +24,7 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
     <!-- Initial loading state - this will be shown immediately -->
     <div id="workout-loading-indicator" class="flex flex-col items-center justify-center p-8">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
-      <p class="text-gray-500 dark:text-gray-400">Loading workout data...</p>
+      <p>Loading workout data...</p>
     </div>
     
     <!-- Error message container - initially hidden -->
@@ -42,19 +41,12 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
     <div id="workout-stats-container" class="hidden">
       <!-- Workout Summary -->
       <div class="mb-8" id="workout-summary">
-          <WorkoutSummary client:only="react" summary={{}} />
+          <WorkoutSummary client:only="react" summary={{}} yearlyStats={[]} />
       </div>
 
-            <!-- Stats Grid -->
-      <div class="grid grid-cols-1 gap-6 mb-8">
-        <div id="workout-types">
-          <WorkoutTypes client:load activityTypes={[]} />
-        </div>
-      </div>
-      
       <!-- Workout Types Chart -->
       <div class="mb-8" id="workout-types-chart">
-          <WorkoutTypesChart client:load activityTypes={[]} />
+          <WorkoutTypesChart client:only="react" activityTypes={[]} />
       </div>
       
       <!-- Recent Workouts -->
@@ -62,10 +54,6 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
           <RecentWorkouts client:only="react" recentActivities={[]} />
       </div>
 
-      <!-- Yearly Stats Charts -->
-      <div class="mb-8" id="yearly-workouts-charts">
-          <YearlyWorkoutsCharts client:load yearlyStats={[]} />
-      </div>
     </div>
   </div>
 </div>
@@ -83,15 +71,6 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
   
   .workout-card:hover {
     transform: translateY(-5px);
-  }
-  
-  /* Override Tremor styles to match website theme */
-  :root {
-    --tremor-background: var(--bubble-bg) !important;
-    --tremor-border: rgba(255, 255, 255, 0.1) !important;
-    --tremor-ring: var(--accent-color) !important;
-    --tremor-primary: var(--accent-color) !important;
-    --tremor-brand: var(--secondary-color) !important;
   }
   
   /* Mobile-friendly adjustments */
