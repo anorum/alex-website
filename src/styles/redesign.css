@@ -3,6 +3,10 @@
 @plugin '@tailwindcss/typography';
 @plugin "flowbite/plugin";
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @source "../../node_modules/flowbite";
 
 @custom-variant dark (&:where(.dark, .dark *));

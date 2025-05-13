@@ -1,0 +1,475 @@
+{
+  "top_artists": [
+    {
+      "name": "Sabrina Carpenter",
+      "genres": [],
+      "popularity": 91,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5ebe053b8338322b9c8609ee7ae"
+    },
+    {
+      "name": "Fujii Kaze",
+      "genres": [
+        "j-pop"
+      ],
+      "popularity": 75,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5ebd3828da41bb2b2a02886b16f"
+    },
+    {
+      "name": "Lewis Capaldi",
+      "genres": [
+        "soft pop"
+      ],
+      "popularity": 80,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5ebea7538654040e553a7b0fc28"
+    },
+    {
+      "name": "Bo Burnham",
+      "genres": [
+        "comedy"
+      ],
+      "popularity": 67,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5eb30d9a4acdf8cd3e8c0ad39ab"
+    },
+    {
+      "name": "Joyce Manor",
+      "genres": [
+        "midwest emo",
+        "pop punk",
+        "indie punk",
+        "emo",
+        "emo pop",
+        "math rock"
+      ],
+      "popularity": 54,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5ebb3f2a370b7c0ab22e199217c"
+    },
+    {
+      "name": "milet",
+      "genres": [
+        "j-pop",
+        "anime",
+        "j-rock"
+      ],
+      "popularity": 64,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5ebe56b3666e69e28713253ed83"
+    },
+    {
+      "name": "My Chemical Romance",
+      "genres": [
+        "emo",
+        "pop punk",
+        "emo pop"
+      ],
+      "popularity": 80,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5eb9c00ad0308287b38b8fdabc2"
+    },
+    {
+      "name": "Joe Hisaishi",
+      "genres": [
+        "japanese classical",
+        "anime"
+      ],
+      "popularity": 71,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5eb255e3fb8af57399bc9975c61"
+    },
+    {
+      "name": "She Her Her Hers",
+      "genres": [
+        "japanese indie",
+        "shoegaze",
+        "chinese indie"
+      ],
+      "popularity": 42,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5ebea1db40e2e0a8af18d1dfc76"
+    },
+    {
+      "name": "Green Day",
+      "genres": [
+        "punk",
+        "pop punk"
+      ],
+      "popularity": 83,
+      "image_url": "https://i.scdn.co/image/ab6761610000e5eb6ff0cd5ef2ecf733804984bb"
+    }
+  ],
+  "top_tracks": [
+    {
+      "name": "Juno",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Short n' Sweet",
+      "popularity": 88,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273fd8d7a8d96871e791cb1f626"
+    },
+    {
+      "name": "Please Please Please",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Short n' Sweet",
+      "popularity": 88,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273fd8d7a8d96871e791cb1f626"
+    },
+    {
+      "name": "15 Minutes",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Short n' Sweet (Deluxe)",
+      "popularity": 85,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273047d6b756e8f5e3f8b50f025"
+    },
+    {
+      "name": "number one girl",
+      "artists": [
+        "ROSÉ"
+      ],
+      "album": "rosie",
+      "popularity": 81,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b2735074bd0894cb1340b8d8a678"
+    },
+    {
+      "name": "Cosmic",
+      "artists": [
+        "Red Velvet"
+      ],
+      "album": "Cosmic",
+      "popularity": 69,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b27333f4f800b259791768d04f40"
+    },
+    {
+      "name": "こころをこめて",
+      "artists": [
+        "Aoi Teshima"
+      ],
+      "album": "Highlights from Aoi Works II",
+      "popularity": 46,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273259e5626e39550538782b674"
+    },
+    {
+      "name": "Busy Woman",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Short n' Sweet (Deluxe)",
+      "popularity": 92,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273047d6b756e8f5e3f8b50f025"
+    },
+    {
+      "name": "Bed Chem",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Short n' Sweet",
+      "popularity": 89,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273fd8d7a8d96871e791cb1f626"
+    },
+    {
+      "name": "emails i can’t send",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "emails i can't send",
+      "popularity": 72,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273700f7bf79c9f063ad0362bdf"
+    },
+    {
+      "name": "Shinunoga E-Wa",
+      "artists": [
+        "Fujii Kaze"
+      ],
+      "album": "HELP EVER HURT NEVER",
+      "popularity": 79,
+      "played_at": null,
+      "image_url": "https://i.scdn.co/image/ab67616d0000b27322805a1b17e41ae357bd98bc"
+    }
+  ],
+  "recently_played": [
+    {
+      "name": "Dogs Eating Dogs",
+      "artists": [
+        "blink-182"
+      ],
+      "album": "Dogs Eating Dogs",
+      "popularity": null,
+      "played_at": "2025-05-13T01:39:59.669Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b27313ce5fdfcbe002c5e0d8d65b"
+    },
+    {
+      "name": "Flare",
+      "artists": [
+        "milet"
+      ],
+      "album": "5am",
+      "popularity": null,
+      "played_at": "2025-05-13T01:36:28.648Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273505e9a0505f7fc56861909b6"
+    },
+    {
+      "name": "emails i can’t send",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "emails i can't send",
+      "popularity": null,
+      "played_at": "2025-05-13T01:32:34.060Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273700f7bf79c9f063ad0362bdf"
+    },
+    {
+      "name": "Born Again (feat. Doja Cat & RAYE)",
+      "artists": [
+        "LISA",
+        "Doja Cat",
+        "RAYE"
+      ],
+      "album": "Alter Ego",
+      "popularity": null,
+      "played_at": "2025-05-13T01:30:49.253Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b2738034090e4afb5b053cd3e067"
+    },
+    {
+      "name": "Tornado Warnings",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "emails i can't send",
+      "popularity": null,
+      "played_at": "2025-05-13T01:25:08.879Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273700f7bf79c9f063ad0362bdf"
+    },
+    {
+      "name": "Skin",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Skin",
+      "popularity": null,
+      "played_at": "2025-05-13T01:21:44.189Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b2732b2473f0d8c4ea75d62fba09"
+    },
+    {
+      "name": "That’s Not How This Works (feat. Dan + Shay & Sabrina Carpenter) - Sabrina’s Version",
+      "artists": [
+        "Charlie Puth",
+        "Dan + Shay",
+        "Sabrina Carpenter"
+      ],
+      "album": "That’s Not How This Works (feat. Dan + Shay & Sabrina Carpenter) [Sabrina’s Version]",
+      "popularity": null,
+      "played_at": "2025-05-13T01:18:46.192Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b27328d0067b8d01b6192c88b77d"
+    },
+    {
+      "name": "things i wish you said",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "emails i can’t send fwd:",
+      "popularity": null,
+      "played_at": "2025-05-13T01:15:43.588Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b2730f45623be014a592a5815827"
+    },
+    {
+      "name": "Sue Me",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "Singular Act I",
+      "popularity": null,
+      "played_at": "2025-05-13T01:13:00.321Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b27338b27a27cea311f34bb68eff"
+    },
+    {
+      "name": "emails i can’t send",
+      "artists": [
+        "Sabrina Carpenter"
+      ],
+      "album": "emails i can't send",
+      "popularity": null,
+      "played_at": "2025-05-13T01:10:00.600Z",
+      "image_url": "https://i.scdn.co/image/ab67616d0000b273700f7bf79c9f063ad0362bdf"
+    }
+  ],
+  "playlists": [
+    {
+      "name": "GetReadyWithAlex 09.26.22",
+      "tracks": 30,
+      "public": true,
+      "description": "A playlist based on your style. You’re Getting Stuff Done. You’re wearing Green, White, and Red. Your vibe is Fuzzy.",
+      "image_url": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84ba30e70cbac05f6a8532244c"
+    },
+    {
+      "name": "My Peloton Music by anorum",
+      "tracks": 2,
+      "public": true,
+      "description": "",
+      "image_url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da841a5d990013d9070e7b173cc5"
+    },
+    {
+      "name": "WELCOME TO THE MOOD PLAYLIST by LEISURE",
+      "tracks": 54,
+      "public": true,
+      "description": "Familiar favourites to set the vibe.",
+      "image_url": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84dea379e229504d3e0edfe8d2"
+    },
+    {
+      "name": "snowboard",
+      "tracks": 35,
+      "public": true,
+      "description": "",
+      "image_url": "https://mosaic.scdn.co/640/ab67616d00001e02a146679a9c1d0d7cb4f5c5a0ab67616d00001e02b4a46eb876c912c751be1923ab67616d00001e02cbf69d057ddce6176920eecfab67616d00001e02ee3d8573b47a75a0d8233b39"
+    },
+    {
+      "name": "shamrock run",
+      "tracks": 65,
+      "public": true,
+      "description": "",
+      "image_url": "https://mosaic.scdn.co/640/ab67616d00001e028ca7d89456553e4bbbf3c981ab67616d00001e029e1cfc756886ac782e363d79ab67616d00001e02b11bdc91cb9ac6b14f5c1daeab67616d00001e02cc2cf912462d8ae4ef856434"
+    },
+    {
+      "name": "Running Mix (Marathon Training Mix) => Follow my new Running Mix 2",
+      "tracks": 147,
+      "public": true,
+      "description": "",
+      "image_url": "https://mosaic.scdn.co/640/ab67616d00001e0228933b808bfb4cbbd0385400ab67616d00001e025e06f2d278a4e0eeb4890020ab67616d00001e02a9be6a9b8b5831a4c431ab9fab67616d00001e02d629ba472bce9c426eb1fdc4"
+    },
+    {
+      "name": "oldies",
+      "tracks": 176,
+      "public": true,
+      "description": "",
+      "image_url": "https://mosaic.scdn.co/640/ab67616d00001e029173e50e99bdea2400222f02ab67616d00001e02a4a3752f48cf0bb54e1dffc1ab67616d00001e02f7e925f926d490a170475a4eab67616d00001e02f8f0a26e4100c490bc384003"
+    },
+    {
+      "name": "Modern Vampires",
+      "tracks": 12,
+      "public": true,
+      "description": "",
+      "image_url": "https://i.scdn.co/image/ab67616d00001e02654afcab578b93f29ca55a29"
+    },
+    {
+      "name": "Nocturne - Wild Nothing",
+      "tracks": 11,
+      "public": true,
+      "description": "",
+      "image_url": "https://i.scdn.co/image/ab67616d00001e02e5d50b202ff6719448eb9007"
+    },
+    {
+      "name": "Kill For Love - The Chromatics",
+      "tracks": 17,
+      "public": true,
+      "description": "",
+      "image_url": null
+    }
+  ],
+  "stats": {
+    "top_genres": [
+      {
+        "genre": "pop punk",
+        "count": 4
+      },
+      {
+        "genre": "emo pop",
+        "count": 3
+      },
+      {
+        "genre": "emo",
+        "count": 3
+      },
+      {
+        "genre": "j-pop",
+        "count": 2
+      },
+      {
+        "genre": "anime",
+        "count": 2
+      }
+    ],
+    "average_artist_popularity": 70,
+    "average_track_popularity": 60.3,
+    "mainstream_factor": 65.15,
+    "top_artists": [
+      "Sabrina Carpenter",
+      "milet",
+      "Ghibli Melodies",
+      "blink-182",
+      "Fujii Kaze"
+    ],
+    "top_tracks": [
+      "A Place to Call Home - Melodies of Life (Final Fantasy IX) by Nobuo Uematsu",
+      "Juno by Sabrina Carpenter",
+      "Please Please Please by Sabrina Carpenter",
+      "Anytime Anywhere by milet",
+      "Shinunoga E-Wa by Fujii Kaze"
+    ],
+    "top_artists_with_images": [
+      {
+        "name": "Sabrina Carpenter",
+        "image_url": "https://i.scdn.co/image/ab6761610000e5ebe053b8338322b9c8609ee7ae"
+      },
+      {
+        "name": "milet",
+        "image_url": "https://i.scdn.co/image/ab6761610000e5ebe56b3666e69e28713253ed83"
+      },
+      {
+        "name": "Ghibli Melodies",
+        "image_url": "https://i.scdn.co/image/ab6761610000e5ebe7d744b382adea0c5221fefd"
+      },
+      {
+        "name": "blink-182",
+        "image_url": "https://i.scdn.co/image/ab6761610000e5eb5da36f8b98dd965336a1507a"
+      },
+      {
+        "name": "Fujii Kaze",
+        "image_url": "https://i.scdn.co/image/ab6761610000e5ebd3828da41bb2b2a02886b16f"
+      }
+    ],
+    "top_tracks_with_images": [
+      {
+        "name": "A Place to Call Home - Melodies of Life (Final Fantasy IX)",
+        "artists": [
+          "Nobuo Uematsu"
+        ],
+        "image_url": "https://i.scdn.co/image/ab67616d0000b2733479a61eaae6d85a0308fe1a"
+      },
+      {
+        "name": "Juno",
+        "artists": [
+          "Sabrina Carpenter"
+        ],
+        "image_url": "https://i.scdn.co/image/ab67616d0000b273fd8d7a8d96871e791cb1f626"
+      },
+      {
+        "name": "Please Please Please",
+        "artists": [
+          "Sabrina Carpenter"
+        ],
+        "image_url": "https://i.scdn.co/image/ab67616d0000b273fd8d7a8d96871e791cb1f626"
+      },
+      {
+        "name": "Anytime Anywhere",
+        "artists": [
+          "milet"
+        ],
+        "image_url": "https://i.scdn.co/image/ab67616d0000b273b2f3bd7c5cdf59dc0c3109ff"
+      },
+      {
+        "name": "Shinunoga E-Wa",
+        "artists": [
+          "Fujii Kaze"
+        ],
+        "image_url": "https://i.scdn.co/image/ab67616d0000b27322805a1b17e41ae357bd98bc"
+      }
+    ]
+  }
+}

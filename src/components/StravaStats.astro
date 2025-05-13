@@ -1,374 +1,188 @@
 ---
-// Define interfaces for our data
-interface ActivitySummary {
-  name: string;
-  type: string;
-  distance: number; // in kilometers
-  duration?: number; // in minutes
-  date: string;
-}
-
-interface ActivityType {
-  name: string;
-  count: number;
-  totalDistance?: number;
-}
-
-interface Summary {
-  total_distance: number;
-  total_elevation_gain: number;
-  total_duration: number;
-  activity_count: number;
-}
-
-interface YearlyStat {
-  year: number;
-  visits_count: number;
-  countries_count: number;
-  cities_count: number;
-}
-
-// Define the API URL
-const apiUrl = 'http://api.homelab/api/v1/strava/data';
-
-// Initialize variables with default values
-let recentActivities: ActivitySummary[] = [];
-let topActivityTypes: ActivityType[] = [];
-let yearlyStats: YearlyStat[] = [];
-let summary: Summary = {
-  total_distance: 0,
-  total_elevation_gain: 0,
-  total_duration: 0,
-  activity_count: 0
-};
-let athleteName = '';
-let athleteLocation = '';
-let hasError = false;
-let errorMessage = '';
-let isLoading = true;
-
-// Check if we have cached data in sessionStorage
-let cachedData = null;
-if (typeof window !== 'undefined' && window.sessionStorage) {
-  const cached = sessionStorage.getItem('stravaStatsCache');
-  if (cached) {
-    try {
-      const { data, timestamp } = JSON.parse(cached);
-      // Use cache if it's less than 15 minutes old
-      if (Date.now() - timestamp < 15 * 60 * 1000) {
-        cachedData = data;
-        console.log('Using cached Strava data');
-      }
-    } catch (e) {
-      console.error('Error parsing cached Strava data:', e);
-    }
-  }
-}
-
-try {
-  if (cachedData) {
-    // Use cached data
-    const data = cachedData;
-    
-    // Process the data
-    if (data.athlete) {
-      athleteName = data.athlete.name || 'Unknown Athlete';
-      athleteLocation = data.athlete.location || 'Unknown Location';
-    }
-    
-    recentActivities = data.recent_activities || [];
-    topActivityTypes = data.top_activity_types || [];
-    summary = data.summary || {
-      total_distance: 0,
-      total_elevation_gain: 0,
-      total_duration: 0,
-      activity_count: 0
-    };
-    
-    isLoading = false;
-  } else {
-    // Fetch data from the API
-    const response = await fetch(apiUrl);
-    
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Cache the data in sessionStorage
-    if (typeof window !== 'undefined' && window.sessionStorage) {
-      sessionStorage.setItem('stravaStatsCache', JSON.stringify({
-        data,
-        timestamp: Date.now()
-      }));
-    }
-    
-    // Process the data
-    if (data.athleteProfile) {
-      athleteName = `${data.athleteProfile.firstname} ${data.athleteProfile.lastname}` || 'Unknown Athlete';
-      athleteLocation = data.athleteProfile.city ? 
-        `${data.athleteProfile.city}, ${data.athleteProfile.country}` : 
-        'Unknown Location';
-    }
-    
-    recentActivities = data.recentActivities || [];
-    topActivityTypes = data.topActivityTypes || [];
-    summary = data.summary || {
-      total_distance: 0,
-      total_elevation_gain: 0,
-      total_duration: 0,
-      activity_count: 0
-    };
-    
-    isLoading = false;
-  }
-  
-  // Convert distance from meters to miles if needed
-  if (summary.total_distance > 1000) { // Assuming it's in meters if > 1000
-    summary.total_distance = summary.total_distance / 1609.34; // Convert meters to miles
-  }
-  
-  // Convert activity distances from meters to miles if needed
-  recentActivities = recentActivities.map(activity => ({
-    ...activity,
-    distance: activity.distance > 100 ? activity.distance / 1609.34 : activity.distance // Convert meters to miles if needed
-  }));
-  
-  // Format activity types for UI
-  topActivityTypes = topActivityTypes.map(type => ({
-    name: type.name,
-    count: type.count,
-    totalDistance: type.totalDistance || 0
-  }));
-  
-} catch (error) {
-  console.error('Error fetching Strava data:', error);
-  hasError = true;
-  errorMessage = error instanceof Error ? error.message : 'Unknown error';
-  isLoading = false;
-}
-
-// Determine if we have data to display
-const hasData = recentActivities.length > 0;
-
-// Helper function to format duration
-function formatDuration(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-}
-
-// Helper function to get activity icon
-function getActivityIcon(type: string): string {
-  switch (type.toLowerCase()) {
-    case 'run':
-    case 'running':
-      return `<i class="fas fa-running"></i>`;
-    case 'ride':
-    case 'cycling':
-    case 'bikeride':
-    case 'virtualride':
-      return `<i class="fas fa-bicycle"></i>`;
-    case 'swim':
-    case 'swimming':
-      return `<i class="fas fa-swimmer"></i>`;
-    case 'hike':
-    case 'hiking':
-    case 'walk':
-    case 'walking':
-      return `<i class="fas fa-hiking"></i>`;
-    case 'workout':
-    case 'weighttraining':
-    case 'weight_training':
-    case 'weights':
-      return `<i class="fas fa-dumbbell"></i>`;
-    case 'yoga':
-      return `<i class="fas fa-om"></i>`;
-    case 'crossfit':
-    case 'workout':
-    case 'training':
-      return `<i class="fas fa-heartbeat"></i>`;
-    default:
-      return `<i class="fas fa-plus"></i>`;
-  }
-}
-
-// Format date for display
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
-  });
-}
+import { FireIcon } from '@heroicons/react/24/outline';
+import WorkoutSummary from './workout/WorkoutSummary.jsx';
+import RecentWorkouts from './workout/RecentWorkouts.jsx';
+import WorkoutTypes from './workout/WorkoutTypes.jsx';
+import YearlyWorkouts from './workout/YearlyWorkouts.jsx';
+import YearlyWorkoutsCharts from './workout/YearlyWorkoutsCharts.jsx';
+import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
 ---
 
-<div class="strava-stats-component p-6 bg-white rounded-lg border-l-4 border-orange-600 shadow-md dark:bg-gray-800 dark:border-orange-500">
-  <!-- Simple Error Banner -->
-  {errorMessage && (
-    <div class="p-4 mb-6 text-sm text-orange-800 rounded-lg bg-orange-50 dark:bg-gray-800 dark:text-orange-400 border border-orange-300 dark:border-orange-800">
+<div class="stats-card p-0.5 sm:p-2 md:p-4">
+  <div class="mb-6">
+    <div class="flex items-center mb-4">
+      <div class="w-10 h-10 flex items-center justify-center bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400 me-4">
+        <FireIcon className="h-6 w-6" />
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workout Stats</h2>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Track your fitness journey</p>
+      </div>
+    </div>
+  </div>
+  
+  <div id="workout-stats-content">
+    <!-- Initial loading state - this will be shown immediately -->
+    <div id="workout-loading-indicator" class="flex flex-col items-center justify-center p-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mb-4"></div>
+      <p class="text-gray-500 dark:text-gray-400">Loading workout data...</p>
+    </div>
+    
+    <!-- Error message container - initially hidden -->
+    <div id="workout-error-message" class="hidden p-4 mb-6 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-300 dark:border-red-800">
       <div class="flex items-center">
         <svg class="flex-shrink-0 inline w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
         </svg>
-        <span class="font-medium">
-          Some stats may not be available due to: {errorMessage}
-        </span>
-      </div>
-    </div>
-  )}
-
-  <div class="flex items-center mb-6">
-    <div class="w-10 h-10 flex items-center justify-center text-orange-600 dark:text-orange-400 me-4">
-      <i class="fab fa-strava text-3xl"></i>
-    </div>
-    <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Strava Stats</h2>
-  </div>
-  
-  
-  <!-- Summary Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-    {isLoading ? (
-      // Skeleton loaders for summary stats
-      Array(4).fill(0).map(() => (
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-          <div class="w-24 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-          <div class="w-16 h-8 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-        </div>
-      ))
-    ) : (
-      <>
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-          <span class="text-sm text-gray-500 dark:text-gray-400">Activities</span>
-          <span class="text-2xl font-bold text-gray-900 dark:text-white" id="activity-count">{summary.activity_count}</span>
-        </div>
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-          <span class="text-sm text-gray-500 dark:text-gray-400">Distance</span>
-          <span class="text-2xl font-bold text-gray-900 dark:text-white" id="total-distance">{Math.round((summary.total_distance || 0) * 10) / 10} mi</span>
-        </div>
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-          <span class="text-sm text-gray-500 dark:text-gray-400">Elevation</span>
-          <span class="text-2xl font-bold text-gray-900 dark:text-white" id="total-elevation">{Math.round(summary.total_elevation_gain)} m</span>
-        </div>
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700 flex flex-col items-center justify-center">
-          <span class="text-sm text-gray-500 dark:text-gray-400">Duration</span>
-          <span class="text-2xl font-bold text-gray-900 dark:text-white" id="total-duration">{formatDuration(summary.total_duration)}</span>
-        </div>
-      </>
-    )}
-  </div>
-  
-  <!-- Stats Grid -->
-  <div id="stats-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Recent Activities -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Activities</h3>
-      <div id="recent-activities-container" class="space-y-3">
-        {isLoading ? (
-          // Skeleton loaders for activities
-          Array(5).fill(0).map(() => (
-            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
-              <div class="flex items-center">
-                <div class="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-                <div class="w-10 h-10 rounded-full mx-3 bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
-                <div>
-                  <div class="w-32 h-5 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-                  <div class="w-24 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="w-16 h-5 bg-gray-200 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-                <div class="w-12 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-              </div>
-            </div>
-          ))
-        ) : recentActivities && recentActivities.length > 0 ? (
-          recentActivities.map((activity: ActivitySummary, index: number) => (
-            <div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-600 last:border-0">
-              <div class="flex items-center">
-                <span class="text-lg font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-                <div class="w-10 h-10 rounded-full mx-3 bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-600 dark:text-orange-300">
-                  <Fragment set:html={getActivityIcon(activity.type)} />
-                </div>
-                <div>
-                  <p class="font-medium text-gray-900 dark:text-white">{activity.name}</p>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{activity.type} • {formatDate(activity.date)}</p>
-                </div>
-              </div>
-              <div class="text-right">
-                <p class="font-medium text-gray-900 dark:text-white">{(activity.distance || 0).toFixed(1)} mi</p>
-                {activity.duration && (
-                  <p class="text-sm text-gray-500 dark:text-gray-400">{formatDuration(activity.duration)}</p>
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">No recent activity data available</p>
-          </div>
-        )}
+        <span id="workout-error-text" class="font-medium">Error loading workout stats</span>
       </div>
     </div>
     
-    <!-- Activity Types -->
-    <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Types</h3>
-      <div id="activity-types-container" class="space-y-3">
-        {isLoading ? (
-          // Skeleton loaders for activity types
-          Array(5).fill(0).map(() => (
-            <div class="mb-3 last:mb-0">
-              <div class="flex justify-between mb-1">
-                <div class="w-32 h-5 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-                <div class="w-24 h-5 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div class="bg-gray-300 dark:bg-gray-600 h-2.5 rounded-full animate-pulse" style={`width: ${Math.random() * 100}%`}></div>
-              </div>
-            </div>
-          ))
-        ) : topActivityTypes && topActivityTypes.length > 0 ? (
-          topActivityTypes.map((activityType: ActivityType) => (
-            <div class="mb-3 last:mb-0">
-              <div class="flex justify-between mb-1">
-                <span class="text-base font-medium text-gray-900 dark:text-white">{activityType.name}</span>
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{activityType.count} activities</span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div class="bg-orange-600 h-2.5 rounded-full" style={`width: ${topActivityTypes.length > 0 ? (activityType.count / topActivityTypes[0].count) * 100 : 0}%`}></div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div>
-            <p class="text-gray-500 dark:text-gray-400">No activity type data available</p>
-          </div>
-        )}
+    <!-- Content container - initially hidden -->
+    <div id="workout-stats-container" class="hidden">
+      <!-- Workout Summary -->
+      <div class="mb-8" id="workout-summary">
+          <WorkoutSummary client:only="react" summary={{}} />
+      </div>
+
+            <!-- Stats Grid -->
+      <div class="grid grid-cols-1 gap-6 mb-8">
+        <div id="workout-types">
+          <WorkoutTypes client:load activityTypes={[]} />
+        </div>
+      </div>
+      
+      <!-- Workout Types Chart -->
+      <div class="mb-8" id="workout-types-chart">
+          <WorkoutTypesChart client:load activityTypes={[]} />
+      </div>
+      
+      <!-- Recent Workouts -->
+      <div class="mb-8" id="recent-workouts">
+          <RecentWorkouts client:only="react" recentActivities={[]} />
+      </div>
+
+      <!-- Yearly Stats Charts -->
+      <div class="mb-8" id="yearly-workouts-charts">
+          <YearlyWorkoutsCharts client:load yearlyStats={[]} />
       </div>
     </div>
   </div>
-  
-  <!-- Athlete Info -->
-  {athleteName && (
-    <div class="mt-6 p-4 bg-gray-50 rounded-lg dark:bg-gray-700">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Athlete Information</h3>
-      <div class="flex items-center">
-        <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-600 dark:text-orange-300 mr-4">
-          <i class="fas fa-user"></i>
-        </div>
-        <div>
-          <p class="font-medium text-gray-900 dark:text-white">{athleteName}</p>
-          {athleteLocation && (
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              <i class="fas fa-map-marker-alt mr-1"></i> {athleteLocation}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  )}
 </div>
+
+<!-- Custom CSS for workout stats -->
+<style is:global>
+  /* Custom styles for workout stats */
+  .workout-card {
+    background-color: var(--bubble-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease;
+  }
+  
+  .workout-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Override Tremor styles to match website theme */
+  :root {
+    --tremor-background: var(--bubble-bg) !important;
+    --tremor-border: rgba(255, 255, 255, 0.1) !important;
+    --tremor-ring: var(--accent-color) !important;
+    --tremor-primary: var(--accent-color) !important;
+    --tremor-brand: var(--secondary-color) !important;
+  }
+  
+  /* Mobile-friendly adjustments */
+  @media (max-width: 640px) {
+    .workout-stats-table {
+      font-size: 0.75rem;
+    }
+    
+    .workout-stats-table th,
+    .workout-stats-table td {
+      padding: 0.5rem 0.25rem;
+    }
+  }
+  
+  /* Improve pill styling */
+  .workout-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  
+  .workout-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+</style>
+
+<script is:inline>
+  // Initialize when the page loads
+  document.addEventListener('astro:page-load', async function() {
+    // Get DOM elements
+    const loadingIndicator = document.getElementById('workout-loading-indicator');
+    const errorMessage = document.getElementById('workout-error-message');
+    const errorText = document.getElementById('workout-error-text');
+    const statsContainer = document.getElementById('workout-stats-container');
+    
+    try {
+      // Fetch data from the API
+      const apiUrl = '/api/alexapi/api/v1/strava/data';
+      console.log('Fetching workout data from:', apiUrl);
+      
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      console.log("Data from API:", data);
+      
+      // Create a custom event with all the data
+      const workoutDataEvent = new CustomEvent('workout-data-ready', {
+        detail: {
+          recentActivities: data.recent_activities || [],
+          topActivityTypes: data.top_activity_types || [],
+          yearlyStats: data.yearly_stats || [],
+          summary: data.summary || {}
+        },
+        bubbles: true
+      });
+      
+      console.log("Dispatching event with data:", workoutDataEvent.detail);
+      
+      // Dispatch the event to the document so all components can listen for it
+      // Add a small delay to ensure components are mounted
+      setTimeout(() => {
+        console.log("Dispatching event after delay");
+        document.dispatchEvent(workoutDataEvent);
+      }, 500);
+      
+      // Show the content and hide the loading indicator
+      if (loadingIndicator) loadingIndicator.classList.add('hidden');
+      if (statsContainer) statsContainer.classList.remove('hidden');
+    } catch (error) {
+      console.error('Error loading workout stats:', error);
+      
+      // Show error message and hide loading indicator
+      if (loadingIndicator) loadingIndicator.classList.add('hidden');
+      if (errorMessage) {
+        if (errorText) errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading workout stats';
+        errorMessage.classList.remove('hidden');
+      }
+    }
+  });
+</script>
