@@ -40,12 +40,11 @@ export default function YearlyStats({ yearlyStats = [] }) {
       year: stat.year,
       visits_count: stat.visits_count,
       countries_count: stat.countries_visited?.length || 0,
-      new_countries_count: stat.new_countries_visited?.length || 0,
       cities_count: stat.cities_visited?.length || 0
     })).sort((a, b) => a.year - b.year); // Sort by year ascending
     
     // Clean up any existing charts
-    ['yearly-visits-chart', 'new-countries-chart'].forEach(id => {
+    ['yearly-visits-chart'].forEach(id => {
       const chartElement = document.getElementById(id);
       if (chartElement && chartElement.chart) {
         chartElement.chart.destroy();
@@ -55,12 +54,9 @@ export default function YearlyStats({ yearlyStats = [] }) {
     // Render visits chart
     renderVisitsChart(processedStats);
     
-    // Render new countries chart
-    renderNewCountriesChart(processedStats);
-    
     return () => {
       // Clean up charts on unmount
-      ['yearly-visits-chart', 'new-countries-chart'].forEach(id => {
+      ['yearly-visits-chart'].forEach(id => {
         const chartElement = document.getElementById(id);
         if (chartElement && chartElement.chart) {
           chartElement.chart.destroy();
@@ -79,7 +75,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
       chart: {
         id: 'yearly-visits-chart',
         type: 'bar',
-        height: 240,
+        height: 300,
         fontFamily: 'Inter, sans-serif',
         toolbar: { show: false },
         background: 'transparent',
@@ -186,99 +182,6 @@ export default function YearlyStats({ yearlyStats = [] }) {
     }
   };
   
-  // Render new countries chart
-  const renderNewCountriesChart = (data) => {
-    const options = {
-      series: [{
-        name: 'New Countries',
-        data: data.map(item => item.new_countries_count)
-      }],
-      chart: {
-        id: 'new-countries-chart',
-        type: 'bar',
-        height: 240,
-        fontFamily: 'Inter, sans-serif',
-        toolbar: { show: false },
-        background: 'transparent',
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: '70%',
-          borderRadius: 6,
-          dataLabels: {
-            position: 'top'
-          }
-        }
-      },
-      colors: ['#3b82f6'], // Blue for new countries
-      dataLabels: {
-        enabled: true,
-        formatter: function(val) {
-          return val > 0 ? val : '';
-        },
-        offsetY: -20,
-        style: {
-          fontSize: '12px',
-          fontFamily: 'Inter, sans-serif',
-          colors: ['rgba(255, 255, 255, 0.8)']
-        }
-      },
-      xaxis: {
-        categories: data.map(item => item.year.toString()),
-        labels: {
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
-          }
-        },
-        axisBorder: { 
-          show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        axisTicks: { 
-          show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'New Countries',
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
-          }
-        },
-        labels: {
-          style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
-          }
-        }
-      },
-      grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
-        strokeDashArray: 4,
-        yaxis: {
-          lines: {
-            show: true
-          }
-        }
-      },
-      tooltip: {
-        theme: 'dark',
-        y: {
-          formatter: (value) => `${value} new ${value === 1 ? 'country' : 'countries'}`
-        }
-      }
-    };
-    
-    const chartElement = document.getElementById('new-countries-chart');
-    if (chartElement) {
-      const chart = new ApexCharts(chartElement, options);
-      chartElement.chart = chart;
-      chart.render();
-    }
-  };
-  
   if (!stats || stats.length === 0) {
     return (
       <div className="stats-card p-2 sm:p-4">
@@ -298,18 +201,10 @@ export default function YearlyStats({ yearlyStats = [] }) {
         Travel by Year
       </h3>
       
-      <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-white mb-2">Yearly Visits</h5>
-          <p className="text-sm text-gray-300 mb-4">Number of trips per year</p>
-          <div id="yearly-visits-chart" className="mt-4"></div>
-        </div>
-
-        <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-white mb-2">New Countries</h5>
-          <p className="text-sm text-gray-300 mb-4">New countries visited each year</p>
-          <div id="new-countries-chart" className="mt-4"></div>
-        </div>
+      <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+        <h5 className="text-lg font-medium text-white mb-2">Yearly Visits</h5>
+        <p className="text-sm text-gray-300 mb-4">Number of trips per year</p>
+        <div id="yearly-visits-chart" className="mt-4"></div>
       </div>
     </div>
   );
