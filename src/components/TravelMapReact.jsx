@@ -516,7 +516,7 @@ export default function TravelMapReact({ travelData: initialData }) {
       <MapContainer 
         center={center} 
         zoom={1} 
-        style={{ height: '350px', width: '100%' }}
+        style={{ height: '70vh', width: '100%' }}
         ref={mapRef}
         className="z-0"
         maxBounds={[[-90, -180], [90, 180]]}

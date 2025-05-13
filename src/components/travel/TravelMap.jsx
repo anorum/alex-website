@@ -495,7 +495,7 @@ export default function TravelMap({ travelData = [] }) {
       <MapContainer 
         center={center} 
         zoom={1} 
-        style={{ height: '350px', width: '100%' }}
+        style={{ height: '70vh', width: '100%' }}
         ref={mapRef}
         className="z-0"
         scrollWheelZoom={true}
