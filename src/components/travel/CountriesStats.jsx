@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import ApexCharts from 'apexcharts';
 
+// Website theme colors
+const themeColors = {
+  primary: '#2a4535',      // Dark green (bg-color)
+  accent: '#77647b',       // Purple (accent-color)
+  secondary: '#8fb996',    // Light green (secondary-color)
+  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
+  text: '#ffffff',         // White (text-color)
+  bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+};
 
 export default function CountriesStats({ countriesData = [] }) {
   const [countries, setCountries] = useState(countriesData);
@@ -19,6 +29,131 @@ export default function CountriesStats({ countriesData = [] }) {
     }
   }, []);
   
+  // Initialize charts when data changes
+  useEffect(() => {
+    if (!countries || countries.length === 0) {
+      return;
+    }
+    
+    // Sort countries by value (most visits first)
+    const sortedCountries = [...countries].sort((a, b) => b.value - a.value);
+    
+    // Take top 10 countries for the chart
+    const topCountries = sortedCountries.slice(0, 10);
+    
+    // Clean up any existing charts
+    ['countries-bar-chart'].forEach(id => {
+      const chartElement = document.getElementById(id);
+      if (chartElement && chartElement.chart) {
+        chartElement.chart.destroy();
+      }
+    });
+    
+    // Render countries bar chart
+    renderCountriesBarChart(topCountries);
+    
+    return () => {
+      // Clean up charts on unmount
+      ['countries-bar-chart'].forEach(id => {
+        const chartElement = document.getElementById(id);
+        if (chartElement && chartElement.chart) {
+          chartElement.chart.destroy();
+        }
+      });
+    };
+  }, [countries]);
+  
+  // Render countries bar chart
+  const renderCountriesBarChart = (data) => {
+    const options = {
+      series: [{
+        name: 'Visits',
+        data: data.map(item => item.value)
+      }],
+      chart: {
+        id: 'countries-bar-chart',
+        type: 'bar',
+        height: 350,
+        fontFamily: 'Inter, sans-serif',
+        toolbar: { show: false },
+        background: 'transparent',
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          distributed: true,
+          barHeight: '80%',
+          borderRadius: 6
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function(val) {
+          return val;
+        },
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif',
+          colors: ['#fff']
+        },
+        offsetX: 16
+      },
+      legend: {
+        show: false // Hide the legend as requested
+      },
+      colors: data.map((_, index) => {
+        const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#6366f1', '#ef4444', '#84cc16', '#14b8a6'];
+        return colors[index % colors.length];
+      }),
+      xaxis: {
+        categories: data.map(item => `${item.flag} ${item.name}`),
+        labels: {
+          style: {
+            fontFamily: 'Inter, sans-serif',
+            colors: 'rgba(255, 255, 255, 0.7)'
+          }
+        },
+        axisBorder: { 
+          show: true,
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        axisTicks: { 
+          show: true,
+          color: 'rgba(255, 255, 255, 0.1)'
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: 'rgba(255, 255, 255, 0.7)'
+          }
+        }
+      },
+      grid: {
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        strokeDashArray: 4,
+        yaxis: {
+          lines: {
+            show: true
+          }
+        }
+      },
+      tooltip: {
+        theme: 'dark',
+        y: {
+          formatter: (value) => `${value} visits`
+        }
+      }
+    };
+    
+    const chartElement = document.getElementById('countries-bar-chart');
+    if (chartElement) {
+      const chart = new ApexCharts(chartElement, options);
+      chartElement.chart = chart;
+      chart.render();
+    }
+  };
+  
   if (!countries || countries.length === 0) {
     return (
       <div className="stats-card p-2 sm:p-4">
@@ -31,11 +166,6 @@ export default function CountriesStats({ countriesData = [] }) {
     );
   }
   
-  // Sort countries by value (most visits first)
-  const sortedCountries = [...countries].sort((a, b) => b.value - a.value);
-  const maxVisits = sortedCountries[0].value;
-  const totalVisits = sortedCountries.reduce((sum, country) => sum + country.value, 0);
-  
   return (
     <div className="stats-card p-2 sm:p-4">
       <h3 className="text-lg font-semibold flex items-center mb-4">
@@ -43,31 +173,10 @@ export default function CountriesStats({ countriesData = [] }) {
         Countries
       </h3>
       
-      <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
-        {sortedCountries.map((country) => (
-          <div key={country.name} className="mb-2">
-            <div className="flex justify-between items-center mb-1">
-              <div className="flex items-center max-w-[60%]">
-                <span className="text-xl mr-2 flex-shrink-0">{country.flag || "🏳️"}</span>
-                <span className="text-sm font-medium truncate">{country.name}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full whitespace-nowrap">
-                  {country.value} visits
-                </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">
-                  ({Math.round((country.value / totalVisits) * 100)}%)
-                </span>
-              </div>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-600 overflow-hidden">
-              <div 
-                className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full" 
-                style={{ width: `${(country.value / maxVisits) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-        ))}
+      <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+        <h5 className="text-lg font-medium text-white mb-2">Most Visited Countries</h5>
+        <p className="text-sm text-gray-300 mb-4">Top countries by number of visits</p>
+        <div id="countries-bar-chart" className="mt-4"></div>
       </div>
     </div>
   );

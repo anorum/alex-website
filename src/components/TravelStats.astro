@@ -63,7 +63,7 @@ import CitiesStats from './travel/CitiesStats';
           <YearlyStats client:only="react" yearlyStats={[]} />
         </div>
         <div id="countries-stats">
-          <CountriesStats client:load countriesData={[]} />
+          <CountriesStats client:only="react" countriesData={[]} />
         </div>
       </div>
     </div>
