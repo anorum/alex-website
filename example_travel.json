@@ -1,0 +1,764 @@
+{
+  "locations": [
+    {
+      "id": "melbourne",
+      "city": "Melbourne",
+      "country": "Australia",
+      "flag": "🇦🇺",
+      "coordinates": [
+        -37.8136,
+        144.9631
+      ],
+      "visits": [
+        {
+          "id": "melbourne-05-2017",
+          "date": "2017-05-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/australia/melbourne/05-2017/IMG_5270.JPG",
+            "/api/v1/travel/images/australia/melbourne/05-2017/IMG_5413.JPG",
+            "/api/v1/travel/images/australia/melbourne/05-2017/IMG_5405.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sydney",
+      "city": "Sydney",
+      "country": "Australia",
+      "flag": "🇦🇺",
+      "coordinates": [
+        -33.8688,
+        151.2093
+      ],
+      "visits": [
+        {
+          "id": "sydney-05-2017",
+          "date": "2017-05-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/australia/sydney/05-2017/IMG_5551.JPG",
+            "/api/v1/travel/images/australia/sydney/05-2017/IMG_5531.JPG",
+            "/api/v1/travel/images/australia/sydney/05-2017/IMG_5572.JPG",
+            "/api/v1/travel/images/australia/sydney/05-2017/IMG_5612.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "honolulu",
+      "city": "Honolulu",
+      "country": "United States",
+      "flag": "🇺🇸",
+      "coordinates": [
+        21.3069,
+        -157.8583
+      ],
+      "visits": [
+        {
+          "id": "honolulu-08-2017",
+          "date": "2017-08-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/hawaii/08-2017/IMG_6262.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hong-kong",
+      "city": "Hong Kong",
+      "country": "China",
+      "flag": "🇭🇰",
+      "coordinates": [
+        22.3193,
+        114.1694
+      ],
+      "visits": [
+        {
+          "id": "hong-kong-08-2018",
+          "date": "2018-08-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/hongkong/08-2018/IMG_1043.JPG",
+            "/api/v1/travel/images/hongkong/08-2018/IMG_1123.JPG",
+            "/api/v1/travel/images/hongkong/08-2018/IMG_1144.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bali",
+      "city": "Bali",
+      "country": "Indonesia",
+      "flag": "🇮🇩",
+      "coordinates": [
+        -8.3405,
+        115.092
+      ],
+      "visits": [
+        {
+          "id": "bali-10-2023",
+          "date": "2023-10-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/indonesia/bali/10-2023/IMG_6300.JPG",
+            "/api/v1/travel/images/indonesia/bali/10-2023/IMG_6265.JPG",
+            "/api/v1/travel/images/indonesia/bali/10-2023/acc1d6f4-5060-4fe5-90ee-fc27d8ac9094.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiroshima",
+      "city": "Hiroshima",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        34.3853,
+        132.4553
+      ],
+      "visits": [
+        {
+          "id": "hiroshima-03-2019",
+          "date": "2019-03-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/hiroshima/03-2019/IMG_2111.JPG",
+            "/api/v1/travel/images/japan/hiroshima/03-2019/IMG_2070.JPG",
+            "/api/v1/travel/images/japan/hiroshima/03-2019/IMG_2104.JPG",
+            "/api/v1/travel/images/japan/hiroshima/03-2019/IMG_2116.JPG",
+            "/api/v1/travel/images/japan/hiroshima/03-2019/IMG_2083.JPG",
+            "/api/v1/travel/images/japan/hiroshima/03-2019/IMG_2080.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kyoto",
+      "city": "Kyoto",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        35.0116,
+        135.7681
+      ],
+      "visits": [
+        {
+          "id": "kyoto-03-2019",
+          "date": "2019-03-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/kyoto/03-2019/IMG_2040.JPG",
+            "/api/v1/travel/images/japan/kyoto/03-2019/IMG_2123.JPG",
+            "/api/v1/travel/images/japan/kyoto/03-2019/IMG_2031.jpg",
+            "/api/v1/travel/images/japan/kyoto/03-2019/IMG_2021.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "niseko",
+      "city": "Niseko",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        42.8048,
+        140.6874
+      ],
+      "visits": [
+        {
+          "id": "niseko-02-2024",
+          "date": "2024-02-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/niseko/02-2024/IMG_7936.JPG",
+            "/api/v1/travel/images/japan/niseko/02-2024/IMG_7968.JPG",
+            "/api/v1/travel/images/japan/niseko/02-2024/IMG_7942.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "osaka",
+      "city": "Osaka",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        34.6937,
+        135.5023
+      ],
+      "visits": [
+        {
+          "id": "osaka-03-2019",
+          "date": "2019-03-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/osaka/03-2019/IMG_2164.JPG",
+            "/api/v1/travel/images/japan/osaka/03-2019/IMG_2154.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sapporo",
+      "city": "Sapporo",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        43.0618,
+        141.3545
+      ],
+      "visits": [
+        {
+          "id": "sapporo-02-2024",
+          "date": "2024-02-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8072.JPG",
+            "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8077.JPG",
+            "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8050.JPG",
+            "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8078.JPG",
+            "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8054.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tokyo",
+      "city": "Tokyo",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        35.6762,
+        139.6503
+      ],
+      "visits": [
+        {
+          "id": "tokyo-08-2024",
+          "date": "2024-08-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/tokyo/08-2024/IMG_0498 2.JPG",
+            "/api/v1/travel/images/japan/tokyo/08-2024/IMG_4869.jpg",
+            "/api/v1/travel/images/japan/tokyo/08-2024/IMG_0472.JPG",
+            "/api/v1/travel/images/japan/tokyo/08-2024/IMG_0443.JPG"
+          ]
+        },
+        {
+          "id": "tokyo-02-2024",
+          "date": "2024-02-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/japan/tokyo/02-2024/IMG_7812.JPG",
+            "/api/v1/travel/images/japan/tokyo/02-2024/IMG_7804.JPG",
+            "/api/v1/travel/images/japan/tokyo/02-2024/IMG_8199.JPG",
+            "/api/v1/travel/images/japan/tokyo/02-2024/AA142D5B-5A0D-4EB3-BB9D-E38A6E14043D.JPG",
+            "/api/v1/travel/images/japan/tokyo/02-2024/IMG_7853.JPG"
+          ]
+        },
+        {
+          "id": "tokyo-03-2019",
+          "date": "2019-03-01",
+          "notes": "First trip to Japan with friends! Hit Tokyo, Kyoto, Hiroshima, and Osaka",
+          "image_urls": [
+            "/api/v1/travel/images/japan/tokyo/03-2019/IMG_3836.JPG",
+            "/api/v1/travel/images/japan/tokyo/03-2019/IMG_2225.JPG",
+            "/api/v1/travel/images/japan/tokyo/03-2019/IMG_1845 2.JPG",
+            "/api/v1/travel/images/japan/tokyo/03-2019/IMG_1881.JPG",
+            "/api/v1/travel/images/japan/tokyo/03-2019/IMG_1879.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cabo",
+      "city": "Cabo",
+      "country": "Mexico",
+      "flag": "🇲🇽",
+      "coordinates": [
+        22.8905,
+        -109.9167
+      ],
+      "visits": [
+        {
+          "id": "cabo-01-2023",
+          "date": "2023-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/mexico/cabo/01-2023/IMG_2767.JPG",
+            "/api/v1/travel/images/mexico/cabo/01-2023/IMG_2720.JPG",
+            "/api/v1/travel/images/mexico/cabo/01-2023/IMG_2752.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cancun",
+      "city": "Cancun",
+      "country": "Mexico",
+      "flag": "🇲🇽",
+      "coordinates": [
+        21.1619,
+        -86.8515
+      ],
+      "visits": [
+        {
+          "id": "cancun-01-2024",
+          "date": "2024-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/mexico/cancun/01-2024/IMG_7535.JPG",
+            "/api/v1/travel/images/mexico/cancun/01-2024/IMG_7577.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "edinburgh",
+      "city": "Edinburgh",
+      "country": "United Kingdom",
+      "flag": "🇬🇧",
+      "coordinates": [
+        55.9533,
+        -3.1883
+      ],
+      "visits": [
+        {
+          "id": "edinburgh-05-2025",
+          "date": "2025-05-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/scotland/05-2025/IMG_4531.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4555.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4602.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4683.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4699.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4714.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4718.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4784.JPG",
+            "/api/v1/travel/images/scotland/05-2025/IMG_4805.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "singapore",
+      "city": "Singapore",
+      "country": "Singapore",
+      "flag": "🇸🇬",
+      "coordinates": [
+        1.3521,
+        103.8198
+      ],
+      "visits": [
+        {
+          "id": "singapore-2024",
+          "date": "2024-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/singapore/2024/IMG_0726.JPG",
+            "/api/v1/travel/images/singapore/2024/IMG_0788.JPG"
+          ]
+        },
+        {
+          "id": "singapore-2023",
+          "date": "2023-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/singapore/2023/IMG_6055.JPG",
+            "/api/v1/travel/images/singapore/2023/IMG_6092.JPG",
+            "/api/v1/travel/images/singapore/2023/IMG_6170.JPG"
+          ]
+        },
+        {
+          "id": "singapore-2018",
+          "date": "2018-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/singapore/2018/IMG_0897.JPG",
+            "/api/v1/travel/images/singapore/2018/IMG_0941.JPG"
+          ]
+        },
+        {
+          "id": "singapore-2017",
+          "date": "2017-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/singapore/2017/IMG_0874.JPG",
+            "/api/v1/travel/images/singapore/2017/IMG_5898.JPG"
+          ]
+        },
+        {
+          "id": "singapore-2016",
+          "date": "2016-01-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/singapore/2016/IMG_1845.JPG",
+            "/api/v1/travel/images/singapore/2016/IMG_3092.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bangkok",
+      "city": "Bangkok",
+      "country": "Thailand",
+      "flag": "🇹🇭",
+      "coordinates": [
+        13.7563,
+        100.5018
+      ],
+      "visits": [
+        {
+          "id": "bangkok-05-2017",
+          "date": "2017-05-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/thailand/bangkok/05-2017/IMG_5846.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "krabi",
+      "city": "Krabi",
+      "country": "Thailand",
+      "flag": "🇹🇭",
+      "coordinates": [
+        8.0863,
+        98.9063
+      ],
+      "visits": [
+        {
+          "id": "krabi-05-2017",
+          "date": "2017-05-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/thailand/krabi/05-2017/IMG_5700.JPG"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hanoi",
+      "city": "Hanoi",
+      "country": "Vietnam",
+      "flag": "🇻🇳",
+      "coordinates": [
+        21.0285,
+        105.8542
+      ],
+      "visits": [
+        {
+          "id": "hanoi-05-2016",
+          "date": "2016-05-01",
+          "notes": "",
+          "image_urls": [
+            "/api/v1/travel/images/vietnam/hanoi/05-2016/IMG_2010.JPG",
+            "/api/v1/travel/images/vietnam/hanoi/05-2016/IMG_2489.JPG",
+            "/api/v1/travel/images/vietnam/hanoi/05-2016/IMG_1962.JPG",
+            "/api/v1/travel/images/vietnam/hanoi/05-2016/IMG_2756.JPG"
+          ]
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "total_countries": 10,
+    "total_cities": 18,
+    "total_visits": 24,
+    "most_visited_city": "Singapore",
+    "most_visited_country": "Japan",
+    "yearly_summaries": [
+      {
+        "year": 2025,
+        "visits_count": 1,
+        "countries_visited": [
+          "United Kingdom"
+        ],
+        "cities_visited": [
+          "Edinburgh"
+        ]
+      },
+      {
+        "year": 2024,
+        "visits_count": 6,
+        "countries_visited": [
+          "Japan",
+          "Mexico",
+          "Singapore"
+        ],
+        "cities_visited": [
+          "Cancun",
+          "Niseko",
+          "Sapporo",
+          "Singapore",
+          "Tokyo"
+        ]
+      },
+      {
+        "year": 2023,
+        "visits_count": 3,
+        "countries_visited": [
+          "Indonesia",
+          "Mexico",
+          "Singapore"
+        ],
+        "cities_visited": [
+          "Bali",
+          "Cabo",
+          "Singapore"
+        ]
+      },
+      {
+        "year": 2019,
+        "visits_count": 4,
+        "countries_visited": [
+          "Japan"
+        ],
+        "cities_visited": [
+          "Hiroshima",
+          "Kyoto",
+          "Osaka",
+          "Tokyo"
+        ]
+      },
+      {
+        "year": 2018,
+        "visits_count": 2,
+        "countries_visited": [
+          "China",
+          "Singapore"
+        ],
+        "cities_visited": [
+          "Hong Kong",
+          "Singapore"
+        ]
+      },
+      {
+        "year": 2017,
+        "visits_count": 6,
+        "countries_visited": [
+          "Australia",
+          "Singapore",
+          "Thailand",
+          "United States"
+        ],
+        "cities_visited": [
+          "Bangkok",
+          "Honolulu",
+          "Krabi",
+          "Melbourne",
+          "Singapore",
+          "Sydney"
+        ]
+      },
+      {
+        "year": 2016,
+        "visits_count": 2,
+        "countries_visited": [
+          "Singapore",
+          "Vietnam"
+        ],
+        "cities_visited": [
+          "Hanoi",
+          "Singapore"
+        ]
+      }
+    ],
+    "country_summaries": [
+      {
+        "country": "Japan",
+        "visits_count": 8,
+        "cities_visited": [
+          "Hiroshima",
+          "Kyoto",
+          "Niseko",
+          "Osaka",
+          "Sapporo",
+          "Tokyo"
+        ],
+        "last_visit_date": "2024-08-01"
+      },
+      {
+        "country": "Singapore",
+        "visits_count": 5,
+        "cities_visited": [
+          "Singapore"
+        ],
+        "last_visit_date": "2024-01-01"
+      },
+      {
+        "country": "Australia",
+        "visits_count": 2,
+        "cities_visited": [
+          "Melbourne",
+          "Sydney"
+        ],
+        "last_visit_date": "2017-05-01"
+      },
+      {
+        "country": "Mexico",
+        "visits_count": 2,
+        "cities_visited": [
+          "Cabo",
+          "Cancun"
+        ],
+        "last_visit_date": "2024-01-01"
+      },
+      {
+        "country": "Thailand",
+        "visits_count": 2,
+        "cities_visited": [
+          "Bangkok",
+          "Krabi"
+        ],
+        "last_visit_date": "2017-05-01"
+      },
+      {
+        "country": "United States",
+        "visits_count": 1,
+        "cities_visited": [
+          "Honolulu"
+        ],
+        "last_visit_date": "2017-08-01"
+      },
+      {
+        "country": "China",
+        "visits_count": 1,
+        "cities_visited": [
+          "Hong Kong"
+        ],
+        "last_visit_date": "2018-08-01"
+      },
+      {
+        "country": "Indonesia",
+        "visits_count": 1,
+        "cities_visited": [
+          "Bali"
+        ],
+        "last_visit_date": "2023-10-01"
+      },
+      {
+        "country": "United Kingdom",
+        "visits_count": 1,
+        "cities_visited": [
+          "Edinburgh"
+        ],
+        "last_visit_date": "2025-05-01"
+      },
+      {
+        "country": "Vietnam",
+        "visits_count": 1,
+        "cities_visited": [
+          "Hanoi"
+        ],
+        "last_visit_date": "2016-05-01"
+      }
+    ]
+  },
+  "recent_visits": [
+    {
+      "location_id": "edinburgh",
+      "city": "Edinburgh",
+      "country": "United Kingdom",
+      "flag": "🇬🇧",
+      "coordinates": [
+        55.9533,
+        -3.1883
+      ],
+      "visit_id": "edinburgh-05-2025",
+      "date": "2025-05-01",
+      "notes": "",
+      "image_urls": [
+        "/api/v1/travel/images/scotland/05-2025/IMG_4531.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4555.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4602.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4683.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4699.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4714.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4718.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4784.JPG",
+        "/api/v1/travel/images/scotland/05-2025/IMG_4805.JPG"
+      ]
+    },
+    {
+      "location_id": "tokyo",
+      "city": "Tokyo",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        35.6762,
+        139.6503
+      ],
+      "visit_id": "tokyo-08-2024",
+      "date": "2024-08-01",
+      "notes": "",
+      "image_urls": [
+        "/api/v1/travel/images/japan/tokyo/08-2024/IMG_0498 2.JPG",
+        "/api/v1/travel/images/japan/tokyo/08-2024/IMG_4869.jpg",
+        "/api/v1/travel/images/japan/tokyo/08-2024/IMG_0472.JPG",
+        "/api/v1/travel/images/japan/tokyo/08-2024/IMG_0443.JPG"
+      ]
+    },
+    {
+      "location_id": "niseko",
+      "city": "Niseko",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        42.8048,
+        140.6874
+      ],
+      "visit_id": "niseko-02-2024",
+      "date": "2024-02-01",
+      "notes": "",
+      "image_urls": [
+        "/api/v1/travel/images/japan/niseko/02-2024/IMG_7936.JPG",
+        "/api/v1/travel/images/japan/niseko/02-2024/IMG_7968.JPG",
+        "/api/v1/travel/images/japan/niseko/02-2024/IMG_7942.JPG"
+      ]
+    },
+    {
+      "location_id": "sapporo",
+      "city": "Sapporo",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        43.0618,
+        141.3545
+      ],
+      "visit_id": "sapporo-02-2024",
+      "date": "2024-02-01",
+      "notes": "",
+      "image_urls": [
+        "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8072.JPG",
+        "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8077.JPG",
+        "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8050.JPG",
+        "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8078.JPG",
+        "/api/v1/travel/images/japan/sapporo/02-2024/IMG_8054.JPG"
+      ]
+    },
+    {
+      "location_id": "tokyo",
+      "city": "Tokyo",
+      "country": "Japan",
+      "flag": "🇯🇵",
+      "coordinates": [
+        35.6762,
+        139.6503
+      ],
+      "visit_id": "tokyo-02-2024",
+      "date": "2024-02-01",
+      "notes": "",
+      "image_urls": [
+        "/api/v1/travel/images/japan/tokyo/02-2024/IMG_7812.JPG",
+        "/api/v1/travel/images/japan/tokyo/02-2024/IMG_7804.JPG",
+        "/api/v1/travel/images/japan/tokyo/02-2024/IMG_8199.JPG",
+        "/api/v1/travel/images/japan/tokyo/02-2024/AA142D5B-5A0D-4EB3-BB9D-E38A6E14043D.JPG",
+        "/api/v1/travel/images/japan/tokyo/02-2024/IMG_7853.JPG"
+      ]
+    }
+  ]
+}

@@ -2,29 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, Title, Text, Metric, Grid, Col, Flex, Divider } from '@tremor/react';
 import { MapIcon, GlobeAltIcon, CalendarIcon, UserGroupIcon, PhotoIcon, ChartBarIcon, MapPinIcon, ClockIcon } from '@heroicons/react/24/outline';
 
-// Helper function to get country flag emoji
-function getCountryFlag(country) {
-  const flagEmojis = {
-    "Singapore": "🇸🇬",
-    "Japan": "🇯🇵",
-    "United Kingdom": "🇬🇧",
-    "United States": "🇺🇸",
-    "France": "🇫🇷",
-    "Italy": "🇮🇹",
-    "Spain": "🇪🇸",
-    "Germany": "🇩🇪",
-    "Australia": "🇦🇺",
-    "Canada": "🇨🇦",
-    "China": "🇨🇳",
-    "India": "🇮🇳",
-    "Brazil": "🇧🇷",
-    "Mexico": "🇲🇽",
-    "South Korea": "🇰🇷",
-    // Add more as needed
-  };
-  
-  return flagEmojis[country] || "🏳️";
-}
 
 // Format date for display
 function formatDate(dateString) {
@@ -63,9 +40,9 @@ export default function TravelStatsReact({
         // Listen for the custom event
         const handleUpdateData = (event) => {
           if (event.detail) {
-            const { travelData: newTravelData, summary: newSummary, yearlyStats: newYearlyStats, countriesData: newCountriesData, citiesData: newCitiesData } = event.detail;
+            const { travelLocations, summary: newSummary, yearlyStats: newYearlyStats, countriesData: newCountriesData, citiesData: newCitiesData } = event.detail;
             
-            if (newTravelData) setTravelData(newTravelData);
+            if (travelLocations) setTravelData(travelLocations);
             if (newSummary) setSummary(newSummary);
             if (newYearlyStats) setYearlyStats(newYearlyStats);
             if (newCountriesData) setCountriesData(newCountriesData);
@@ -73,10 +50,10 @@ export default function TravelStatsReact({
           }
         };
         
-        container.addEventListener('update-travel-stats', handleUpdateData);
+        document.addEventListener('travel-data-ready', handleUpdateData);
         
         return () => {
-          container.removeEventListener('update-travel-stats', handleUpdateData);
+          document.removeEventListener('travel-data-ready', handleUpdateData);
         };
       }
     }
@@ -88,11 +65,19 @@ export default function TravelStatsReact({
       return <Text>No yearly stats available</Text>;
     }
     
-    const maxVisits = Math.max(...yearlyStats.map(stat => stat.visits_count));
+    // Process stats to ensure they have the right properties
+    const processedYearlyStats = yearlyStats.map(stat => ({
+      year: stat.year,
+      visits_count: stat.visits_count,
+      countries_count: stat.countries_visited?.length || 0,
+      cities_count: stat.cities_visited?.length || 0
+    }));
+    
+    const maxVisits = Math.max(...processedYearlyStats.map(stat => stat.visits_count));
     
     return (
       <div className="space-y-6">
-        {yearlyStats.map((stat, index) => (
+        {processedYearlyStats.map((stat, index) => (
           <div key={index} className="mb-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center">
@@ -142,7 +127,7 @@ export default function TravelStatsReact({
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center">
                 <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-800 dark:text-blue-300 mr-3">
-                  <span className="text-xl">{getCountryFlag(country.name)}</span>
+                  <span className="text-xl">{country.flag || "🏳️"}</span>
                 </div>
                 <span className="text-base font-medium text-gray-900 dark:text-white">
                   {country.name}
@@ -238,7 +223,7 @@ export default function TravelStatsReact({
                 <div className="flex items-center justify-between p-3">
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full mr-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300 shadow-sm">
-                      <span className="text-xl">{getCountryFlag(location.country)}</span>
+                      <span className="text-xl">{location.flag || "🏳️"}</span>
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">{location.city}</p>
@@ -273,7 +258,7 @@ export default function TravelStatsReact({
                 <div className="flex items-center justify-between p-3">
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full mr-3 bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300 shadow-sm">
-                      <span className="text-xl">{getCountryFlag(visit.country)}</span>
+                      <span className="text-xl">{visit.flag || "🏳️"}</span>
                     </div>
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">{visit.city}</p>

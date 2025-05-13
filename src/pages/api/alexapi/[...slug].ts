@@ -30,20 +30,32 @@ export const GET: APIRoute = async ({ params, request }) => {
     const response = await fetch(apiUrl, {
       headers: {
         'X-API-Key': API_KEY,
-        'Content-Type': 'application/json'
+        // Don't set Content-Type to allow the browser to set it automatically
       }
     });
     
-    // Get the response data
-    const data = await response.json();
+    // Check if the response is an image or other binary data
+    const contentType = response.headers.get('Content-Type') || '';
     
-    // Return the response
-    return new Response(JSON.stringify(data), {
-      status: response.status,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    if (contentType.includes('image/') || contentType.includes('application/octet-stream')) {
+      // For images and binary data, return the response as is
+      const arrayBuffer = await response.arrayBuffer();
+      return new Response(arrayBuffer, {
+        status: response.status,
+        headers: {
+          'Content-Type': contentType
+        }
+      });
+    } else {
+      // For JSON and other text data, parse and return as JSON
+      const data = await response.json();
+      return new Response(JSON.stringify(data), {
+        status: response.status,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
   } catch (error) {
     console.error('API proxy error:', error);
     

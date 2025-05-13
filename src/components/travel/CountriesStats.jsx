@@ -1,28 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 
-// Helper function to get country flag emoji
-function getCountryFlag(country) {
-  const flagEmojis = {
-    "Singapore": "🇸🇬",
-    "Japan": "🇯🇵",
-    "United Kingdom": "🇬🇧",
-    "United States": "🇺🇸",
-    "France": "🇫🇷",
-    "Italy": "🇮🇹",
-    "Spain": "🇪🇸",
-    "Germany": "🇩🇪",
-    "Australia": "🇦🇺",
-    "Canada": "🇨🇦",
-    "China": "🇨🇳",
-    "India": "🇮🇳",
-    "Brazil": "🇧🇷",
-    "Mexico": "🇲🇽",
-    "South Korea": "🇰🇷",
-  };
-  
-  return flagEmojis[country] || "🏳️";
-}
 
 export default function CountriesStats({ countriesData = [] }) {
   const [countries, setCountries] = useState(countriesData);
@@ -36,8 +14,8 @@ export default function CountriesStats({ countriesData = [] }) {
         }
       };
       
-      window.addEventListener('travel-data-ready', handleDataReady);
-      return () => window.removeEventListener('travel-data-ready', handleDataReady);
+      document.addEventListener('travel-data-ready', handleDataReady);
+      return () => document.removeEventListener('travel-data-ready', handleDataReady);
     }
   }, []);
   
@@ -70,7 +48,7 @@ export default function CountriesStats({ countriesData = [] }) {
           <div key={country.name} className="mb-2">
             <div className="flex justify-between items-center mb-1">
               <div className="flex items-center max-w-[60%]">
-                <span className="text-xl mr-2 flex-shrink-0">{getCountryFlag(country.name)}</span>
+                <span className="text-xl mr-2 flex-shrink-0">{country.flag || "🏳️"}</span>
                 <span className="text-sm font-medium truncate">{country.name}</span>
               </div>
               <div className="flex items-center gap-1">

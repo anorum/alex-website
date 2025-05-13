@@ -13,8 +13,8 @@ export default function YearlyStats({ yearlyStats = [] }) {
         }
       };
       
-      window.addEventListener('travel-data-ready', handleDataReady);
-      return () => window.removeEventListener('travel-data-ready', handleDataReady);
+      document.addEventListener('travel-data-ready', handleDataReady);
+      return () => document.removeEventListener('travel-data-ready', handleDataReady);
     }
   }, []);
   
@@ -30,7 +30,15 @@ export default function YearlyStats({ yearlyStats = [] }) {
     );
   }
   
-  const maxVisits = Math.max(...stats.map(stat => stat.visits_count));
+  // Process stats to ensure they have the right properties
+  const processedStats = stats.map(stat => ({
+    year: stat.year,
+    visits_count: stat.visits_count,
+    countries_count: stat.countries_visited?.length || 0,
+    cities_count: stat.cities_visited?.length || 0
+  }));
+  
+  const maxVisits = Math.max(...processedStats.map(stat => stat.visits_count));
   
   return (
     <div className="stats-card p-4">
@@ -40,7 +48,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
       </h3>
       
       <div className="space-y-4 max-h-[300px] overflow-y-auto pr-1">
-        {stats.map((stat) => (
+        {processedStats.map((stat) => (
           <div key={stat.year} className="mb-3">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 gap-2">
               <div className="flex items-center">

@@ -13,8 +13,8 @@ export default function CitiesStats({ citiesData = [] }) {
         }
       };
       
-      window.addEventListener('travel-data-ready', handleDataReady);
-      return () => window.removeEventListener('travel-data-ready', handleDataReady);
+      document.addEventListener('travel-data-ready', handleDataReady);
+      return () => document.removeEventListener('travel-data-ready', handleDataReady);
     }
   }, []);
   
