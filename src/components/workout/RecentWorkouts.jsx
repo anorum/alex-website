@@ -175,7 +175,7 @@ export default function RecentWorkouts({ recentActivities = [] }) {
           borderRadius: 6
         }
       },
-      colors: [themeColors.accent],
+      colors: [themeColors.secondary],
       dataLabels: {
         enabled: false
       },

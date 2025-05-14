@@ -1,5 +1,9 @@
 ---
 import { BookOpenIcon } from '@heroicons/react/24/outline';
+import BookSummary from './goodreads/BookSummary';
+import CurrentlyReading from './goodreads/CurrentlyReading';
+import RecentlyRead from './goodreads/RecentlyRead';
+import TopRatedBooks from './goodreads/TopRatedBooks';
 ---
 
 <div class="stats-card p-0.5 sm:p-2 md:p-4">
@@ -34,8 +38,24 @@ import { BookOpenIcon } from '@heroicons/react/24/outline';
     
     <!-- Content container - initially hidden -->
     <div id="reading-stats-container" class="hidden">
-      <div class="p-8 text-center">
-        <p class="text-gray-500 dark:text-gray-400">Reading stats coming soon!</p>
+      <!-- Book Summary -->
+      <div class="mb-8" id="book-summary">
+        <BookSummary client:only="react" summary={{}} />
+      </div>
+      
+      <!-- Currently Reading -->
+      <div class="mb-8" id="currently-reading">
+        <CurrentlyReading client:only="react" currentlyReading={[]} />
+      </div>
+      
+      <!-- Recently Read -->
+      <div class="mb-8" id="recently-read">
+        <RecentlyRead client:only="react" recentlyRead={[]} />
+      </div>
+      
+      <!-- Top Rated Books -->
+      <div class="mb-8" id="top-rated-books">
+        <TopRatedBooks client:only="react" topRatedBooks={[]} />
       </div>
     </div>
   </div>
@@ -43,13 +63,66 @@ import { BookOpenIcon } from '@heroicons/react/24/outline';
 
 <script is:inline>
   // Initialize when the page loads
-  document.addEventListener('astro:page-load', function() {
+  document.addEventListener('astro:page-load', async function() {
     // Get DOM elements
     const loadingIndicator = document.getElementById('reading-loading-indicator');
+    const errorMessage = document.getElementById('reading-error-message');
+    const errorText = document.getElementById('reading-error-text');
     const statsContainer = document.getElementById('reading-stats-container');
     
-    // Show the content and hide the loading indicator
-    if (loadingIndicator) loadingIndicator.classList.add('hidden');
-    if (statsContainer) statsContainer.classList.remove('hidden');
+    try {
+      // Fetch data from the API
+      const apiUrl = '/api/alexapi/api/v1/books/data';
+      console.log('Fetching books data from:', apiUrl);
+      
+      // For now, use the example data
+      const exampleDataUrl = '/exampe/example_books.json';
+      const response = await fetch(exampleDataUrl);
+      
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Process the data
+      const books = data.books || [];
+      const stats = data.stats || {};
+      
+      // Create a custom event with all the data
+      const booksDataEvent = new CustomEvent('books-data-ready', {
+        detail: {
+          books: books,
+          summary: stats,
+          booksPerYear: stats.books_per_year || {},
+          currentlyReading: stats.currently_reading || [],
+          recentlyRead: stats.recently_read || [],
+          topRatedBooks: stats.top_rated_books || []
+        },
+        bubbles: true
+      });
+      
+      console.log("Dispatching event with data:", booksDataEvent.detail);
+      
+      // Dispatch the event to the document so all components can listen for it
+      // Add a small delay to ensure components are mounted
+      setTimeout(() => {
+        console.log("Dispatching event after delay");
+        document.dispatchEvent(booksDataEvent);
+      }, 500);
+      
+      // Show the content and hide the loading indicator
+      if (loadingIndicator) loadingIndicator.classList.add('hidden');
+      if (statsContainer) statsContainer.classList.remove('hidden');
+    } catch (error) {
+      console.error('Error loading reading stats:', error);
+      
+      // Show error message and hide loading indicator
+      if (loadingIndicator) loadingIndicator.classList.add('hidden');
+      if (errorMessage) {
+        if (errorText) errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading reading stats';
+        errorMessage.classList.remove('hidden');
+      }
+    }
   });
 </script>
