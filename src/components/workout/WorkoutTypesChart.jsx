@@ -4,14 +4,26 @@ import ApexCharts from 'apexcharts';
 
 import { chartColors } from '../../utils/chartUtils';
 
-// Chart colors array
-const chartColorsArray = [
-  chartColors.green,
-  chartColors.teal,
-  chartColors.blue,
-  chartColors.purple,
-  chartColors.orange,
-];
+// Function to get current theme colors
+const getThemeColors = () => {
+  if (typeof window !== 'undefined') {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    return {
+      text: isDarkMode ? '#ffffff' : '#2a4535',
+      textMuted: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(42, 69, 53, 0.7)',
+      background: isDarkMode ? '#2a4535' : '#ffffff',
+      border: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      grid: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    };
+  }
+  return {
+    text: '#2a4535',
+    textMuted: 'rgba(42, 69, 53, 0.7)',
+    background: '#ffffff',
+    border: 'rgba(0, 0, 0, 0.1)',
+    grid: 'rgba(0, 0, 0, 0.1)',
+  };
+};
 
 export default function WorkoutTypesChart({ activityTypes = [] }) {
   const [types, setTypes] = useState(activityTypes);
@@ -45,13 +57,13 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
     // Process data for charts
     const activitiesData = types.map(type => ({
       name: type.name,
-      activities: type.count
+      value: type.count
     }));
     
     const distanceData = types.map(type => ({
       name: type.name,
-      distance: formatDistance(type.total_distance)
-    })).filter(item => item.distance > 0); // Only include types with distance
+      value: formatDistance(type.total_distance)
+    })).filter(item => item.value > 0); // Only include types with distance
     
     // Clean up any existing charts
     ['activities-bar-chart', 'distance-bar-chart'].forEach(id => {
@@ -69,6 +81,17 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
       renderDistanceBarChart(distanceData);
     }
     
+    // Add theme change listener
+    const handleThemeChange = () => {
+      // Re-render charts when theme changes
+      renderActivitiesBarChart(activitiesData);
+      if (distanceData.length > 0) {
+        renderDistanceBarChart(distanceData);
+      }
+    };
+    
+    document.addEventListener('theme-changed', handleThemeChange);
+    
     return () => {
       // Clean up charts on unmount
       ['activities-bar-chart', 'distance-bar-chart'].forEach(id => {
@@ -77,17 +100,23 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
           chartElement.chart.destroy();
         }
       });
+      
+      document.removeEventListener('theme-changed', handleThemeChange);
     };
   }, [types]);
   
   // Render activities bar chart
   const renderActivitiesBarChart = (data) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       series: [{
         name: 'Activities',
-        data: data.map(item => item.activities)
+        data: data.map(item => item.value)
       }],
       chart: {
+        id: 'activities-bar-chart',
         type: 'bar',
         height: 320,
         fontFamily: 'Inter, sans-serif',
@@ -99,7 +128,7 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
           horizontal: true,
           distributed: true,
           barHeight: '80%',
-          borderRadius: 8
+          borderRadius: typeof window !== 'undefined' && window.innerWidth < 640 ? 6 : 8
         }
       },
       dataLabels: {
@@ -108,39 +137,43 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
           return val;
         },
         style: {
-          fontSize: '12px',
+          fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px',
           fontFamily: 'Inter, sans-serif',
-          colors: ['#fff']
+          colors: [isDarkMode ? '#fff' : '#2a4535']
         },
-        offsetX: 16
+        offsetX: typeof window !== 'undefined' && window.innerWidth < 640 ? 8 : 16
       },
-      colors: data.map((_, index) => chartColorsArray[index % chartColorsArray.length]),
+      colors: [chartColors.green],
       xaxis: {
         categories: data.map(item => item.name),
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'var(--text-color)'
-          }
+            colors: currentTheme.text,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px'
+          },
+          trim: true
         },
         axisBorder: { 
           show: true,
-          color: 'var(--border-color)'
+          color: currentTheme.border
         },
         axisTicks: { 
           show: true,
-          color: 'var(--border-color)'
+          color: currentTheme.border
         }
       },
       yaxis: {
         labels: {
           style: {
-            colors: 'var(--text-color)'
-          }
+            colors: currentTheme.text,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px'
+          },
+          trim: true
         }
       },
       grid: {
-        borderColor: 'var(--border-color)',
+        borderColor: currentTheme.grid,
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -149,11 +182,36 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
         }
       },
       tooltip: {
-        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+        theme: isDarkMode ? 'dark' : 'light',
         y: {
-          formatter: (value) => `${value} activities`
+          formatter: (value) => `${value}`
         }
-      }
+      },
+      responsive: [
+        {
+          breakpoint: 640,
+          options: {
+            chart: {
+              height: 250
+            },
+            plotOptions: {
+              bar: {
+                borderRadius: 6
+              }
+            },
+            legend: {
+              position: 'bottom',
+              fontSize: '10px'
+            },
+            dataLabels: {
+              offsetX: 8,
+              style: {
+                fontSize: '10px'
+              }
+            }
+          }
+        }
+      ]
     };
     
     const chartElement = document.getElementById('activities-bar-chart');
@@ -166,12 +224,16 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
   
   // Render distance bar chart
   const renderDistanceBarChart = (data) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       series: [{
         name: 'Distance',
-        data: data.map(item => item.distance)
+        data: data.map(item => item.value)
       }],
       chart: {
+        id: 'distance-bar-chart',
         type: 'bar',
         height: 320,
         fontFamily: 'Inter, sans-serif',
@@ -183,48 +245,52 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
           horizontal: true,
           distributed: true,
           barHeight: '80%',
-          borderRadius: 8
+          borderRadius: typeof window !== 'undefined' && window.innerWidth < 640 ? 6 : 8
         }
       },
       dataLabels: {
         enabled: true,
         formatter: function(val) {
-          return val + ' mi';
+          return `${val} mi`;
         },
         style: {
-          fontSize: '12px',
+          fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px',
           fontFamily: 'Inter, sans-serif',
-          colors: ['#fff']
+          colors: [isDarkMode ? '#fff' : '#2a4535']
         },
-        offsetX: 16
+        offsetX: typeof window !== 'undefined' && window.innerWidth < 640 ? 8 : 16
       },
-      colors: data.map((_, index) => chartColorsArray[index % chartColorsArray.length]),
+      colors: [chartColors.blue],
       xaxis: {
         categories: data.map(item => item.name),
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'var(--text-color)'
-          }
+            colors: currentTheme.text,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px'
+          },
+          trim: true
         },
         axisBorder: { 
           show: true,
-          color: 'var(--border-color)'
+          color: currentTheme.border
         },
         axisTicks: { 
           show: true,
-          color: 'var(--border-color)'
+          color: currentTheme.border
         }
       },
       yaxis: {
         labels: {
           style: {
-            colors: 'var(--text-color)'
-          }
+            colors: currentTheme.text,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px'
+          },
+          trim: true
         }
       },
       grid: {
-        borderColor: 'var(--border-color)',
+        borderColor: currentTheme.grid,
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -233,11 +299,36 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
         }
       },
       tooltip: {
-        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+        theme: isDarkMode ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} mi`
         }
-      }
+      },
+      responsive: [
+        {
+          breakpoint: 640,
+          options: {
+            chart: {
+              height: 250
+            },
+            plotOptions: {
+              bar: {
+                borderRadius: 6
+              }
+            },
+            legend: {
+              position: 'bottom',
+              fontSize: '10px'
+            },
+            dataLabels: {
+              offsetX: 8,
+              style: {
+                fontSize: '10px'
+              }
+            }
+          }
+        }
+      ]
     };
     
     const chartElement = document.getElementById('distance-bar-chart');
@@ -250,34 +341,38 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
   
   if (!types || types.length === 0) {
     return (
-      <div className="stats-card p-2 sm:p-4">
-        <h3 className="text-lg font-semibold flex items-center mb-2">
-          <ChartBarIcon className="h-5 w-5 mr-2 text-orange-600 dark:text-orange-400" />
+      <div className="stats-card p-2 sm:p-4 md:p-6">
+        <h3 className="text-base sm:text-lg md:text-xl font-semibold flex items-center mb-2">
+          <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-orange-600 dark:text-orange-400" />
           Activity Types
         </h3>
-        <p className="text-center py-4">No activity type data available</p>
+        <p className="text-center py-3 sm:py-4">No activity type data available</p>
       </div>
     );
   }
   
   return (
-    <div className="stats-card p-2 sm:p-4">
-      <h3 className="text-lg font-semibold flex items-center mb-4">
-        <ChartBarIcon className="h-5 w-5 mr-2 text-orange-600 dark:text-orange-400" />
+    <div className="stats-card p-2 sm:p-4 md:p-6">
+      <h3 className="text-base sm:text-lg md:text-xl font-semibold flex items-center mb-2 sm:mb-3 md:mb-4">
+        <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-orange-600 dark:text-orange-400" />
         Activity Types
       </h3>
       
-      <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium mb-2">Activities by Type</h5>
-          <p className="text-sm opacity-80 mb-4">Number of activities per type</p>
-          <div id="activities-bar-chart" className="mt-4"></div>
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6">
+        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-2 sm:p-3 md:p-4">
+          <h5 className="text-sm sm:text-base md:text-lg font-medium mb-1 sm:mb-1.5 md:mb-2">Activities by Type</h5>
+          <p className="text-xs sm:text-sm opacity-80 mb-1.5 sm:mb-2 md:mb-4">Number of activities per type</p>
+          <div className="chart-container mt-2 sm:mt-3 md:mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+            <div id="activities-bar-chart"></div>
+          </div>
         </div>
 
-        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4 mt-6">
-          <h5 className="text-lg font-medium mb-2">Distance by Type</h5>
-          <p className="text-sm opacity-80 mb-4">Total distance per activity type (miles)</p>
-          <div id="distance-bar-chart" className="mt-4"></div>
+        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-2 sm:p-3 md:p-4">
+          <h5 className="text-sm sm:text-base md:text-lg font-medium mb-1 sm:mb-1.5 md:mb-2">Distance by Type</h5>
+          <p className="text-xs sm:text-sm opacity-80 mb-1.5 sm:mb-2 md:mb-4">Total distance per activity type (miles)</p>
+          <div className="chart-container mt-2 sm:mt-3 md:mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+            <div id="distance-bar-chart"></div>
+          </div>
         </div>
       </div>
     </div>

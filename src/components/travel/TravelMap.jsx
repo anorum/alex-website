@@ -164,6 +164,11 @@ export default function TravelMap({ travelData = [] }) {
   const [loadedImages, setLoadedImages] = useState({});
   const [isLoadingImages, setIsLoadingImages] = useState(false);
   
+  // Function to determine if we're on mobile
+  const isMobile = () => {
+    return typeof window !== 'undefined' && window.innerWidth < 640;
+  };
+  
   // Listen for custom events
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -204,7 +209,7 @@ export default function TravelMap({ travelData = [] }) {
   
   if (!locations || locations.length === 0) {
     return (
-      <div className="h-[400px] w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <div className="h-[250px] sm:h-[350px] md:h-[400px] w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
         <p className="text-gray-500 dark:text-gray-400">No travel data available</p>
       </div>
     );
@@ -398,45 +403,45 @@ export default function TravelMap({ travelData = [] }) {
     fullscreenDiv.appendChild(container);
     document.body.appendChild(fullscreenDiv);
   };
-  
+
   return (
     <div className="rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 relative">
       {/* Location detail overlay */}
       {selectedLocation && (
         <div className="absolute inset-0 bg-[#2a4535] dark:bg-[#1a2e24] z-20 overflow-y-auto">
-          <div className="sticky top-0 z-30 bg-[#2a4535] dark:bg-[#1a2e24] shadow-md p-4 backdrop-blur-md border-b border-white/10">
+          <div className="sticky top-0 z-30 bg-[#2a4535] dark:bg-[#1a2e24] shadow-md p-2 sm:p-3 md:p-4 backdrop-blur-md border-b border-white/10">
             <div className="flex items-center justify-between max-w-3xl mx-auto">
               <div className="flex items-center">
-                <span className="text-3xl mr-3">{selectedLocation.flag}</span>
-                <h2 className="text-2xl font-bold">{selectedLocation.city}, {selectedLocation.country}</h2>
+                <span className="text-xl sm:text-2xl md:text-3xl mr-1.5 sm:mr-2 md:mr-3">{selectedLocation.flag}</span>
+                <h2 className="text-base sm:text-lg md:text-2xl font-bold truncate">{selectedLocation.city}, {selectedLocation.country}</h2>
               </div>
               <button 
                 onClick={closeLocationDetail}
-                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
                 aria-label="Close detail view"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
           </div>
           
-          <div className="p-4 max-w-3xl mx-auto animate-fade-in">
-            <p className="text-lg mb-4">{selectedLocation.visits.length} visits to this location</p>
+          <div className="p-2 sm:p-3 md:p-4 max-w-3xl mx-auto animate-fade-in">
+            <p className="text-sm sm:text-base md:text-lg mb-2 sm:mb-3 md:mb-4">{selectedLocation.visits.length} visits to this location</p>
             
             {selectedLocation.visits.map((visit, index) => (
-              <div key={visit.id || index} className="mb-8 bg-white/10 dark:bg-white/5 rounded-lg p-4 shadow-md backdrop-blur-md transition-transform hover:translate-y-[-5px]">
-                <h3 className="text-xl font-semibold mb-2 text-white">{formatDate(visit.date)}</h3>
+              <div key={visit.id || index} className="mb-4 sm:mb-6 md:mb-8 bg-white/10 dark:bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 shadow-md backdrop-blur-md transition-transform hover:translate-y-[-5px]">
+                <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">{formatDate(visit.date)}</h3>
                 
                 {visit.notes && (
-                  <p className="text-white/90 mb-4">{visit.notes}</p>
+                  <p className="text-white/90 mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base">{visit.notes}</p>
                 )}
                 
                 {visit.imageUrls && visit.imageUrls.length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="text-lg font-medium mb-2 text-[#77647b]">Photos</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="mt-2 sm:mt-3 md:mt-4">
+                    <h4 className="text-sm sm:text-base md:text-lg font-medium mb-1 sm:mb-2 text-[#77647b]">Photos</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                       {visit.imageUrls.map((url, imgIndex) => (
                         <div key={imgIndex} className="relative aspect-video rounded-lg overflow-hidden shadow-md">
                           <div className="w-full h-full relative">
@@ -495,14 +500,15 @@ export default function TravelMap({ travelData = [] }) {
       <MapContainer 
         center={center} 
         zoom={1} 
-        style={{ height: '70vh', width: '100%' }}
+        style={{ width: '100%' }}
         ref={mapRef}
-        className="z-0"
+        className="z-0 h-[50vh] sm:h-[60vh] md:h-[70vh]"
         scrollWheelZoom={true}
         attributionControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
         maxBoundsViscosity={1.0}
         worldCopyJump={false}
+        zoomControl={!isMobile()} // Hide zoom controls on mobile
         whenCreated={(map) => {
           // Add a debounce to zoom events to reduce unnecessary re-renders
           let zoomDebounce;
@@ -521,6 +527,46 @@ export default function TravelMap({ travelData = [] }) {
               // This is intentionally empty to just debounce the pan event
             }, 300);
           });
+          
+          // Adjust map for mobile
+          if (isMobile()) {
+            // Disable dragging on mobile to prevent accidental map movement
+            // when scrolling the page (user can still tap to enable dragging)
+            map.dragging.disable();
+            
+            // Add a tap handler to enable dragging on tap
+            const enableDragging = () => {
+              map.dragging.enable();
+              map.off('click', enableDragging);
+              
+              // Re-disable dragging after 10 seconds of inactivity
+              setTimeout(() => {
+                if (!map.dragging._draggable._moved) {
+                  map.dragging.disable();
+                  map.on('click', enableDragging);
+                }
+              }, 10000);
+            };
+            
+            map.on('click', enableDragging);
+          }
+          
+          // Handle window resize
+          const handleResize = () => {
+            map.invalidateSize();
+            
+            // Update zoom controls visibility
+            if (isMobile()) {
+              map.zoomControl.remove();
+            } else if (!map.zoomControl._container) {
+              map.zoomControl.addTo(map);
+            }
+          };
+          
+          window.addEventListener('resize', handleResize);
+          
+          // Store the handler for cleanup
+          map._resizeHandler = handleResize;
         }}
       >
         <TileLayer

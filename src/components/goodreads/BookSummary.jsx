@@ -220,7 +220,11 @@ export default function BookSummary({ summary = {} }) {
               </div>
             </div>
           </div>
-          {item.chartId && <div id={item.chartId} className="h-[120px] mt-2"></div>}
+          {item.chartId && (
+            <div className="chart-container h-[120px] mt-2">
+              <div id={item.chartId}></div>
+            </div>
+          )}
           {!item.chartId && (
             <div className="h-[120px] mt-2 flex items-center justify-center">
               {item.label === "Average Rating" && (

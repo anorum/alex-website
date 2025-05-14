@@ -2,42 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import ApexCharts from 'apexcharts';
 
-// Website theme colors
-const themeColors = {
-  // Dark mode colors
-  dark: {
-    primary: '#2a4535',      // Dark green (bg-color)
-    accent: '#77647b',       // Purple (accent-color)
-    secondary: '#8fb996',    // Light green (secondary-color)
-    tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-    text: '#ffffff',         // White (text-color)
-    textMuted: 'rgba(255, 255, 255, 0.7)',
-    bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
-    axisBorder: 'rgba(255, 255, 255, 0.1)',
-    gridBorder: 'rgba(255, 255, 255, 0.1)'
-  },
-  // Light mode colors
-  light: {
-    primary: '#0c6b4e',      // Green (bg-color)
-    accent: '#77647b',       // Purple (accent-color)
-    secondary: '#0c6b4e',    // Green (secondary-color)
-    tertiary: '#8fb996',     // Light green (tertiary-color)
-    text: '#2a4535',         // Dark green (text-color)
-    textMuted: 'rgba(42, 69, 53, 0.7)',
-    bubble: 'rgba(255, 255, 255, 0.7)', // Bubble background
-    axisBorder: 'rgba(0, 0, 0, 0.1)',
-    gridBorder: 'rgba(0, 0, 0, 0.1)'
-  }
-};
+import { chartColors } from '../../utils/chartUtils';
 
 // Function to get current theme colors
 const getThemeColors = () => {
   if (typeof window !== 'undefined') {
-    return document.documentElement.classList.contains('dark') 
-      ? themeColors.dark 
-      : themeColors.light;
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    return {
+      text: isDarkMode ? '#ffffff' : '#2a4535',
+      textMuted: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(42, 69, 53, 0.7)',
+      background: isDarkMode ? '#2a4535' : '#ffffff',
+      border: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      grid: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+    };
   }
-  return themeColors.dark; // Default to dark theme
+  return {
+    text: '#2a4535',
+    textMuted: 'rgba(42, 69, 53, 0.7)',
+    background: '#ffffff',
+    border: 'rgba(0, 0, 0, 0.1)',
+    grid: 'rgba(0, 0, 0, 0.1)',
+  };
 };
 
 export default function YearlyStats({ yearlyStats = [] }) {
@@ -65,20 +50,20 @@ export default function YearlyStats({ yearlyStats = [] }) {
     
     // Process stats to ensure they have the right properties
     const processedStats = stats.map(stat => ({
-      year: stat.year,
-      visits_count: stat.visits_count,
-      countries_count: stat.countries_visited?.length || 0,
-      cities_count: stat.cities_visited?.length || 0
-    })).sort((a, b) => a.year - b.year); // Sort by year ascending
+      category: stat.year.toString(),
+      values: {
+        visits: stat.visits_count,
+        countries: stat.countries_visited?.length || 0,
+        cities: stat.cities_visited?.length || 0
+      }
+    })).sort((a, b) => a.category.localeCompare(b.category)); // Sort by year ascending
     
     // Clean up any existing charts
-    ['yearly-visits-chart'].forEach(id => {
-      const chartElement = document.getElementById(id);
-      if (chartElement && chartElement.chart) {
-        chartElement.chart.destroy();
-        chartElement.chart = null;
-      }
-    });
+    const chartElement = document.getElementById('yearly-visits-chart');
+    if (chartElement && chartElement.chart) {
+      chartElement.chart.destroy();
+      chartElement.chart = null;
+    }
     
     // Render visits chart
     renderVisitsChart(processedStats);
@@ -86,13 +71,11 @@ export default function YearlyStats({ yearlyStats = [] }) {
     // Add theme change listener
     const handleThemeChange = () => {
       // Clean up existing chart before rendering new one
-      ['yearly-visits-chart'].forEach(id => {
-        const chartElement = document.getElementById(id);
-        if (chartElement && chartElement.chart) {
-          chartElement.chart.destroy();
-          chartElement.chart = null;
-        }
-      });
+      const chartElement = document.getElementById('yearly-visits-chart');
+      if (chartElement && chartElement.chart) {
+        chartElement.chart.destroy();
+        chartElement.chart = null;
+      }
       
       // Re-render chart with new theme
       renderVisitsChart(processedStats);
@@ -103,13 +86,11 @@ export default function YearlyStats({ yearlyStats = [] }) {
     
     return () => {
       // Clean up charts on unmount
-      ['yearly-visits-chart'].forEach(id => {
-        const chartElement = document.getElementById(id);
-        if (chartElement && chartElement.chart) {
-          chartElement.chart.destroy();
-          chartElement.chart = null;
-        }
-      });
+      const chartElement = document.getElementById('yearly-visits-chart');
+      if (chartElement && chartElement.chart) {
+        chartElement.chart.destroy();
+        chartElement.chart = null;
+      }
       
       // Remove theme change listener
       document.removeEventListener('theme-changed', handleThemeChange);
@@ -124,26 +105,26 @@ export default function YearlyStats({ yearlyStats = [] }) {
     const options = {
       series: [{
         name: 'Visits',
-        data: data.map(item => item.visits_count)
+        data: data.map(item => item.values.visits)
       }],
       chart: {
         id: 'yearly-visits-chart',
         type: 'bar',
-        height: 300,
+        height: 320,
         fontFamily: 'Inter, sans-serif',
         toolbar: { show: false },
         background: 'transparent',
       },
       plotOptions: {
         bar: {
+          horizontal: false,
           columnWidth: '70%',
-          borderRadius: 6,
+          borderRadius: 4,
           dataLabels: {
             position: 'top'
           }
         }
       },
-      colors: [currentTheme.secondary],
       dataLabels: {
         enabled: true,
         formatter: function(val) {
@@ -153,24 +134,26 @@ export default function YearlyStats({ yearlyStats = [] }) {
         style: {
           fontSize: '12px',
           fontFamily: 'Inter, sans-serif',
-          colors: [currentTheme.text]
+          colors: [isDarkMode ? '#fff' : '#2a4535']
         }
       },
+      colors: [chartColors.green],
       xaxis: {
-        categories: data.map(item => item.year.toString()),
+        categories: data.map(item => item.category),
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: currentTheme.textMuted
+            colors: currentTheme.text,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px'
           }
         },
         axisBorder: { 
           show: true,
-          color: currentTheme.axisBorder
+          color: currentTheme.border
         },
         axisTicks: { 
           show: true,
-          color: currentTheme.axisBorder
+          color: currentTheme.border
         }
       },
       yaxis: {
@@ -178,17 +161,18 @@ export default function YearlyStats({ yearlyStats = [] }) {
           text: 'Number of Visits',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: currentTheme.textMuted
+            color: currentTheme.text
           }
         },
         labels: {
           style: {
-            colors: currentTheme.textMuted
+            colors: currentTheme.text,
+            fontSize: typeof window !== 'undefined' && window.innerWidth < 640 ? '10px' : '12px'
           }
         }
       },
       grid: {
-        borderColor: currentTheme.gridBorder,
+        borderColor: currentTheme.grid,
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -198,34 +182,51 @@ export default function YearlyStats({ yearlyStats = [] }) {
       },
       tooltip: {
         theme: isDarkMode ? 'dark' : 'light',
-        y: {
-          formatter: (value) => `${value} visits`
-        },
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           const item = data[dataPointIndex];
           return `
             <div class="p-2">
               <div class="flex items-center mb-2">
-                <span class="font-medium">${item.year}</span>
+                <span class="font-medium">${item.category}</span>
               </div>
               <div class="grid grid-cols-1 gap-2">
                 <div>
                   <span class="text-xs opacity-70">Visits:</span>
-                  <span class="block font-medium">${item.visits_count}</span>
+                  <span class="block font-medium">${item.values.visits}</span>
                 </div>
                 <div>
                   <span class="text-xs opacity-70">Countries:</span>
-                  <span class="block font-medium">${item.countries_count}</span>
+                  <span class="block font-medium">${item.values.countries}</span>
                 </div>
                 <div>
                   <span class="text-xs opacity-70">Cities:</span>
-                  <span class="block font-medium">${item.cities_count}</span>
+                  <span class="block font-medium">${item.values.cities}</span>
                 </div>
               </div>
             </div>
           `;
         }
-      }
+      },
+      responsive: [
+        {
+          breakpoint: 640,
+          options: {
+            chart: {
+              height: 250
+            },
+            plotOptions: {
+              bar: {
+                borderRadius: 3
+              }
+            },
+            dataLabels: {
+              style: {
+                fontSize: '10px'
+              }
+            }
+          }
+        }
+      ]
     };
     
     const chartElement = document.getElementById('yearly-visits-chart');
@@ -238,27 +239,29 @@ export default function YearlyStats({ yearlyStats = [] }) {
   
   if (!stats || stats.length === 0) {
     return (
-      <div className="stats-card p-2 sm:p-4">
-        <h3 className="text-lg font-semibold flex items-center mb-2">
-          <CalendarIcon className="h-5 w-5 mr-2 text-secondary-color" />
+      <div className="stats-card p-2 sm:p-4 md:p-6">
+        <h3 className="text-base sm:text-lg md:text-xl font-semibold flex items-center mb-2">
+          <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-secondary-color" />
           Travel by Year
         </h3>
-        <p className="text-center text-gray-500 dark:text-gray-400 py-4">No yearly stats available</p>
+        <p className="text-center text-gray-500 dark:text-gray-400 py-3 sm:py-4">No yearly stats available</p>
       </div>
     );
   }
   
   return (
-    <div className="stats-card p-2 sm:p-4">
-      <h3 className="text-lg font-semibold flex items-center mb-4">
-        <CalendarIcon className="h-5 w-5 mr-2 text-secondary-color" />
+    <div className="stats-card p-2 sm:p-4 md:p-6">
+      <h3 className="text-base sm:text-lg md:text-xl font-semibold flex items-center mb-2 sm:mb-3 md:mb-4">
+        <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-secondary-color" />
         Travel by Year
       </h3>
       
-      <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-        <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Yearly Visits</h5>
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Number of trips per year</p>
-        <div id="yearly-visits-chart" className="mt-4"></div>
+      <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-2 sm:p-3 md:p-4">
+        <h5 className="text-sm sm:text-base md:text-lg font-medium text-gray-800 dark:text-white mb-1 sm:mb-1.5 md:mb-2">Yearly Visits</h5>
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-1.5 sm:mb-2 md:mb-4">Number of trips per year</p>
+        <div className="chart-container mt-2 sm:mt-3 md:mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+          <div id="yearly-visits-chart"></div>
+        </div>
       </div>
     </div>
   );

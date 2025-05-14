@@ -536,7 +536,9 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
             </svg>
           </div>
         </div>
-        <div id="area-chart" className="mt-4 h-[200px]"></div>
+        <div className="chart-container mt-4 h-[20vh] sm:h-[25vh] md:h-[30vh]">
+          <div id="area-chart"></div>
+        </div>
         <div className="grid grid-cols-1 border-t border-gray-400 dark:border-gray-600 justify-between pt-5">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium opacity-80">
@@ -602,7 +604,9 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
             <h5 className="text-lg font-medium mb-2">Activities by Year</h5>
             <p className="text-sm opacity-80 mb-4">Number of activities recorded each year</p>
-            <div id="activities-chart" className="mt-4"></div>
+            <div className="chart-container mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+              <div id="activities-chart"></div>
+            </div>
           </div>
         </div>
         
@@ -611,7 +615,9 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
             <h5 className="text-lg font-medium mb-2">Distance by Year</h5>
             <p className="text-sm opacity-80 mb-4">Total distance covered each year (miles)</p>
-            <div id="distance-chart" className="mt-4"></div>
+            <div className="chart-container mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+              <div id="distance-chart"></div>
+            </div>
           </div>
         </div>
         
@@ -620,7 +626,9 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
             <h5 className="text-lg font-medium mb-2">Elevation Gain</h5>
             <p className="text-sm opacity-80 mb-4">Total elevation gain each year (thousands of feet)</p>
-            <div id="elevation-chart" className="mt-4"></div>
+            <div className="chart-container mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+              <div id="elevation-chart"></div>
+            </div>
           </div>
         </div>
         
@@ -629,7 +637,9 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
             <h5 className="text-lg font-medium mb-2">Duration</h5>
             <p className="text-sm opacity-80 mb-4">Total time spent on activities each year (hours)</p>
-            <div id="duration-chart" className="mt-4"></div>
+            <div className="chart-container mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+              <div id="duration-chart"></div>
+            </div>
           </div>
         </div>
       </div>

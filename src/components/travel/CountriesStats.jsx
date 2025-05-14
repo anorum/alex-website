@@ -233,7 +233,9 @@ export default function CountriesStats({ countriesData = [] }) {
       <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
         <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Most Visited Countries</h5>
         <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Top countries by number of visits</p>
-        <div id="countries-bar-chart" className="mt-4"></div>
+        <div className="chart-container mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
+          <div id="countries-bar-chart"></div>
+        </div>
       </div>
     </div>
   );

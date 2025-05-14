@@ -1,11 +1,10 @@
 @import "tailwindcss";
 @import "flowbite/src/themes/default";
-@plugin '@tailwindcss/typography';
-@plugin "flowbite/plugin";
 
-@source "../../node_modules/flowbite";
-
-@custom-variant dark (&:where(.dark, .dark *));
+/* Typography and Flowbite plugins */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Sean Halpin inspired redesign */
 
@@ -283,4 +282,59 @@ h3 {
   width: 100%;
   margin: 0 auto;
   padding: 5rem 1rem 2rem; /* Added top padding to account for fixed navigation */
+}
+
+/* Chart responsiveness */
+[id$="-chart"] {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ApexCharts responsive fixes */
+.apexcharts-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%; /* Ensure it doesn't exceed container */
+}
+
+/* Chart container fixes */
+.chart-container {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Stats page specific fixes */
+.stats-card, 
+.spotify-card,
+.principle-card {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Fix for mobile tables */
+@media (max-width: 640px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .max-w-[150px] {
+    max-width: 100px !important;
+  }
+}
+
+/* Ensure all containers respect viewport width */
+.container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Legend responsiveness */
+.apexcharts-legend {
+  flex-wrap: wrap !important;
 }

@@ -18,8 +18,8 @@ let isLoading = false;
 ---
 
 <Layout title="Stats - Alex Norum" description="Personal statistics and data visualizations">
-		<section class="section">
-			<div class="container">
+		<section class="section overflow-x-hidden">
+			<div class="container max-w-full px-2 sm:px-4">
 				<!-- Hero Section -->
 				<div class="hero">
 					<h1>Stats</h1>
@@ -27,7 +27,7 @@ let isLoading = false;
 				</div>
 				
 				<!-- Stats Cards -->
-				<div class="grid md:grid-cols-1 gap-8 mb-16 animate-fade-in">
+				<div class="grid md:grid-cols-1 gap-8 mb-16 animate-fade-in overflow-hidden">
 					<TravelStats />
 					<SpotifyStats />
 					<StravaStats />
