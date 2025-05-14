@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import ApexCharts from 'apexcharts';
 
-// Website theme colors
+import { chartColors } from '../../utils/chartUtils';
+
+// Chart colors
 const themeColors = {
-  primary: '#2a4535',      // Dark green (bg-color)
-  accent: '#77647b',       // Purple (accent-color)
-  secondary: '#8fb996',    // Light green (secondary-color)
-  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-  text: '#ffffff',         // White (text-color)
-  bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+  primary: chartColors.green,
+  accent: chartColors.purple,
+  secondary: chartColors.teal,
+  tertiary: chartColors.blue,
 };
 
 export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
@@ -104,7 +104,7 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
       },
       tooltip: {
         enabled: true,
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         x: {
           show: true,
         },
@@ -137,7 +137,7 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           right: 2,
           top: 0
         },
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
       },
       series: [
         {
@@ -152,7 +152,7 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           show: true,
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { show: false },
@@ -203,16 +203,16 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
@@ -220,22 +220,22 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           text: 'Number of Activities',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: 'var(--text-color)'
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           },
           formatter: (val) => Math.round(val)
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} activities`
         }
@@ -282,41 +282,41 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
         title: {
-          text: 'Distance (miles)',
+          text: 'Number of Activities',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: 'var(--text-color)'
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           },
           formatter: (val) => Math.round(val)
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
-          formatter: (value) => `${value} mi`
+          formatter: (value) => `${value} activities`
         }
       }
     };
@@ -363,16 +363,16 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
@@ -380,22 +380,22 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           text: 'Elevation (thousands of feet)',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: 'var(--text-color)'
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           },
           formatter: (val) => val.toFixed(1)
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value}k ft`
         }
@@ -447,16 +447,16 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
@@ -464,22 +464,22 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           text: 'Duration (hours)',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: 'var(--text-color)'
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           },
           formatter: (val) => Math.round(val)
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} hrs`
         }
@@ -521,13 +521,13 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
       </h3>
       
       {/* Summary Card */}
-      <div className="w-full bg-white/10 rounded-lg shadow-sm dark:bg-gray-800/30 p-4 md:p-6 mb-6">
+      <div className="w-full bg-white/70 dark:bg-gray-800/30 rounded-lg shadow-sm p-4 md:p-6 mb-6">
         <div className="flex justify-between">
           <div>
-            <h5 className="leading-none text-3xl font-bold text-white pb-2">
+            <h5 className="leading-none text-3xl font-bold pb-2">
               {totalActivities}
             </h5>
-            <p className="text-base font-normal text-gray-300">Total Activities</p>
+            <p className="text-base font-normal opacity-80">Total Activities</p>
           </div>
           <div className={`flex items-center px-2.5 py-0.5 text-base font-semibold ${yoyChange >= 0 ? 'text-green-400' : 'text-red-400'} text-center`}>
             {yoyChange}%
@@ -537,9 +537,9 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
           </div>
         </div>
         <div id="area-chart" className="mt-4 h-[200px]"></div>
-        <div className="grid grid-cols-1 border-t border-gray-600 justify-between pt-5">
+        <div className="grid grid-cols-1 border-t border-gray-400 dark:border-gray-600 justify-between pt-5">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-300">
+            <span className="text-sm font-medium opacity-80">
               Activity trend over years
             </span>
           </div>
@@ -547,7 +547,7 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
       </div>
       
       {/* Tab Navigation */}
-      <div className="border-b border-gray-600">
+      <div className="border-b border-gray-400 dark:border-gray-600">
         <ul className="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
           <li className="mr-2" role="presentation">
             <button 
@@ -599,36 +599,36 @@ export default function YearlyWorkoutsCharts({ yearlyStats = [] }) {
       <div className="mt-4">
         {/* Activities Tab */}
         <div className={`${activeTab === 0 ? 'block' : 'hidden'}`}>
-          <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-            <h5 className="text-lg font-medium text-white mb-2">Activities by Year</h5>
-            <p className="text-sm text-gray-300 mb-4">Number of activities recorded each year</p>
+          <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+            <h5 className="text-lg font-medium mb-2">Activities by Year</h5>
+            <p className="text-sm opacity-80 mb-4">Number of activities recorded each year</p>
             <div id="activities-chart" className="mt-4"></div>
           </div>
         </div>
         
         {/* Distance Tab */}
         <div className={`${activeTab === 1 ? 'block' : 'hidden'}`}>
-          <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-            <h5 className="text-lg font-medium text-white mb-2">Distance by Year</h5>
-            <p className="text-sm text-gray-300 mb-4">Total distance covered each year (miles)</p>
+          <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+            <h5 className="text-lg font-medium mb-2">Distance by Year</h5>
+            <p className="text-sm opacity-80 mb-4">Total distance covered each year (miles)</p>
             <div id="distance-chart" className="mt-4"></div>
           </div>
         </div>
         
         {/* Elevation Tab */}
         <div className={`${activeTab === 2 ? 'block' : 'hidden'}`}>
-          <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-            <h5 className="text-lg font-medium text-white mb-2">Elevation Gain</h5>
-            <p className="text-sm text-gray-300 mb-4">Total elevation gain each year (thousands of feet)</p>
+          <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+            <h5 className="text-lg font-medium mb-2">Elevation Gain</h5>
+            <p className="text-sm opacity-80 mb-4">Total elevation gain each year (thousands of feet)</p>
             <div id="elevation-chart" className="mt-4"></div>
           </div>
         </div>
         
         {/* Duration Tab */}
         <div className={`${activeTab === 3 ? 'block' : 'hidden'}`}>
-          <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-            <h5 className="text-lg font-medium text-white mb-2">Duration</h5>
-            <p className="text-sm text-gray-300 mb-4">Total time spent on activities each year (hours)</p>
+          <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+            <h5 className="text-lg font-medium mb-2">Duration</h5>
+            <p className="text-sm opacity-80 mb-4">Total time spent on activities each year (hours)</p>
             <div id="duration-chart" className="mt-4"></div>
           </div>
         </div>

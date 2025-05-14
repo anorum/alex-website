@@ -7,7 +7,7 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
 import ColumnChartCard from './workout/example'
 ---
 
-<div class="stats-card p-0.5 sm:p-2 md:p-4">
+<div class="stats-card p-0.5 sm:p-2 md:p-4 transition-all duration-300">
   <div class="mb-6">
     <div class="flex items-center mb-4">
       <div class="w-10 h-10 flex items-center justify-center bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400 me-4">
@@ -53,6 +53,11 @@ import ColumnChartCard from './workout/example'
       <div class="mb-8" id="recent-workouts">
           <RecentWorkouts client:only="react" recentActivities={[]} />
       </div>
+      
+      <!-- Yearly Workouts -->
+      <div class="mb-8" id="yearly-workouts">
+          <YearlyWorkouts client:only="react" yearlyStats={[]} />
+      </div>
 
     </div>
   </div>
@@ -64,9 +69,19 @@ import ColumnChartCard from './workout/example'
   .workout-card {
     background-color: var(--bubble-bg);
     border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     box-shadow: var(--card-shadow);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Light mode specific styles */
+  :root:not(.dark) .workout-card {
+    border: 1px solid var(--border-color-light);
+  }
+  
+  /* Dark mode specific styles */
+  .dark .workout-card {
+    border: 1px solid var(--border-color-dark);
   }
   
   .workout-card:hover {

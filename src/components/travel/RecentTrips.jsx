@@ -35,8 +35,8 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
   if (!recentVisits || recentVisits.length === 0) {
     return (
       <div className="bg-white/10 dark:bg-white/5 rounded-lg p-4 shadow-md backdrop-blur-md">
-        <h3 className="text-xl font-semibold mb-4">Recent Trips</h3>
-        <p className="text-gray-400">No recent trips available</p>
+        <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Recent Trips</h3>
+        <p className="text-gray-500 dark:text-gray-400">No recent trips available</p>
       </div>
     );
   }
@@ -49,25 +49,25 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
 
   return (
     <div className="bg-white/10 dark:bg-white/5 rounded-lg p-4 shadow-md backdrop-blur-md">
-      <h3 className="text-xl font-semibold mb-4">Recent Trips</h3>
+      <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Recent Trips</h3>
       
       {/* Desktop view - table */}
       <div className="hidden sm:block">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-white/10">
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4">Location</th>
-              <th className="py-3 px-4">Country</th>
-              <th className="py-3 px-4">Photos</th>
-              <th className="py-3 px-4">Notes</th>
+            <tr className="border-b border-gray-200 dark:border-white/10">
+              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Date</th>
+              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Location</th>
+              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Country</th>
+              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Photos</th>
+              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Notes</th>
             </tr>
           </thead>
           <tbody>
             {recentVisits.map((visit) => (
               <tr 
                 key={visit.visit_id} 
-                className="border-b border-white/10 hover:bg-white/5 transition-colors cursor-pointer"
+                className="border-b border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
                 onClick={() => {
                   const event = new CustomEvent('view-location-on-map', {
                     detail: { locationId: visit.location_id }
@@ -76,21 +76,21 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                   document.getElementById('travel-map-container')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                <td className="py-3 px-4">{formatDate(visit.date)}</td>
+                <td className="py-3 px-4 text-gray-700 dark:text-gray-300">{formatDate(visit.date)}</td>
                 <td className="py-3 px-4">
                   <div className="flex items-center">
                     <span className="text-xl mr-2">{visit.flag}</span>
-                    <span>{visit.city}</span>
+                    <span className="text-gray-800 dark:text-gray-200">{visit.city}</span>
                   </div>
                 </td>
-                <td className="py-3 px-4">{visit.country}</td>
+                <td className="py-3 px-4 text-gray-700 dark:text-gray-300">{visit.country}</td>
                 <td className="py-3 px-4">
                   {visit.imageUrls && (
                     <div className="flex -space-x-2">
                       {visit.imageUrls.slice(0, 3).map((url, index) => (
                         <div 
                           key={index} 
-                          className="w-8 h-8 rounded-full overflow-hidden border border-white/20 shadow-sm"
+                          className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 dark:border-white/20 shadow-sm"
                           style={{ zIndex: 3 - index }}
                         >
                           <img 
@@ -101,7 +101,7 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                         </div>
                       ))}
                       {visit.imageUrls.length > 3 && (
-                        <div className="w-8 h-8 rounded-full bg-[#77647b] flex items-center justify-center text-xs text-white border border-white/20 shadow-sm" style={{ zIndex: 0 }}>
+                        <div className="w-8 h-8 rounded-full bg-[#0c6b4e] dark:bg-[#77647b] flex items-center justify-center text-xs text-white border border-gray-200 dark:border-white/20 shadow-sm" style={{ zIndex: 0 }}>
                           +{visit.imageUrls.length - 3}
                         </div>
                       )}
@@ -110,9 +110,9 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                 </td>
                 <td className="py-3 px-4">
                   {visit.notes ? (
-                    <p className="text-sm text-white/80 line-clamp-2">{visit.notes}</p>
+                    <p className="text-sm text-gray-600 dark:text-white/80 line-clamp-2">{visit.notes}</p>
                   ) : (
-                    <span className="text-white/40 text-sm">-</span>
+                    <span className="text-gray-400 dark:text-white/40 text-sm">-</span>
                   )}
                 </td>
               </tr>
@@ -126,7 +126,7 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
         {recentVisits.map((visit) => (
           <div 
             key={visit.visit_id}
-            className="bg-white/5 rounded-lg p-3 cursor-pointer hover:bg-white/10 transition-colors"
+            className="bg-gray-50 dark:bg-white/5 rounded-lg p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
             onClick={() => {
               const event = new CustomEvent('view-location-on-map', {
                 detail: { locationId: visit.location_id }
@@ -139,11 +139,11 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
               <div className="flex items-center">
                 <span className="text-2xl mr-2">{visit.flag}</span>
                 <div>
-                  <h4 className="font-medium">{visit.city}</h4>
-                  <p className="text-sm text-white/70">{visit.country}</p>
+                  <h4 className="font-medium text-gray-800 dark:text-white">{visit.city}</h4>
+                  <p className="text-sm text-gray-600 dark:text-white/70">{visit.country}</p>
                 </div>
               </div>
-              <div className="text-sm text-white/70">
+              <div className="text-sm text-gray-500 dark:text-white/70">
                 {formatDate(visit.date)}
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                 {visit.imageUrls.slice(0, 3).map((url, index) => (
                   <div 
                     key={index} 
-                    className="w-8 h-8 rounded-full overflow-hidden border border-white/20 shadow-sm"
+                    className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 dark:border-white/20 shadow-sm"
                     style={{ zIndex: 3 - index }}
                   >
                     <img 
@@ -164,7 +164,7 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                   </div>
                 ))}
                 {visit.imageUrls.length > 3 && (
-                  <div className="w-8 h-8 rounded-full bg-[#77647b] flex items-center justify-center text-xs text-white border border-white/20 shadow-sm" style={{ zIndex: 0 }}>
+                  <div className="w-8 h-8 rounded-full bg-[#0c6b4e] dark:bg-[#77647b] flex items-center justify-center text-xs text-white border border-gray-200 dark:border-white/20 shadow-sm" style={{ zIndex: 0 }}>
                     +{visit.imageUrls.length - 3}
                   </div>
                 )}
@@ -172,13 +172,13 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
             )}
             
             {visit.notes && (
-              <p className="text-sm text-white/80 line-clamp-2">{visit.notes}</p>
+              <p className="text-sm text-gray-600 dark:text-white/80 line-clamp-2">{visit.notes}</p>
             )}
           </div>
         ))}
       </div>
       
-      <div className="mt-4 text-sm text-white/60 italic">
+      <div className="mt-4 text-sm text-gray-500 dark:text-white/60 italic">
         Click on any {isMobile ? 'card' : 'row'} to view that location on the map
       </div>
     </div>

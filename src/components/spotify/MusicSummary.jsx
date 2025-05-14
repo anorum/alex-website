@@ -3,6 +3,29 @@ import { ChartBarIcon, MusicalNoteIcon } from '@heroicons/react/24/outline';
 
 export default function MusicSummary({ summary = {} }) {
   const [stats, setStats] = useState(summary);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // Check theme on mount and when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Initial theme check
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+      
+      // Listen for theme changes
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class' && 
+              mutation.target === document.documentElement) {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+          }
+        });
+      });
+      
+      observer.observe(document.documentElement, { attributes: true });
+      
+      return () => observer.disconnect();
+    }
+  }, []);
   
   // Listen for data updates
   useEffect(() => {
@@ -32,14 +55,14 @@ export default function MusicSummary({ summary = {} }) {
       value: Math.round(data.average_artist_popularity || 0),
       label: "Avg. Artist Popularity",
       bgColor: "bg-indigo-100 dark:bg-indigo-900",
-      textColor: "text-indigo-600 dark:text-indigo-400"
+      textColor: "text-indigo-700 dark:text-indigo-400"
     },
     {
       icon: <ChartBarIcon className="h-5 w-5" />,
       value: `${Math.round(data.mainstream_factor || 0)}%`,
       label: "Mainstream Factor",
       bgColor: "bg-blue-100 dark:bg-blue-900",
-      textColor: "text-blue-600 dark:text-blue-400"
+      textColor: "text-blue-700 dark:text-blue-400"
     }
   ];
   
@@ -51,8 +74,8 @@ export default function MusicSummary({ summary = {} }) {
             {item.icon}
           </div>
           <div className="truncate w-full">
-            <p className="text-xl font-semibold truncate">{item.value}</p>
-            <p className="text-md opacity-80">{item.label}</p>
+            <p className="text-xl font-semibold truncate text-gray-800 dark:text-white">{item.value}</p>
+            <p className="text-md text-gray-600 dark:text-gray-300">{item.label}</p>
           </div>
         </div>
       ))}

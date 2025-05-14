@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import ApexCharts from 'apexcharts';
 
-// Website theme colors
+import { chartColors } from '../../utils/chartUtils';
+
+// Chart colors
 const themeColors = {
-  primary: '#2a4535',      // Dark green (bg-color)
-  accent: '#77647b',       // Purple (accent-color)
-  secondary: '#8fb996',    // Light green (secondary-color)
-  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-  text: '#ffffff',         // White (text-color)
-  bubble: 'rgba(255, 255, 255, 0.1)' // Bubble background
+  primary: chartColors.green,
+  accent: chartColors.purple,
+  secondary: chartColors.teal,
+  tertiary: chartColors.blue,
 };
 
 export default function YearlyWorkouts({ yearlyStats = [] }) {
@@ -100,27 +100,27 @@ export default function YearlyWorkouts({ yearlyStats = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -129,7 +129,7 @@ export default function YearlyWorkouts({ yearlyStats = [] }) {
         }
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} activities`
         }
@@ -181,7 +181,7 @@ export default function YearlyWorkouts({ yearlyStats = [] }) {
         Yearly Stats
       </h3>
       
-      <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4 max-h-[500px] overflow-y-auto">
+      <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4 max-h-[500px] overflow-y-auto">
         <div id="yearly-activities-chart" className="mt-2 mb-4"></div>
         
         {/* Custom legend with additional stats */}
@@ -189,17 +189,17 @@ export default function YearlyWorkouts({ yearlyStats = [] }) {
           {processedStats.map((stat, index) => (
             <div key={index} className="flex flex-col">
               <div className="flex justify-between items-center">
-                <span className="font-medium text-white">{stat.name}</span>
-                <span className="font-medium text-white">{stat.value} activities</span>
+                <span className="font-medium">{stat.name}</span>
+                <span className="font-medium">{stat.value} activities</span>
               </div>
               <div className="flex flex-wrap gap-1 text-xs mt-1">
-                <span className="px-2 py-0.5 bg-white/10 text-blue-300 rounded-full whitespace-nowrap">
+                <span className="px-2 py-0.5 bg-blue-100 dark:bg-white/10 text-blue-700 dark:text-blue-300 rounded-full whitespace-nowrap">
                   {stat.distance} mi
                 </span>
-                <span className="px-2 py-0.5 bg-white/10 text-green-300 rounded-full whitespace-nowrap">
+                <span className="px-2 py-0.5 bg-green-100 dark:bg-white/10 text-green-700 dark:text-green-300 rounded-full whitespace-nowrap">
                   {stat.elevation} ft
                 </span>
-                <span className="px-2 py-0.5 bg-white/10 text-purple-300 rounded-full whitespace-nowrap">
+                <span className="px-2 py-0.5 bg-purple-100 dark:bg-white/10 text-purple-700 dark:text-purple-300 rounded-full whitespace-nowrap">
                   {stat.duration} hrs
                 </span>
               </div>

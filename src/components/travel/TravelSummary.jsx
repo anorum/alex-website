@@ -4,17 +4,71 @@ import ApexCharts from 'apexcharts';
 
 // Website theme colors
 const themeColors = {
-  primary: '#2a4535',      // Dark green (bg-color)
-  accent: '#77647b',       // Purple (accent-color)
-  secondary: '#8fb996',    // Light green (secondary-color)
-  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-  text: '#ffffff',         // White (text-color)
-  bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+  // Dark mode colors
+  dark: {
+    primary: '#2a4535',      // Dark green (bg-color)
+    accent: '#77647b',       // Purple (accent-color)
+    secondary: '#8fb996',    // Light green (secondary-color)
+    tertiary: '#d1e2c4',     // Very light green (tertiary-color)
+    text: '#ffffff',         // White (text-color)
+    textMuted: 'rgba(255, 255, 255, 0.7)',
+    bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+    axisBorder: 'rgba(255, 255, 255, 0.1)',
+    gridBorder: 'rgba(255, 255, 255, 0.1)'
+  },
+  // Light mode colors
+  light: {
+    primary: '#0c6b4e',      // Green (bg-color)
+    accent: '#77647b',       // Purple (accent-color)
+    secondary: '#0c6b4e',    // Green (secondary-color)
+    tertiary: '#8fb996',     // Light green (tertiary-color)
+    text: '#2a4535',         // Dark green (text-color)
+    textMuted: 'rgba(42, 69, 53, 0.7)',
+    bubble: 'rgba(255, 255, 255, 0.7)', // Bubble background
+    axisBorder: 'rgba(0, 0, 0, 0.1)',
+    gridBorder: 'rgba(0, 0, 0, 0.1)'
+  }
+};
+
+// Function to get current theme colors
+const getThemeColors = () => {
+  if (typeof window !== 'undefined') {
+    return document.documentElement.classList.contains('dark') 
+      ? themeColors.dark 
+      : themeColors.light;
+  }
+  return themeColors.dark; // Default to dark theme
 };
 
 export default function TravelSummary({ summary = {} }) {
   const [stats, setStats] = useState(summary);
   const [yearData, setYearData] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // Check theme on mount and when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Initial theme check
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+      
+      // Listen for theme changes
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class' && 
+              mutation.target === document.documentElement) {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+            
+            // Trigger theme-changed event for charts to update
+            document.dispatchEvent(new Event('theme-changed'));
+          }
+        });
+      });
+      
+      observer.observe(document.documentElement, { attributes: true });
+      
+      return () => observer.disconnect();
+    }
+  }, []);
   
   // Listen for data updates
   useEffect(() => {
@@ -62,6 +116,7 @@ export default function TravelSummary({ summary = {} }) {
       const chartElement = document.getElementById(id);
       if (chartElement && chartElement.chart) {
         chartElement.chart.destroy();
+        chartElement.chart = null;
       }
     });
     
@@ -70,19 +125,46 @@ export default function TravelSummary({ summary = {} }) {
     renderCitiesChart(chartData);
     renderVisitsChart(chartData);
     
+    // Add theme change listener
+    const handleThemeChange = () => {
+      // Clean up existing charts before rendering new ones
+      ['countries-chart', 'cities-chart', 'visits-chart'].forEach(id => {
+        const chartElement = document.getElementById(id);
+        if (chartElement && chartElement.chart) {
+          chartElement.chart.destroy();
+          chartElement.chart = null;
+        }
+      });
+      
+      // Re-render charts with new theme
+      renderCountriesChart(chartData);
+      renderCitiesChart(chartData);
+      renderVisitsChart(chartData);
+    };
+    
+    // Listen for theme changes
+    document.addEventListener('theme-changed', handleThemeChange);
+    
     return () => {
       // Clean up charts on unmount
       ['countries-chart', 'cities-chart', 'visits-chart'].forEach(id => {
         const chartElement = document.getElementById(id);
         if (chartElement && chartElement.chart) {
           chartElement.chart.destroy();
+          chartElement.chart = null;
         }
       });
+      
+      // Remove theme change listener
+      document.removeEventListener('theme-changed', handleThemeChange);
     };
   }, [yearData]);
   
   // Render countries chart
   const renderCountriesChart = (chartData) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       chart: {
         id: 'countries-chart',
@@ -99,7 +181,7 @@ export default function TravelSummary({ summary = {} }) {
       },
       tooltip: {
         enabled: true,
-        theme: 'dark',
+        theme: isDarkMode ? 'dark' : 'light',
         x: {
           show: true,
         },
@@ -112,8 +194,8 @@ export default function TravelSummary({ summary = {} }) {
         gradient: {
           opacityFrom: 0.55,
           opacityTo: 0,
-          shade: themeColors.secondary,
-          gradientToColors: [themeColors.secondary],
+          shade: currentTheme.secondary,
+          gradientToColors: [currentTheme.secondary],
         },
       },
       dataLabels: {
@@ -122,7 +204,7 @@ export default function TravelSummary({ summary = {} }) {
       stroke: {
         width: 3,
         curve: 'smooth',
-        colors: [themeColors.secondary]
+        colors: [currentTheme.secondary]
       },
       grid: {
         show: true,
@@ -132,13 +214,13 @@ export default function TravelSummary({ summary = {} }) {
           right: 2,
           top: 0
         },
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: currentTheme.gridBorder,
       },
       series: [
         {
           name: "Countries",
           data: chartData.map(item => item.countries),
-          color: themeColors.secondary,
+          color: currentTheme.secondary,
         },
       ],
       xaxis: {
@@ -147,7 +229,7 @@ export default function TravelSummary({ summary = {} }) {
           show: true,
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         },
         axisBorder: { show: false },
@@ -168,6 +250,9 @@ export default function TravelSummary({ summary = {} }) {
   
   // Render cities chart
   const renderCitiesChart = (chartData) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       chart: {
         id: 'cities-chart',
@@ -184,7 +269,7 @@ export default function TravelSummary({ summary = {} }) {
       },
       tooltip: {
         enabled: true,
-        theme: 'dark',
+        theme: isDarkMode ? 'dark' : 'light',
         x: {
           show: true,
         },
@@ -197,8 +282,8 @@ export default function TravelSummary({ summary = {} }) {
         gradient: {
           opacityFrom: 0.55,
           opacityTo: 0,
-          shade: themeColors.accent,
-          gradientToColors: [themeColors.accent],
+          shade: currentTheme.accent,
+          gradientToColors: [currentTheme.accent],
         },
       },
       dataLabels: {
@@ -207,7 +292,7 @@ export default function TravelSummary({ summary = {} }) {
       stroke: {
         width: 3,
         curve: 'smooth',
-        colors: [themeColors.accent]
+        colors: [currentTheme.accent]
       },
       grid: {
         show: true,
@@ -217,13 +302,13 @@ export default function TravelSummary({ summary = {} }) {
           right: 2,
           top: 0
         },
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: currentTheme.gridBorder,
       },
       series: [
         {
           name: "Cities",
           data: chartData.map(item => item.cities),
-          color: themeColors.accent,
+          color: currentTheme.accent,
         },
       ],
       xaxis: {
@@ -232,7 +317,7 @@ export default function TravelSummary({ summary = {} }) {
           show: true,
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         },
         axisBorder: { show: false },
@@ -253,6 +338,9 @@ export default function TravelSummary({ summary = {} }) {
   
   // Render visits chart
   const renderVisitsChart = (chartData) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       chart: {
         id: 'visits-chart',
@@ -269,7 +357,7 @@ export default function TravelSummary({ summary = {} }) {
       },
       tooltip: {
         enabled: true,
-        theme: 'dark',
+        theme: isDarkMode ? 'dark' : 'light',
         x: {
           show: true,
         },
@@ -282,8 +370,8 @@ export default function TravelSummary({ summary = {} }) {
         gradient: {
           opacityFrom: 0.55,
           opacityTo: 0,
-          shade: themeColors.tertiary,
-          gradientToColors: [themeColors.tertiary],
+          shade: currentTheme.tertiary,
+          gradientToColors: [currentTheme.tertiary],
         },
       },
       dataLabels: {
@@ -292,7 +380,7 @@ export default function TravelSummary({ summary = {} }) {
       stroke: {
         width: 3,
         curve: 'smooth',
-        colors: [themeColors.tertiary]
+        colors: [currentTheme.tertiary]
       },
       grid: {
         show: true,
@@ -302,13 +390,13 @@ export default function TravelSummary({ summary = {} }) {
           right: 2,
           top: 0
         },
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: currentTheme.gridBorder,
       },
       series: [
         {
           name: "Visits",
           data: chartData.map(item => item.visits),
-          color: themeColors.tertiary,
+          color: currentTheme.tertiary,
         },
       ],
       xaxis: {
@@ -317,7 +405,7 @@ export default function TravelSummary({ summary = {} }) {
           show: true,
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         },
         axisBorder: { show: false },
@@ -371,8 +459,8 @@ export default function TravelSummary({ summary = {} }) {
                 {item.icon}
               </div>
               <div>
-                <p className="text-xl font-semibold">{item.value}</p>
-                <p className="text-sm opacity-80">{item.label}</p>
+                <p className="text-xl font-semibold text-gray-800 dark:text-white">{item.value}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{item.label}</p>
               </div>
             </div>
           </div>

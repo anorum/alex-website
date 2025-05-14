@@ -10,11 +10,57 @@
 /* Sean Halpin inspired redesign */
 
 :root {
-  --bg-color: #2a4535;
-  --text-color: #ffffff;
+  /* Sean Halpin's color palette */
+  --color-white: hsla(0, 0%, 100%, 1);
+  --color-white50: hsla(0, 0%, 100%, .5);
+  --color-white20: hsla(0, 0%, 100%, .2);
+  --color-white30: hsla(0, 0%, 100%, .3);
+  --color-backdrop: hsla(45, 17%, 95%, .8);
+  --color-black: hsla(0, 0%, 0%, 1);
+  --color-beige: hsla(36, 31%, 90%, 1);
+  --color-green300: hsla(159, 42%, 88%, 1);
+  --color-green400: hsla(160, 52%, 71%, 1);
+  --color-green500: hsla(172, 95%, 18%, 1);
+  --color-green600: hsla(171, 15%, 35%, 1);
+  --color-green700: hsla(171, 11%, 24%, 1);
+  --color-green800: hsla(158, 23%, 18%, 1);
+  
+  /* Light mode colors */
+  --bg-color-light: var(--color-beige);
+  --text-color-light: var(--color-green500);
+  --text-secondary-light: var(--color-green600);
+  --text-tertiary-light: var(--color-green700);
+  --accent-color-light: var(--color-green500);
+  --secondary-color-light: var(--color-green400);
+  --tertiary-color-light: var(--color-green300);
+  --bubble-bg-light: rgba(255, 255, 255, 0.7);
+  --card-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --border-color-light: rgba(0, 0, 0, 0.1);
+  
+  /* Dark mode colors */
+  --bg-color-dark: #1a2e24;
+  --text-color-dark: #ffffff;
+  --text-secondary-dark: #e0e0e0;
+  --text-tertiary-dark: #c0c0c0;
+  --accent-color-dark: #77647b;
+  --secondary-color-dark: #8fb996;
+  --tertiary-color-dark: #d1e2c4;
+  --bubble-bg-dark: rgba(255, 255, 255, 0.05);
+  --card-shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-color-dark: rgba(255, 255, 255, 0.1);
+  
+  /* Default to light mode */
+  --bg-color: var(--bg-color-light);
+  --text-color: var(--text-color-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-tertiary: var(--text-tertiary-light);
+  --accent-color: var(--accent-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --tertiary-color: var(--tertiary-color-light);
+  --bubble-bg: var(--bubble-bg-light);
+  --card-shadow: var(--card-shadow-light);
+  --border-color: var(--border-color-light);
   --text-dark: #333333;
-  --accent-color: #77647b;
-  --bubble-bg: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -219,9 +265,16 @@ h3 {
 
 /* Dark mode */
 .dark {
-  --bg-color: #1a2e24;
-  --text-color: #ffffff;
-  --bubble-bg: rgba(255, 255, 255, 0.05);
+  --bg-color: var(--bg-color-dark);
+  --text-color: var(--text-color-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-tertiary: var(--text-tertiary-dark);
+  --accent-color: var(--accent-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --tertiary-color: var(--tertiary-color-dark);
+  --bubble-bg: var(--bubble-bg-dark);
+  --card-shadow: var(--card-shadow-dark);
+  --border-color: var(--border-color-dark);
 }
 
 /* Content container */

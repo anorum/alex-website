@@ -4,22 +4,62 @@ import ApexCharts from 'apexcharts';
 
 // Website theme colors
 const themeColors = {
-  primary: '#2a4535',      // Dark green (bg-color)
-  accent: '#77647b',       // Purple (accent-color)
-  secondary: '#8fb996',    // Light green (secondary-color)
-  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-  text: '#ffffff',         // White (text-color)
-  bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+  // Dark mode colors
+  dark: {
+    primary: '#2a4535',      // Dark green (bg-color)
+    accent: '#77647b',       // Purple (accent-color)
+    secondary: '#8fb996',    // Light green (secondary-color)
+    tertiary: '#d1e2c4',     // Very light green (tertiary-color)
+    text: '#ffffff',         // White (text-color)
+    textMuted: 'rgba(255, 255, 255, 0.7)',
+    bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+    axisBorder: 'rgba(255, 255, 255, 0.1)',
+    gridBorder: 'rgba(255, 255, 255, 0.1)'
+  },
+  // Light mode colors
+  light: {
+    primary: '#0c6b4e',      // Green (bg-color)
+    accent: '#77647b',       // Purple (accent-color)
+    secondary: '#0c6b4e',    // Green (secondary-color)
+    tertiary: '#8fb996',     // Light green (tertiary-color)
+    text: '#2a4535',         // Dark green (text-color)
+    textMuted: 'rgba(42, 69, 53, 0.7)',
+    bubble: 'rgba(255, 255, 255, 0.7)', // Bubble background
+    axisBorder: 'rgba(0, 0, 0, 0.1)',
+    gridBorder: 'rgba(0, 0, 0, 0.1)'
+  }
+};
+
+// Function to get current theme colors
+const getThemeColors = () => {
+  if (typeof window !== 'undefined') {
+    return document.documentElement.classList.contains('dark') 
+      ? themeColors.dark 
+      : themeColors.light;
+  }
+  return themeColors.dark; // Default to dark theme
 };
 
 // Chart colors array
-const chartColorsArray = [
-  themeColors.secondary,
-  themeColors.accent,
-  themeColors.tertiary,
-  '#ff9800',  // Orange
-  '#2196f3',  // Blue
-];
+const getChartColors = (isDarkMode) => {
+  if (isDarkMode) {
+    return [
+      themeColors.dark.secondary,
+      themeColors.dark.accent,
+      themeColors.dark.tertiary,
+      '#ff9800',  // Orange
+      '#2196f3',  // Blue
+    ];
+  } else {
+    return [
+      themeColors.light.secondary,
+      themeColors.light.accent,
+      themeColors.light.tertiary,
+      '#e65100',  // Dark Orange
+      '#0d47a1',  // Dark Blue
+    ];
+  }
+};
 
 export default function RecentWorkouts({ recentActivities = [] }) {
   const [activities, setActivities] = useState(recentActivities);
@@ -130,6 +170,7 @@ export default function RecentWorkouts({ recentActivities = [] }) {
       const chartElement = document.getElementById(id);
       if (chartElement && chartElement.chart) {
         chartElement.chart.destroy();
+        chartElement.chart = null;
       }
     });
     
@@ -143,19 +184,50 @@ export default function RecentWorkouts({ recentActivities = [] }) {
       renderDurationChart(durationData);
     }
     
+    // Add theme change listener
+    const handleThemeChange = () => {
+      // Clean up existing charts before rendering new ones
+      ['recent-distance-chart', 'recent-duration-chart'].forEach(id => {
+        const chartElement = document.getElementById(id);
+        if (chartElement && chartElement.chart) {
+          chartElement.chart.destroy();
+          chartElement.chart = null;
+        }
+      });
+      
+      // Re-render charts with new theme
+      if (distanceData.length > 0) {
+        renderDistanceChart(distanceData);
+      }
+      
+      if (durationData.length > 0) {
+        renderDurationChart(durationData);
+      }
+    };
+    
+    // Listen for theme changes
+    document.addEventListener('theme-changed', handleThemeChange);
+    
     return () => {
       // Clean up charts on unmount
       ['recent-distance-chart', 'recent-duration-chart'].forEach(id => {
         const chartElement = document.getElementById(id);
         if (chartElement && chartElement.chart) {
           chartElement.chart.destroy();
+          chartElement.chart = null;
         }
       });
+      
+      // Remove theme change listener
+      document.removeEventListener('theme-changed', handleThemeChange);
     };
   }, [activities]);
   
   // Render distance chart
   const renderDistanceChart = (data) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       series: [{
         name: 'Distance',
@@ -175,7 +247,7 @@ export default function RecentWorkouts({ recentActivities = [] }) {
           borderRadius: 6
         }
       },
-      colors: [themeColors.secondary],
+      colors: [currentTheme.secondary],
       dataLabels: {
         enabled: false
       },
@@ -184,7 +256,7 @@ export default function RecentWorkouts({ recentActivities = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           },
           rotate: -45,
           rotateAlways: false,
@@ -192,11 +264,11 @@ export default function RecentWorkouts({ recentActivities = [] }) {
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: currentTheme.axisBorder
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: currentTheme.axisBorder
         }
       },
       yaxis: {
@@ -204,21 +276,21 @@ export default function RecentWorkouts({ recentActivities = [] }) {
           text: 'Distance (miles)',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: currentTheme.textMuted
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: currentTheme.gridBorder,
         strokeDashArray: 4
       },
       tooltip: {
-        theme: 'dark',
+        theme: isDarkMode ? 'dark' : 'light',
         x: {
           show: true
         },
@@ -267,6 +339,9 @@ export default function RecentWorkouts({ recentActivities = [] }) {
   
   // Render duration chart
   const renderDurationChart = (data) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       series: [{
         name: 'Duration',
@@ -286,7 +361,7 @@ export default function RecentWorkouts({ recentActivities = [] }) {
           borderRadius: 6
         }
       },
-      colors: [themeColors.secondary],
+      colors: [currentTheme.secondary],
       dataLabels: {
         enabled: false
       },
@@ -295,7 +370,7 @@ export default function RecentWorkouts({ recentActivities = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           },
           rotate: -45,
           rotateAlways: false,
@@ -303,11 +378,11 @@ export default function RecentWorkouts({ recentActivities = [] }) {
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: currentTheme.axisBorder
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: currentTheme.axisBorder
         }
       },
       yaxis: {
@@ -315,21 +390,21 @@ export default function RecentWorkouts({ recentActivities = [] }) {
           text: 'Duration (hours)',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: currentTheme.textMuted
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: currentTheme.gridBorder,
         strokeDashArray: 4
       },
       tooltip: {
-        theme: 'dark',
+        theme: isDarkMode ? 'dark' : 'light',
         x: {
           show: true
         },
@@ -397,45 +472,45 @@ export default function RecentWorkouts({ recentActivities = [] }) {
       
       <div className="grid grid-cols-1 gap-6">
         <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-white mb-2">Recent Distances</h5>
-          <p className="text-sm text-gray-300 mb-4">Distance per recent activity (miles)</p>
+          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Recent Distances</h5>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Distance per recent activity (miles)</p>
           <div id="recent-distance-chart" className="mt-4"></div>
         </div>
 
         <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-white mb-2">Recent Durations</h5>
-          <p className="text-sm text-gray-300 mb-4">Duration per recent activity (hours)</p>
+          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Recent Durations</h5>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Duration per recent activity (hours)</p>
           <div id="recent-duration-chart" className="mt-4"></div>
         </div>
         
         <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-white mb-2">Recent Activities</h5>
-          <p className="text-sm text-gray-300 mb-4">Your latest workouts</p>
+          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Recent Activities</h5>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Your latest workouts</p>
           <div className="max-h-[400px] overflow-y-auto pr-1">
             <div className="overflow-x-auto">
               <table className="w-full text-sm workout-stats-table">
                 <thead className="bg-white/10 dark:bg-gray-700">
                   <tr>
-                    <th className="p-2 text-left">Activity</th>
-                    <th className="p-2 text-left hidden sm:table-cell">Type</th>
-                    <th className="p-2 text-left">Date</th>
-                    <th className="p-2 text-left">Distance</th>
-                    <th className="p-2 text-left">Duration</th>
+                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Activity</th>
+                    <th className="p-2 text-left hidden sm:table-cell text-gray-700 dark:text-gray-200">Type</th>
+                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Date</th>
+                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Distance</th>
+                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Duration</th>
                   </tr>
                 </thead>
                 <tbody>
                   {activities.slice(0, 10).map((activity, index) => (
-                    <tr key={index} className="border-b border-white/10 dark:border-gray-700 hover:bg-white/5 dark:hover:bg-gray-800">
+                    <tr key={index} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
                       <td className="p-2">
                         <div className="flex items-center">
                           <span className="text-xl mr-2">{getActivityIcon(activity.type)}</span>
-                          <span className="font-medium text-sm truncate max-w-[120px] sm:max-w-[150px]">{activity.name}</span>
+                          <span className="font-medium text-sm truncate max-w-[120px] sm:max-w-[150px] text-gray-800 dark:text-gray-200">{activity.name}</span>
                         </div>
                       </td>
-                      <td className="p-2 hidden sm:table-cell">
+                      <td className="p-2 hidden sm:table-cell text-gray-700 dark:text-gray-300">
                         {activity.type}
                       </td>
-                      <td className="p-2">
+                      <td className="p-2 text-gray-700 dark:text-gray-300">
                         {formatDate(activity.date)}
                       </td>
                       <td className="p-2">

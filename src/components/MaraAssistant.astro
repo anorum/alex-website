@@ -41,16 +41,16 @@
   }
   
   .mara-assistant-content {
-    background: linear-gradient(135deg, rgba(230, 177, 126, 0.2) 0%, rgba(119, 100, 123, 0.2) 100%);
+    background-color: var(--bubble-bg);
     border-radius: 16px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     padding: 1.5rem;
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
   }
@@ -62,8 +62,21 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    background: var(--accent-color);
     z-index: 1;
+  }
+
+  /* Ensure Mara's colors update with theme changes */
+  :root:not(.dark) .mara-assistant-content {
+    background-color: var(--bubble-bg-light);
+    border: 1px solid var(--border-color-light);
+    box-shadow: var(--card-shadow-light);
+  }
+  
+  .dark .mara-assistant-content {
+    background-color: var(--bubble-bg-dark);
+    border: 1px solid var(--border-color-dark);
+    box-shadow: var(--card-shadow-dark);
   }
   
   .mara-assistant-content:hover {
@@ -81,9 +94,19 @@
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    border: 3px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+  }
+  
+  :root:not(.dark) .mara-avatar {
+    border: 3px solid var(--border-color-light);
+    box-shadow: var(--card-shadow-light);
+  }
+  
+  .dark .mara-avatar {
+    border: 3px solid var(--border-color-dark);
+    box-shadow: var(--card-shadow-dark);
   }
   
   .mara-assistant-content:hover .mara-avatar {
@@ -145,11 +168,20 @@
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
+  }
+  
+  :root:not(.dark) .mara-chat-button {
+    box-shadow: var(--card-shadow-light);
+  }
+  
+  .dark .mara-chat-button {
+    box-shadow: var(--card-shadow-dark);
   }
   
   .mara-chat-button:hover {
     background-color: var(--secondary-color);
+    color: var(--text-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }

@@ -36,7 +36,7 @@ export default function CitiesStats({ citiesData = [] }) {
   
   return (
     <div className="stats-card p-2 sm:p-4">
-      <h3 className="text-lg font-semibold flex items-center mb-4">
+      <h3 className="text-lg font-semibold flex items-center mb-4 text-gray-800 dark:text-white">
         <MapPinIcon className="h-5 w-5 mr-2 text-secondary-color" />
         Top Cities
       </h3>
@@ -49,7 +49,7 @@ export default function CitiesStats({ citiesData = [] }) {
                 <div className="w-7 h-7 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-800 dark:text-green-300 mr-2 flex-shrink-0">
                   <span className="text-xs font-bold">{city.name.substring(0, 2).toUpperCase()}</span>
                 </div>
-                <span className="text-sm font-medium truncate">{city.name}</span>
+                <span className="text-sm font-medium truncate text-gray-800 dark:text-white">{city.name}</span>
               </div>
               <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full whitespace-nowrap">
                 {city.value} visits
@@ -57,7 +57,7 @@ export default function CitiesStats({ citiesData = [] }) {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-600 overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full" 
+                className="bg-gradient-to-r from-green-500 to-green-700 dark:from-green-400 dark:to-green-600 h-2 rounded-full" 
                 style={{ width: `${(city.value / maxVisits) * 100}%` }}
               ></div>
             </div>

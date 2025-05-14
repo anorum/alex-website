@@ -4,12 +4,40 @@ import ApexCharts from 'apexcharts';
 
 // Website theme colors
 const themeColors = {
-  primary: '#2a4535',      // Dark green (bg-color)
-  accent: '#77647b',       // Purple (accent-color)
-  secondary: '#8fb996',    // Light green (secondary-color)
-  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-  text: '#ffffff',         // White (text-color)
-  bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+  // Dark mode colors
+  dark: {
+    primary: '#2a4535',      // Dark green (bg-color)
+    accent: '#77647b',       // Purple (accent-color)
+    secondary: '#8fb996',    // Light green (secondary-color)
+    tertiary: '#d1e2c4',     // Very light green (tertiary-color)
+    text: '#ffffff',         // White (text-color)
+    textMuted: 'rgba(255, 255, 255, 0.7)',
+    bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
+    axisBorder: 'rgba(255, 255, 255, 0.1)',
+    gridBorder: 'rgba(255, 255, 255, 0.1)'
+  },
+  // Light mode colors
+  light: {
+    primary: '#0c6b4e',      // Green (bg-color)
+    accent: '#77647b',       // Purple (accent-color)
+    secondary: '#0c6b4e',    // Green (secondary-color)
+    tertiary: '#8fb996',     // Light green (tertiary-color)
+    text: '#2a4535',         // Dark green (text-color)
+    textMuted: 'rgba(42, 69, 53, 0.7)',
+    bubble: 'rgba(255, 255, 255, 0.7)', // Bubble background
+    axisBorder: 'rgba(0, 0, 0, 0.1)',
+    gridBorder: 'rgba(0, 0, 0, 0.1)'
+  }
+};
+
+// Function to get current theme colors
+const getThemeColors = () => {
+  if (typeof window !== 'undefined') {
+    return document.documentElement.classList.contains('dark') 
+      ? themeColors.dark 
+      : themeColors.light;
+  }
+  return themeColors.dark; // Default to dark theme
 };
 
 export default function YearlyStats({ yearlyStats = [] }) {
@@ -48,11 +76,30 @@ export default function YearlyStats({ yearlyStats = [] }) {
       const chartElement = document.getElementById(id);
       if (chartElement && chartElement.chart) {
         chartElement.chart.destroy();
+        chartElement.chart = null;
       }
     });
     
     // Render visits chart
     renderVisitsChart(processedStats);
+    
+    // Add theme change listener
+    const handleThemeChange = () => {
+      // Clean up existing chart before rendering new one
+      ['yearly-visits-chart'].forEach(id => {
+        const chartElement = document.getElementById(id);
+        if (chartElement && chartElement.chart) {
+          chartElement.chart.destroy();
+          chartElement.chart = null;
+        }
+      });
+      
+      // Re-render chart with new theme
+      renderVisitsChart(processedStats);
+    };
+    
+    // Listen for theme changes
+    document.addEventListener('theme-changed', handleThemeChange);
     
     return () => {
       // Clean up charts on unmount
@@ -60,13 +107,20 @@ export default function YearlyStats({ yearlyStats = [] }) {
         const chartElement = document.getElementById(id);
         if (chartElement && chartElement.chart) {
           chartElement.chart.destroy();
+          chartElement.chart = null;
         }
       });
+      
+      // Remove theme change listener
+      document.removeEventListener('theme-changed', handleThemeChange);
     };
   }, [stats]);
   
   // Render visits chart
   const renderVisitsChart = (data) => {
+    const currentTheme = getThemeColors();
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
     const options = {
       series: [{
         name: 'Visits',
@@ -89,7 +143,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
           }
         }
       },
-      colors: [themeColors.secondary],
+      colors: [currentTheme.secondary],
       dataLabels: {
         enabled: true,
         formatter: function(val) {
@@ -99,7 +153,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
         style: {
           fontSize: '12px',
           fontFamily: 'Inter, sans-serif',
-          colors: ['rgba(255, 255, 255, 0.8)']
+          colors: [currentTheme.text]
         }
       },
       xaxis: {
@@ -107,16 +161,16 @@ export default function YearlyStats({ yearlyStats = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: currentTheme.axisBorder
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: currentTheme.axisBorder
         }
       },
       yaxis: {
@@ -124,17 +178,17 @@ export default function YearlyStats({ yearlyStats = [] }) {
           text: 'Number of Visits',
           style: {
             fontFamily: 'Inter, sans-serif',
-            color: 'rgba(255, 255, 255, 0.7)'
+            color: currentTheme.textMuted
           }
         },
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: currentTheme.textMuted
           }
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: currentTheme.gridBorder,
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -143,7 +197,7 @@ export default function YearlyStats({ yearlyStats = [] }) {
         }
       },
       tooltip: {
-        theme: 'dark',
+        theme: isDarkMode ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} visits`
         },
@@ -202,8 +256,8 @@ export default function YearlyStats({ yearlyStats = [] }) {
       </h3>
       
       <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-        <h5 className="text-lg font-medium text-white mb-2">Yearly Visits</h5>
-        <p className="text-sm text-gray-300 mb-4">Number of trips per year</p>
+        <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Yearly Visits</h5>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Number of trips per year</p>
         <div id="yearly-visits-chart" className="mt-4"></div>
       </div>
     </div>

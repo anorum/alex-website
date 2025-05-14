@@ -66,7 +66,7 @@ export function createBarChartConfig({
         categories: xAxisCategories,
         labels: {
           style: {
-            colors: '#6B7280',
+            colors: 'var(--text-color)',
             fontSize: '12px',
             fontFamily: 'Inter, sans-serif',
           }
@@ -81,7 +81,7 @@ export function createBarChartConfig({
       yaxis: {
         labels: {
           style: {
-            colors: '#6B7280',
+            colors: 'var(--text-color)',
             fontSize: '12px',
             fontFamily: 'Inter, sans-serif',
           },
@@ -220,7 +220,7 @@ interface BarListConfig {
 export function createBarListConfig({
   data,
   valueFormatter = (val: number) => val.toString(),
-  color = chartColors.orange,
+  color = chartColors.green,
   height = 350
 }: BarListConfig): any {
   // Transform data for ApexCharts
@@ -287,7 +287,7 @@ export function createBarListConfig({
       yaxis: {
         labels: {
           style: {
-            colors: '#6B7280',
+            colors: 'var(--text-color)',
             fontSize: '12px',
             fontFamily: 'Inter, sans-serif',
           }

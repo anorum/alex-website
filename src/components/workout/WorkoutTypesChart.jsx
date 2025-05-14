@@ -2,23 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { ChartBarIcon } from '@heroicons/react/24/outline';
 import ApexCharts from 'apexcharts';
 
-// Website theme colors
-const themeColors = {
-  primary: '#2a4535',      // Dark green (bg-color)
-  accent: '#77647b',       // Purple (accent-color)
-  secondary: '#8fb996',    // Light green (secondary-color)
-  tertiary: '#d1e2c4',     // Very light green (tertiary-color)
-  text: '#ffffff',         // White (text-color)
-  bubble: 'rgba(255, 255, 255, 0.1)', // Bubble background
-};
+import { chartColors } from '../../utils/chartUtils';
 
 // Chart colors array
 const chartColorsArray = [
-  themeColors.secondary,
-  themeColors.accent,
-  themeColors.tertiary,
-  '#ff9800',  // Orange
-  '#2196f3',  // Blue
+  chartColors.green,
+  chartColors.teal,
+  chartColors.blue,
+  chartColors.purple,
+  chartColors.orange,
 ];
 
 export default function WorkoutTypesChart({ activityTypes = [] }) {
@@ -128,27 +120,27 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -157,7 +149,7 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
         }
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} activities`
         }
@@ -212,27 +204,27 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
         labels: {
           style: {
             fontFamily: 'Inter, sans-serif',
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         },
         axisBorder: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         },
         axisTicks: { 
           show: true,
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: 'var(--border-color)'
         }
       },
       yaxis: {
         labels: {
           style: {
-            colors: 'rgba(255, 255, 255, 0.7)'
+            colors: 'var(--text-color)'
           }
         }
       },
       grid: {
-        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderColor: 'var(--border-color)',
         strokeDashArray: 4,
         yaxis: {
           lines: {
@@ -241,7 +233,7 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
         }
       },
       tooltip: {
-        theme: 'dark',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         y: {
           formatter: (value) => `${value} mi`
         }
@@ -276,15 +268,15 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
       </h3>
       
       <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-white mb-2">Activities by Type</h5>
-          <p className="text-sm text-gray-300 mb-4">Number of activities per type</p>
+        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
+          <h5 className="text-lg font-medium mb-2">Activities by Type</h5>
+          <p className="text-sm opacity-80 mb-4">Number of activities per type</p>
           <div id="activities-bar-chart" className="mt-4"></div>
         </div>
 
-        <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4 mt-6">
-          <h5 className="text-lg font-medium text-white mb-2">Distance by Type</h5>
-          <p className="text-sm text-gray-300 mb-4">Total distance per activity type (miles)</p>
+        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-4 mt-6">
+          <h5 className="text-lg font-medium mb-2">Distance by Type</h5>
+          <p className="text-sm opacity-80 mb-4">Total distance per activity type (miles)</p>
           <div id="distance-bar-chart" className="mt-4"></div>
         </div>
       </div>

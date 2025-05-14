@@ -12,15 +12,55 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Color palette inspired by Sean Halpin's site */
-  --bg-color: #2a4535;
-  --text-color: #ffffff;
-  --text-dark: #333333;
-  --accent-color: #77647b;
-  --secondary-color: #8fb996;
-  --tertiary-color: #d1e2c4;
-  --bubble-bg: rgba(255, 255, 255, 0.1);
-  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --color-white: hsla(0, 0%, 100%, 1);
+  --color-white50: hsla(0, 0%, 100%, .5);
+  --color-white20: hsla(0, 0%, 100%, .2);
+  --color-white30: hsla(0, 0%, 100%, .3);
+  --color-backdrop: hsla(45, 17%, 95%, .8);
+  --color-black: hsla(0, 0%, 0%, 1);
+  --color-beige: hsla(36, 31%, 90%, 1);
+  --color-green300: hsla(159, 42%, 88%, 1);
+  --color-green400: hsla(160, 52%, 71%, 1);
+  --color-green500: hsla(172, 95%, 18%, 1);
+  --color-green600: hsla(171, 15%, 35%, 1);
+  --color-green700: hsla(171, 11%, 24%, 1);
+  --color-green800: hsla(158, 23%, 18%, 1);
+  
+  /* Light mode colors */
+  --bg-color-light: var(--color-beige);
+  --text-color-light: var(--color-green500);
+  --text-secondary-light: var(--color-green600);
+  --text-tertiary-light: var(--color-green700);
+  --accent-color-light: var(--color-green500);
+  --secondary-color-light: var(--color-green400);
+  --tertiary-color-light: var(--color-green300);
+  --bubble-bg-light: rgba(255, 255, 255, 0.7);
+  --card-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --border-color-light: rgba(0, 0, 0, 0.1);
+  
+  /* Dark mode colors */
+  --bg-color-dark: #1a2e24;
+  --text-color-dark: #ffffff;
+  --text-secondary-dark: #e0e0e0;
+  --text-tertiary-dark: #c0c0c0;
+  --accent-color-dark: #77647b;
+  --secondary-color-dark: #8fb996;
+  --tertiary-color-dark: #d1e2c4;
+  --bubble-bg-dark: rgba(255, 255, 255, 0.05);
+  --card-shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-color-dark: rgba(255, 255, 255, 0.1);
+  
+  /* Default to light mode */
+  --bg-color: var(--bg-color-light);
+  --text-color: var(--text-color-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-tertiary: var(--text-tertiary-light);
+  --accent-color: var(--accent-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --tertiary-color: var(--tertiary-color-light);
+  --bubble-bg: var(--bubble-bg-light);
+  --card-shadow: var(--card-shadow-light);
+  --border-color: var(--border-color-light);
   
   /* Typography */
   --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -193,9 +233,13 @@ p {
   width: 200px;
   height: 200px;
   object-fit: cover;
-  border: 5px solid rgba(255, 255, 255, 0.2);
+  border: 5px solid rgba(143, 185, 150, 0.3);
   box-shadow: var(--card-shadow);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .profile-image {
+  border: 5px solid rgba(255, 255, 255, 0.2);
 }
 
 @media (min-width: 768px) {
@@ -256,11 +300,19 @@ p {
   backdrop-filter: blur(10px);
   transition: transform 0.3s ease, background-color 0.3s ease;
   box-shadow: var(--card-shadow);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark .experience-bubble {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .experience-bubble:hover {
   transform: translateY(-5px);
+  background-color: rgba(143, 185, 150, 0.2);
+}
+
+.dark .experience-bubble:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -288,10 +340,14 @@ p {
   border-radius: var(--radius-md);
   padding: 0.25rem;
   box-shadow: var(--card-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease;
   overflow: hidden;
   position: relative;
+}
+
+.dark .company-timeline {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (min-width: 640px) {
@@ -352,15 +408,20 @@ p {
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   display: inline-flex;
   align-items: center;
   font-weight: 500;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.dark .skill-tag {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .skill-tag:hover {
   background-color: var(--accent-color);
+  color: white;
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -416,9 +477,19 @@ p {
 }
 
 .nav-container.scrolled {
-  background-color: rgba(42, 69, 53, 0.9);
+  background-color: rgba(var(--bg-color), 0.9);
   padding: var(--spacing-xs) var(--spacing-sm);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
+}
+
+/* Light mode specific styles for scrolled nav */
+:root:not(.dark) .nav-container.scrolled {
+  background-color: rgba(236, 227, 212, 0.9); /* Beige with opacity */
+}
+
+/* Dark mode specific styles for scrolled nav */
+.dark .nav-container.scrolled {
+  background-color: rgba(26, 46, 36, 0.9);
 }
 
 @media (min-width: 768px) {
@@ -450,9 +521,13 @@ p {
   background-color: var(--bubble-bg);
   transition: all 0.3s ease;
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   font-size: 0.9rem;
   text-align: center;
+}
+
+.dark .nav-link {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -464,14 +539,19 @@ p {
 
 .nav-link:hover, .nav-link.active {
   background-color: var(--accent-color);
+  color: white;
   transform: translateY(-2px);
 }
 
 /* Footer */
 .footer {
   padding: var(--spacing-lg) 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin-top: var(--spacing-lg);
+}
+
+.dark .footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Principles Section */
@@ -492,8 +572,12 @@ p {
   border-radius: var(--radius-md);
   padding: 0.25rem;
   transition: transform 0.3s ease, background-color 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--card-shadow);
+}
+
+.dark .principle-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (min-width: 640px) {
@@ -510,6 +594,10 @@ p {
 
 .principle-card:hover {
   transform: translateY(-5px);
+  background-color: rgba(143, 185, 150, 0.2);
+}
+
+.dark .principle-card:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -523,12 +611,16 @@ p {
 /* Form elements */
 input, textarea, select {
   background-color: var(--bubble-bg);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: var(--radius-sm);
   padding: var(--spacing-sm);
   color: var(--text-color);
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark input, .dark textarea, .dark select {
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 input:focus, textarea:focus, select:focus {
@@ -539,7 +631,7 @@ input:focus, textarea:focus, select:focus {
 
 button {
   background-color: var(--accent-color);
-  color: var(--text-color);
+  color: white;
   border: none;
   border-radius: var(--radius-full);
   padding: var(--spacing-sm) var(--spacing-md);
@@ -550,6 +642,7 @@ button {
 
 button:hover {
   background-color: var(--secondary-color);
+  color: var(--text-dark);
   transform: translateY(-2px);
 }
 
@@ -571,9 +664,16 @@ button:hover {
 
 /* Dark mode */
 .dark {
-  --bg-color: #1a2e24;
-  --text-color: #ffffff;
-  --bubble-bg: rgba(255, 255, 255, 0.05);
+  --bg-color: var(--bg-color-dark);
+  --text-color: var(--text-color-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-tertiary: var(--text-tertiary-dark);
+  --accent-color: var(--accent-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --tertiary-color: var(--tertiary-color-dark);
+  --bubble-bg: var(--bubble-bg-dark);
+  --card-shadow: var(--card-shadow-dark);
+  --border-color: var(--border-color-dark);
 }
 
 /* Content container */
@@ -596,8 +696,12 @@ button:hover {
   border-radius: var(--radius-md);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--card-shadow);
+}
+
+.dark .blog-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .blog-card:hover {
@@ -611,9 +715,13 @@ button:hover {
   border-radius: var(--radius-md);
   padding: 0.25rem;
   transition: transform 0.3s ease, background-color 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--card-shadow);
   height: 100%;
+}
+
+.dark .stats-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @media (min-width: 640px) {
@@ -630,6 +738,10 @@ button:hover {
 
 .stats-card:hover {
   transform: translateY(-5px);
+  background-color: rgba(143, 185, 150, 0.2);
+}
+
+.dark .stats-card:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -673,11 +785,19 @@ button:hover {
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
   transition: transform 0.3s ease, background-color 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--card-shadow);
+}
+
+.dark .faq-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .faq-card:hover {
   transform: translateY(-5px);
+  background-color: rgba(143, 185, 150, 0.2);
+}
+
+.dark .faq-card:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
