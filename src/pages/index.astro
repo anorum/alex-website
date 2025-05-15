@@ -1,399 +1,494 @@
 ---
-import { Image } from 'astro:assets';
-import meImage from '../assets/me.jpeg';
-import legalZoomLogo from '../assets/logos/LegalZoomlogo.webp';
-import newRelicLogo from '../assets/logos/newreliclogo.svg';
-import oracleLogo from '../assets/logos/oraclelogo.png';
 import Layout from '../layouts/Layout.astro';
+import meImage from '../assets/me.jpeg';
 import MaraAssistant from '../components/MaraAssistant.astro';
-
-// Define work experience data
-const workExperience = [
-  {
-    title: "Group Manager, Data Platform Engineering",
-    company: "LegalZoom",
-    period: "23-Present",
-    description: "Leading the Data Platform team, focused on Snowflake administration, orchestration (Airflow), infrastructure-as-code (Terraform), and data governance enablement."
-  },
-  {
-    title: "Principal Data Engineer",
-    company: "LegalZoom",
-    period: "21-23",
-    description: "Modernized the data platform by introducing Airflow on Kubernetes, revamping Snowflake architecture with Terraform, and enabling cost governance practices."
-  },
-  {
-    title: "Senior Data Engineer",
-    company: "New Relic",
-    period: "19-21",
-    description: "Worked across analytics and data platform teams to scale ETL pipelines, manage dbt models, and integrate cross-functional product analytics workflows."
-  },
-  {
-    title: "Data Engineer",
-    company: "Oracle",
-    period: "13-19",
-    description: "Built data pipelines and analytics solutions for enterprise database systems."
-  }
-];
-
-// Define skills
-const skills = [
-  "Python", "Snowflake", "Airflow", "Terraform", "AWS", "Kubernetes", 
-  "dbt", "PostgreSQL", "Kafka", "ETL", "Data Modeling", "LLMs", 
-  "ML Pipelines", "Prompt Engineering", "Data Contracts", "Cost Optimization"
-];
-
-// Define principles
-const principles = [
-  {
-    number: "01",
-    title: "Build for Scale",
-    description: "I design systems that can handle growth and increasing complexity. Scalability isn't just about handling more data—it's about creating architectures that can evolve with changing requirements."
-  },
-  {
-    number: "02",
-    title: "Collaborate",
-    description: "Good engineering is not created in isolation but rather in a shared space. I aim to include stakeholders in my process and create a collaborative environment that welcomes and encourages feedback."
-  },
-  {
-    number: "03",
-    title: "Accessibility",
-    description: "I aim to make everything I design accessible to all for one main reason - it's the right thing to do. Accessible products benefit the many, not the few."
-  },
-  {
-    number: "04",
-    title: "Experiment",
-    description: "Everything I create is subject to change and experimentation. Not everything will work, but it's worth trying - and learning from what doesn't."
-  }
-];
+import Timeline from '../components/Timeline.astro';
+import SkillsGroup from '../components/SkillsGroup.astro';
+import InterestItem from '../components/InterestItem.astro';
+import TravelMap from '../components/travel/TravelMap';
 ---
 
-<Layout title="Alex Norum - Software Engineer" description="Personal website of Alex Norum, Software Engineer and Technology Enthusiast">
-    <!-- Hero Section -->
-    <section class="hero">
-      <h1 class="text-3xl sm:text-4xl md:text-5xl">I'm Alex.</h1>
-      <p class="text-lg sm:text-xl md:text-2xl">Data Platform Engineer & Technology Enthusiast</p>
-      <div class="profile animate-fade-in">
-        <Image 
-          src={meImage} 
-          alt="Alex Norum" 
-          width={300}
-          height={300}
-          class="profile-image w-[200px] h-[200px] md:w-[300px] md:h-[300px]"
-        />
-        <div class="profile-content">
-          <h2 class="text-xl sm:text-2xl md:text-3xl">I'm a Data Platform Engineer working remotely from Portland, Oregon.</h2>
-          <p class="text-sm sm:text-base md:text-lg">
-            Over the past decade, I've worked in various areas of data engineering, including ETL pipelines, data modeling, and platform architecture. I currently lead the Data Platform Engineering team at LegalZoom, where I focus on enabling teams through clean tooling, governance, and cost-efficient architecture.
-          </p>
-          <p class="text-sm sm:text-base md:text-lg">
-            I'm passionate about creating scalable, efficient data solutions that help businesses make better decisions. My approach combines technical expertise with a focus on collaboration and accessibility.
-          </p>
-        </div>
-      </div>
-    </section>
-            
-    <!-- Experience Section -->
-    <section class="section">
-      <div class="container">
-        <h2>Work Experience</h2>
-        <div class="experience-container">
-            <div class="company-timeline backdrop-blur-md bg-white/5 rounded-xl p-6 border border-white/10">
-              <div class="company-header flex items-center mb-4">
-                <div class="flex items-center justify-center">
-                  <Image 
-                    src={legalZoomLogo} 
-                    alt="LegalZoom Logo" 
-                    width={50}
-                    height={50}
-                    class="rounded-lg mr-4"
-                  />
-                </div>
-                <div class="flex flex-col justify-center">
-                  <h3 class="text-2xl mb-0">LegalZoom</h3>
-                  <p class="text-sm opacity-70">Legal Technology</p>
-                </div>
-              </div>
-              
-              <div class="relative pl-8 border-l-2 border-secondary-color ml-6 mt-6">
-                <div class="experience-timeline-item mb-8">
-                  <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                    <h4 class="text-lg sm:text-xl">Group Manager, Data Platform Engineering</h4>
-                    <span class="experience-date text-sm sm:text-base">23-Present</span>
-                  </div>
-                  <p class="text-sm opacity-80 leading-relaxed">Leading the Data Platform team, focused on Snowflake administration, orchestration (Airflow), infrastructure-as-code (Terraform), and data governance enablement.</p>
-                </div>
-                
-                <div class="experience-timeline-item">
-                  <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                    <h4 class="text-lg sm:text-xl">Principal Data Engineer</h4>
-                    <span class="experience-date text-sm sm:text-base">21-23</span>
-                  </div>
-                  <p class="text-sm opacity-80 leading-relaxed">Modernized the data platform by introducing Airflow on Kubernetes, revamping Snowflake architecture with Terraform, and enabling cost governance practices.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div class="company-timeline backdrop-blur-md bg-white/5 rounded-xl p-6 border border-white/10">
-              <div class="company-header flex items-center mb-4">
-                <div class="flex items-center justify-center">
-                  <Image 
-                    src={newRelicLogo} 
-                    alt="New Relic Logo" 
-                    width={50}
-                    height={50}
-                    class="rounded-lg mr-4"
-                  />
-                </div>
-                <div class="flex flex-col justify-center">
-                  <h3 class="text-2xl mb-0">New Relic</h3>
-                  <p class="text-sm opacity-70">Observability Platform</p>
-                </div>
-              </div>
-              
-              <div class="relative pl-8 border-l-2 border-secondary-color ml-6 mt-6">
-                <div class="experience-timeline-item">
-                  <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                    <h4 class="text-lg sm:text-xl">Senior Data Engineer</h4>
-                    <span class="experience-date text-sm sm:text-base">19-21</span>
-                  </div>
-                  <p class="text-sm opacity-80 leading-relaxed">Worked across analytics and data platform teams to scale ETL pipelines, manage dbt models, and integrate cross-functional product analytics workflows.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div class="company-timeline backdrop-blur-md bg-white/5 rounded-xl p-6 border border-white/10">
-              <div class="company-header flex items-center mb-4">
-                <div class="flex items-center justify-center">
-                  <Image 
-                    src={oracleLogo} 
-                    alt="Oracle Logo" 
-                    width={50}
-                    height={50}
-                    class="rounded-lg mr-4"
-                  />
-                </div>
-                <div class="flex flex-col justify-center">
-                  <h3 class="text-2xl mb-0">Oracle</h3>
-                  <p class="text-sm opacity-70">Enterprise Technology</p>
-                </div>
-              </div>
-              
-              <div class="relative pl-8 border-l-2 border-secondary-color ml-6 mt-6">
-                <div class="experience-timeline-item mb-8">
-                  <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                    <h4 class="text-lg sm:text-xl">Senior Data Engineer</h4>
-                    <span class="experience-date text-sm sm:text-base">17-19</span>
-                  </div>
-                  <p class="text-sm opacity-80 leading-relaxed">Led development of enterprise data pipelines and analytics solutions for Oracle's cloud services.</p>
-                </div>
-                
-                <div class="experience-timeline-item">
-                  <div class="absolute w-4 h-4 bg-secondary-color rounded-full -left-[10px] mt-1"></div>
-                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
-                    <h4 class="text-lg sm:text-xl">Data Engineer</h4>
-                    <span class="experience-date text-sm sm:text-base">13-17</span>
-                  </div>
-                  <p class="text-sm opacity-80 leading-relaxed">Built and maintained data pipelines and analytics solutions for enterprise database systems.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+<Layout title="Alex Norum - Data Platform Engineer" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and system simplifier. Based in Portland, OR.">
+  <!-- Hero Section with About Me -->
+  <section class="relative overflow-hidden py-16 md:py-24">
+    <!-- Background decorative elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+      <div class="absolute top-20 left-10 w-64 h-64 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div class="absolute top-40 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
 
-    <!-- Skills Section -->
-    <section class="section">
-      <div class="container">
-        <h2>Skills & Technologies</h2>
-        
-        <div class="principles-grid mb-6">
-          <div class="principle-card">
-            <div class="skill-category">
-              <div class="skill-category-header">
-                <i class="fas fa-code text-3xl text-secondary-color mr-3 skill-category-icon"></i>
-                <div>
-                  <h3>Programming</h3>
-                  <div class="skill-level" style="width: 95%;"></div>
-                </div>
-              </div>
-              <div class="skills-container">
-                <span class="skill-tag"><i class="fab fa-python skill-tag-icon"></i>Python</span>
-                <span class="skill-tag"><i class="fas fa-database skill-tag-icon"></i>PostgreSQL</span>
-                <span class="skill-tag"><i class="fas fa-exchange-alt skill-tag-icon"></i>ETL</span>
-                <span class="skill-tag"><i class="fas fa-project-diagram skill-tag-icon"></i>Data Modeling</span>
-              </div>
-            </div>
+    <div class="container max-w-6xl mx-auto px-4 relative z-10">
+      <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
+        <!-- Text Content -->
+        <div class="lg:w-3/5 space-y-6">
+          <div class="space-y-2">
+            <span class="inline-block text-sm font-semibold px-3 py-1 rounded-full bg-secondary-color text-white">Hello there 👋</span>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+              I'm <span class="relative inline-block">
+                <span class="relative z-10">Alex Norum</span>
+                <span class="absolute bottom-2 left-0 w-full h-3 bg-secondary-color opacity-30"></span>
+              </span>
+            </h1>
           </div>
           
-          <div class="principle-card">
-            <div class="skill-category">
-              <div class="skill-category-header">
-                <i class="fas fa-cloud text-3xl text-secondary-color mr-3 skill-category-icon"></i>
-                <div>
-                  <h3>Cloud & Infrastructure</h3>
-                  <div class="skill-level" style="width: 90%;"></div>
-                </div>
-              </div>
-              <div class="skills-container">
-                <span class="skill-tag"><i class="fas fa-snowflake skill-tag-icon"></i>Snowflake</span>
-                <span class="skill-tag"><i class="fab fa-aws skill-tag-icon"></i>AWS</span>
-                <span class="skill-tag"><i class="fas fa-server skill-tag-icon"></i>Terraform</span>
-                <span class="skill-tag"><i class="fas fa-dharmachakra skill-tag-icon"></i>Kubernetes</span>
-              </div>
-            </div>
+          <p class="text-lg sm:text-xl text-muted max-w-xl leading-relaxed">
+            I lead platform teams, build scalable infrastructure, and obsess over empowering data teams with great tooling.
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4 sm:items-center">
+            <p class="text-base text-muted">
+              Based in Portland. Building at LegalZoom. Formerly New Relic and Oracle.
+            </p>
+            <span class="hidden sm:block h-1 w-1 bg-accent-color rounded-full"></span>
+            <p class="text-base text-muted italic">Always learning, always iterating.</p>
+          </div>
+          
+          <div class="pt-4 flex flex-wrap gap-3">
+            <a href="/stats" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-accent-color text-accent-color hover:bg-accent-color hover:text-white transition-all">
+              <span>See what I'm tracking</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+            <a href="#contact" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-color text-white hover:bg-opacity-90 transition-all">
+              <span>Get in touch</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </a>
           </div>
         </div>
         
-        <div class="principles-grid">
-          <div class="principle-card">
-            <div class="skill-category">
-              <div class="skill-category-header">
-                <i class="fas fa-cogs text-3xl text-secondary-color mr-3 skill-category-icon"></i>
-                <div>
-                  <h3>Data Engineering</h3>
-                  <div class="skill-level" style="width: 98%;"></div>
-                </div>
-              </div>
-              <div class="skills-container">
-                <span class="skill-tag"><i class="fas fa-wind skill-tag-icon"></i>Airflow</span>
-                <span class="skill-tag"><i class="fas fa-cube skill-tag-icon"></i>dbt</span>
-                <span class="skill-tag"><i class="fas fa-stream skill-tag-icon"></i>Kafka</span>
-                <span class="skill-tag"><i class="fas fa-chart-line skill-tag-icon"></i>Cost Optimization</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="principle-card">
-            <div class="skill-category">
-              <div class="skill-category-header">
-                <i class="fas fa-robot text-3xl text-secondary-color mr-3 skill-category-icon"></i>
-                <div>
-                  <h3>AI & ML</h3>
-                  <div class="skill-level" style="width: 85%;"></div>
-                </div>
-              </div>
-              <div class="skills-container">
-                <span class="skill-tag"><i class="fas fa-brain skill-tag-icon"></i>LLMs</span>
-                <span class="skill-tag"><i class="fas fa-cogs skill-tag-icon"></i>ML Pipelines</span>
-                <span class="skill-tag"><i class="fas fa-terminal skill-tag-icon"></i>Prompt Engineering</span>
-                <span class="skill-tag"><i class="fas fa-file-contract skill-tag-icon"></i>Data Contracts</span>
-              </div>
+        <!-- Profile Image -->
+        <div class="lg:w-2/5 flex justify-center">
+          <div class="relative">
+            <!-- Decorative elements around image -->
+            <div class="absolute -top-4 -right-4 w-24 h-24 border-2 border-secondary-color rounded-full"></div>
+            <div class="absolute -bottom-4 -left-4 w-16 h-16 border-2 border-accent-color rounded-full"></div>
+            
+            <!-- Main image with fancy border -->
+            <div class="relative z-10 rounded-2xl overflow-hidden border-4 border-white dark:border-gray-800 shadow-2xl transform hover:rotate-2 transition-transform duration-300">
+              <img 
+                src={meImage.src} 
+                alt="Alex Norum" 
+                class="w-64 sm:w-80 object-cover"
+                loading="eager"
+              />
+              
+              <!-- Overlay gradient -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
+      <span class="text-xs text-muted mb-2">Scroll to explore</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-accent-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+    </div>
+  </section>
 
-    <!-- Principles Section -->
-    <section class="section">
-      <div class="container">
-        <h2>My Principles</h2>
-        <p class="mb-8 text-lg">
-          Let's collaborate if you're committed to sustainability, education, equality, or carbon neutrality. I believe we should leave this Earth as good as or better than we found it for future generations.
+  <!-- What I Do Section -->
+  <section class="py-16 bg-white/5 border-y border-white/10">
+    <div class="container max-w-6xl mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+          <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">What I Do</h2>
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+        </div>
+        
+        <div class="space-y-6">
+          <p class="text-md sm:text-lg text-muted leading-relaxed">
+            I lead the <span class="font-semibold text-accent-color">Data Platform Engineering</span> team at LegalZoom, focused on building reliable, secure, and self-service data infrastructure with tools like Snowflake, Airflow, and Terraform.
+          </p>
+          
+          <p class="text-md sm:text-lg text-muted leading-relaxed">
+            My work lives at the intersection of <span class="italic">platform engineering and enablement</span> — delivering reusable building blocks and strong foundations for teams to move fast with confidence.
+          </p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+            <div class="p-6 rounded-xl bg-bubble-bg border border-border-color hover:transform hover:-translate-y-1 transition-all">
+              <div class="w-12 h-12 rounded-full bg-accent-color bg-opacity-20 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-accent-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Data Architecture</h3>
+              <p class="text-muted">Designing scalable data systems that balance performance, cost, and maintainability.</p>
+            </div>
+            
+            <div class="p-6 rounded-xl bg-bubble-bg border border-border-color hover:transform hover:-translate-y-1 transition-all">
+              <div class="w-12 h-12 rounded-full bg-secondary-color bg-opacity-20 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-secondary-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Platform Engineering</h3>
+              <p class="text-muted">Building self-service tools and platforms that empower teams to work efficiently.</p>
+            </div>
+            
+            <div class="p-6 rounded-xl bg-bubble-bg border border-border-color hover:transform hover:-translate-y-1 transition-all">
+              <div class="w-12 h-12 rounded-full bg-tertiary-color bg-opacity-20 flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-tertiary-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold mb-2">Team Leadership</h3>
+              <p class="text-muted">Growing engineering talent and fostering a culture of collaboration and innovation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Experience Timeline -->
+  <section class="py-16" id="experience">
+    <div class="container max-w-6xl mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-3 mb-10">
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+          <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Work Experience</h2>
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+        </div>
+        
+        <!-- Custom timeline wrapper with horizontal scroll indicator -->
+        <div class="relative">
+          <!-- Timeline progress bar -->
+          <div class="absolute left-0 top-6 w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-full bg-accent-color w-0 timeline-progress"></div>
+          </div>
+          
+          <!-- Timeline component -->
+          <div class="pt-10">
+            <Timeline />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="py-16 bg-white/5 border-y border-white/10" id="skills">
+    <div class="container max-w-6xl mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-3 mb-10">
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+          <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Core Skills</h2>
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Data Engineering Skills -->
+          <div class="skills-category">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-800 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold">Data Engineering</h3>
+            </div>
+            
+            <SkillsGroup 
+              title="Data Platforms" 
+              skills={["Snowflake", "BigQuery", "Redshift", "Databricks"]}
+              colorScheme="blue"
+            />
+            
+            <div class="h-4"></div>
+            
+            <SkillsGroup 
+              title="Data Processing" 
+              skills={["Airflow", "dbt", "Spark", "Kafka"]}
+              colorScheme="blue"
+            />
+          </div>
+          
+          <!-- Infrastructure Skills -->
+          <div class="skills-category">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-800 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold">Infrastructure</h3>
+            </div>
+            
+            <SkillsGroup 
+              title="Cloud & DevOps" 
+              skills={["AWS", "GCP", "Terraform", "Kubernetes"]}
+              colorScheme="green"
+            />
+            
+            <div class="h-4"></div>
+            
+            <SkillsGroup 
+              title="Monitoring & Reliability" 
+              skills={["Datadog", "Prometheus", "Grafana", "SLOs"]}
+              colorScheme="green"
+            />
+          </div>
+          
+          <!-- Leadership Skills -->
+          <div class="skills-category md:col-span-2">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-800 dark:text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold">Leadership & Strategy</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <SkillsGroup 
+                title="Team Leadership" 
+                skills={["Engineering Management", "Mentoring", "Technical Roadmaps", "Cross-team Collaboration"]}
+                colorScheme="purple"
+              />
+              
+              <SkillsGroup 
+                title="Strategic Planning" 
+                skills={["System Design", "Technical Strategy", "Process Optimization", "Stakeholder Management"]}
+                colorScheme="purple"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <!-- Interactive skills visualization -->
+        <div class="mt-12 p-6 rounded-xl bg-bubble-bg border border-border-color">
+          <h3 class="text-xl font-semibold mb-4">My Engineering Philosophy</h3>
+          
+          <ul class="space-y-4 text-muted">
+            <li class="flex items-start gap-3 transform hover:-translate-x-1 transition-transform">
+              <span class="text-2xl">💡</span>
+              <span>Build for scale, not for today.</span>
+            </li>
+            <li class="flex items-start gap-3 transform hover:-translate-x-1 transition-transform">
+              <span class="text-2xl">🧠</span>
+              <span>Simplicity wins. Always.</span>
+            </li>
+            <li class="flex items-start gap-3 transform hover:-translate-x-1 transition-transform">
+              <span class="text-2xl">⚙️</span>
+              <span>Invest in good defaults and strong foundations.</span>
+            </li>
+            <li class="flex items-start gap-3 transform hover:-translate-x-1 transition-transform">
+              <span class="text-2xl">🤝</span>
+              <span>Tools should enable, not obstruct.</span>
+            </li>
+            <li class="flex items-start gap-3 transform hover:-translate-x-1 transition-transform">
+              <span class="text-2xl">📈</span>
+              <span>Everything is an experiment — track it and learn.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beyond Work Section -->
+  <section class="py-16" id="beyond-work">
+    <div class="container max-w-6xl mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-3 mb-10">
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+          <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Beyond Work</h2>
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+        </div>
+        
+        <p class="text-muted mb-8">
+          I track everything from my running to my reading to my golf swing. I believe data can deepen hobbies, not just work.
         </p>
-
-        <div class="principles-grid">
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <div class="principle-number">01</div>
-              <i class="fas fa-expand-arrows-alt text-3xl text-accent-color ml-4"></i>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <InterestItem
+            title="Running & Fitness"
+            description="Exploring trails around Forest Park and tracking my progress with data."
+            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>'
+            colorScheme="green"
+          >
+            <div class="mt-3 text-sm">
+              <a href="/stats" class="text-green-700 dark:text-green-400 hover:underline inline-flex items-center gap-1">
+                <span>View my running stats</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
             </div>
-            <h3>Build for Scale</h3>
-            <p>
-              I design systems that can handle growth and increasing complexity. Scalability isn't just about handling more data—it's about creating architectures that can evolve with changing requirements.
-            </p>
+          </InterestItem>
+          
+          <InterestItem
+            title="Golf"
+            description="Tracking stats and rebuilding my swing with data-driven insights."
+            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>'
+            colorScheme="blue"
+          >
+            <div class="mt-3 text-sm">
+              <a href="/stats" class="text-blue-700 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
+                <span>View my golf stats</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </InterestItem>
+          
+          <InterestItem
+            title="Reading"
+            description="Murakami, sci-fi, philosophy, and data science books."
+            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>'
+            colorScheme="purple"
+          >
+            <div class="mt-3 text-sm">
+              <a href="/stats" class="text-purple-700 dark:text-purple-400 hover:underline inline-flex items-center gap-1">
+                <span>See what I'm reading</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </InterestItem>
+          
+          <InterestItem
+            title="Cooking"
+            description="Japanese comfort food and experimenting with new recipes."
+            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>'
+            colorScheme="yellow"
+          />
+        </div>
+        
+        <!-- Travel visualization teaser -->
+        <div class="mt-10 p-6 rounded-xl bg-bubble-bg border border-border-color overflow-hidden">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+            <h3 class="text-xl font-semibold">Places I've Been</h3>
+            <a href="/stats" class="text-sm text-accent-color hover:underline inline-flex items-center gap-1">
+              <span>View detailed travel stats</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
           </div>
           
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <div class="principle-number">02</div>
-              <i class="fas fa-users text-3xl text-accent-color ml-4"></i>
+          <div class="relative h-64 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <TravelMap client:only="react" travelData={[]}/>
             </div>
-            <h3>Collaborate</h3>
-            <p>
-              Good engineering is not created in isolation but rather in a shared space. I aim to include stakeholders in my process and create a collaborative environment that welcomes and encourages feedback.
-            </p>
-          </div>
-          
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <div class="principle-number">03</div>
-              <i class="fas fa-universal-access text-3xl text-accent-color ml-4"></i>
-            </div>
-            <h3>Accessibility</h3>
-            <p>
-              I aim to make everything I design accessible to all for one main reason - it's the right thing to do. Accessible products benefit the many, not the few.
-            </p>
-          </div>
-          
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <div class="principle-number">04</div>
-              <i class="fas fa-flask text-3xl text-accent-color ml-4"></i>
-            </div>
-            <h3>Experiment</h3>
-            <p>
-              Everything I create is subject to change and experimentation. Not everything will work, but it's worth trying - and learning from what doesn't.
-            </p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Personal Section -->
-    <section class="section">
-      <div class="container">
-        <h2>Beyond Work</h2>
-        <div class="principles-grid">
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <i class="fas fa-snowboarding text-4xl text-secondary-color mr-4"></i>
-              <h3>Outdoor Adventures</h3>
-            </div>
-            <p>
-              When I'm not coding, you'll find me on the slopes snowboarding during winter months, hitting the trails for runs around Portland, or playing a round of golf at one of Oregon's beautiful courses.
-            </p>
-          </div>
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <i class="fas fa-globe-americas text-4xl text-secondary-color mr-4"></i>
-              <h3>Travel & Exploration</h3>
-            </div>
-            <p>
-              I'm passionate about traveling around the world, experiencing different cultures, and collecting memories rather than things. My partner and I are always planning our next adventure.
-            </p>
-          </div>
+  <!-- Mara AI Assistant Section -->
+  <section class="py-16 bg-white/5 border-t border-white/10" id="chat">
+    <div class="container max-w-6xl mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center gap-3 mb-10">
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+          <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Chat with Mara</h2>
+          <div class="h-px flex-1 bg-accent-color opacity-30"></div>
         </div>
         
-        <div class="principles-grid mt-6">
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <i class="fas fa-utensils text-4xl text-secondary-color mr-4"></i>
-              <h3>Portland Foodie</h3>
-            </div>
-            <p>
-              Portland's food scene is incredible, and I love exploring local restaurants and food carts. From innovative farm-to-table spots to hidden neighborhood gems, I'm always on the hunt for great culinary experiences.
-            </p>
-          </div>
-          <div class="principle-card">
-            <div class="flex items-center mb-4">
-              <i class="fas fa-dog text-4xl text-secondary-color mr-4"></i>
-              <h3>Life at Home</h3>
-            </div>
-            <p>
-              At home, I enjoy playing music, reading, and spending quality time with my Australian Labradoodle, Mara, who's always ready for the next adventure or just a lazy afternoon.
-            </p>
-          </div>
-        </div>
-        
-        <div class="mt-8 text-center">
-          <a href="/contact" class="nav-link inline-block">Get in touch</a>
+        <div class="relative">
+          <!-- Decorative elements -->
+          <div class="absolute -top-10 -right-10 w-20 h-20 border-2 border-secondary-color rounded-full opacity-20"></div>
+          <div class="absolute -bottom-5 -left-5 w-16 h-16 border-2 border-accent-color rounded-full opacity-20"></div>
+          
+          <!-- Enhanced Mara Assistant -->
+          <MaraAssistant />
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 </Layout>
+
+<style>
+/* Animation classes */
+.animate-blob {
+  animation: blob-bounce 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+@keyframes blob-bounce {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Timeline progress animation */
+.timeline-progress {
+  animation: timeline-progress 2s ease-out forwards;
+}
+
+@keyframes timeline-progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* Fade in up animation for sections */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+
+<script>
+// Intersection Observer for scroll animations
+document.addEventListener('DOMContentLoaded', () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-fade-in-up');
+        (entry.target as HTMLElement).style.opacity = '1';
+      }
+    });
+  }, {
+    threshold: 0.1
+  });
+  
+  // Observe all sections
+  document.querySelectorAll('section').forEach(section => {
+    observer.observe(section);
+  });
+});
+</script>

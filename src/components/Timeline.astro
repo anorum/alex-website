@@ -1,0 +1,49 @@
+---
+import legalZoomLogo from '../assets/logos/LegalZoomlogo.webp';
+import newRelicLogo from '../assets/logos/newreliclogo.svg';
+import oracleLogo from '../assets/logos/oraclelogo.png';
+
+const timeline = [
+  {
+    company: "LegalZoom",
+    logo: legalZoomLogo,
+    role: "Group Manager, Data Platform Engineering",
+    period: "2023 – Present",
+    description: "Leading the data platform engineering team focused on Snowflake, Airflow, dbt, and Terraform to power self-service analytics and ML workflows."
+  },
+  {
+    company: "LegalZoom",
+    logo: legalZoomLogo,
+    role: "Principal Data Engineer",
+    period: "2021 – 2023",
+    description: "Introduced Airflow on Kubernetes, modernized Snowflake infrastructure, and built developer-centric data tooling."
+  },
+  {
+    company: "New Relic",
+    logo: newRelicLogo,
+    role: "Senior Data Engineer → Lead Data Analyst",
+    period: "2018 – 2021",
+    description: "Contributed to the Data OS initiative, built real-time analytics pipelines, and supported product analytics org."
+  },
+  {
+    company: "Oracle",
+    logo: oracleLogo,
+    role: "Analytics Lead",
+    period: "2013 – 2018",
+    description: "Partnered with R&D and operations to build scalable reporting and analytics capabilities across the org."
+  }
+];
+---
+
+<div class="space-y-12 sm:space-y-10">
+  {timeline.map((item, index) => (
+    <div class="relative flex flex-col sm:flex-row gap-4 sm:gap-6 items-start animate-fade-in-up opacity-0 animate-delay-[150ms] animate-fill-forwards">
+      <img src={item.logo.src} alt={item.company + ' logo'} class="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-md bg-white p-1 shadow" />
+      <div class="flex-1">
+        <h3 class="text-lg sm:text-xl font-semibold">{item.role}</h3>
+        <p class="text-sm text-[var(--text-secondary)]">{item.company} · {item.period}</p>
+        <p class="mt-2 text-sm text-[var(--text-tertiary)]">{item.description}</p>
+      </div>
+    </div>
+  ))}
+</div>
