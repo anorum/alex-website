@@ -161,12 +161,12 @@ h3 {
 }
 
 p {
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 @media (min-width: 768px) {
   p {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
   }
 }
 
@@ -732,7 +732,7 @@ button:hover {
 
 @media (min-width: 768px) {
   .stats-card {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
 }
 

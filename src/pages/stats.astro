@@ -2,9 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import SpotifyStats from '../components/SpotifyStats.astro';
 import StravaStats from '../components/StravaStats.astro';
-import { default as EighteenBirdiesStats } from '../components/18BirdiesStats.astro';
 import GoodreadsStats from '../components/GoodreadsStats.astro';
 import TravelStats from '../components/TravelStats.astro';
+import GolfStats from '../components/GolfStats.astro';
 
 // Get the time range from the URL query parameter, or default to short_term
 const timeRange = Astro.url.searchParams.get('time_range');
@@ -29,9 +29,10 @@ let isLoading = false;
 				<!-- Stats Cards -->
 				<div class="grid md:grid-cols-1 gap-8 mb-16 animate-fade-in overflow-hidden">
 					<TravelStats />
-					<SpotifyStats />
+					<GolfStats />
 					<StravaStats />
 					<GoodreadsStats />
+					<SpotifyStats />
 				</div>
 				
 				<!-- Additional Stats Section -->

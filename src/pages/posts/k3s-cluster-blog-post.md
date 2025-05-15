@@ -4,7 +4,7 @@ title: "Building My Home Kubernetes Cluster with Raspberry Pi and k3s"
 description: "How I built a powerful, energy-efficient home server platform using Raspberry Pi hardware and k3s Kubernetes."
 pubDate: 2023-05-14
 author: "Alex Norum"
-image: "/images/blog/k3s-cluster.png"
+image: "/public/images/blog/k3s-cluster.JPG"
 tags: ["kubernetes", "k3s", "raspberry pi", "homelab", "self-hosting"]
 category: "tutorial"
 ---

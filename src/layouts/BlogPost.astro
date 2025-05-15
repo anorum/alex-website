@@ -15,29 +15,29 @@ function formatDate(date: Date): string {
 ---
 
 <Layout title={`${title} - Alex Norum`} description={description}>
-    <article class="bg-white dark:bg-gray-900">
-      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
+    <article class="bg-[var(--bg-color)] text-[var(--text-color)]">
+      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 rounded-lg shadow-sm border border-[var(--border-color)] bg-[var(--bubble-bg)]">
         <!-- Header -->
         <div class="mb-8">
           <div class="flex items-center gap-2 mb-4">
-            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+            <span class="bg-[var(--secondary-color)] text-[var(--text-color)] text-xs font-medium px-2.5 py-0.5 rounded transition-transform hover:scale-105">
               {category}
             </span>
-            <span class="text-sm text-gray-500 dark:text-gray-400">
+            <span class="text-sm text-[var(--text-secondary)]">
               {formatDate(pubDate)}
             </span>
             {updatedDate && (
-              <span class="text-sm text-gray-500 dark:text-gray-400">
+              <span class="text-sm text-[var(--text-secondary)]">
                 (Updated: {formatDate(updatedDate)})
               </span>
             )}
           </div>
           
-          <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
+          <h1 class="text-4xl md:text-5xl font-extrabold text-[var(--text-color)] mb-4">
             {title}
           </h1>
           
-          <p class="text-xl text-gray-500 dark:text-gray-400 mb-6">
+          <p class="text-xl text-[var(--text-secondary)] mb-6">
             {description}
           </p>
           
@@ -45,7 +45,7 @@ function formatDate(date: Date): string {
             <div class="flex items-center space-x-2">
               <img class="w-10 h-10 rounded-full" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png" alt={`${author} avatar`} />
               <div>
-                <p class="text-gray-900 dark:text-white font-medium">{author}</p>
+                <p class="text-[var(--text-color)] font-medium">{author}</p>
               </div>
             </div>
           </div>
@@ -60,7 +60,7 @@ function formatDate(date: Date): string {
           
           <div class="flex flex-wrap gap-2 mb-8">
             {tags && tags.map((tag: string) => (
-              <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">
+              <span class="bg-[var(--tertiary-color)] text-[var(--text-color)] text-xs font-medium px-2.5 py-0.5 rounded transition-transform hover:scale-105">
                 {tag}
               </span>
             ))}
@@ -68,14 +68,33 @@ function formatDate(date: Date): string {
         </div>
         
         <!-- Content -->
-        <div class="prose prose-lg dark:prose-invert max-w-none">
+        <div class="prose prose-lg dark:prose-invert max-w-none 
+          prose-headings:text-[var(--text-color)] 
+          prose-p:text-[var(--text-secondary)] 
+          prose-a:text-[var(--accent-color)] hover:prose-a:text-[var(--secondary-color)]
+          prose-strong:text-[var(--text-color)]
+          prose-em:text-[var(--text-secondary)]
+          prose-code:bg-[var(--bubble-bg)] prose-code:text-[var(--text-color)] prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+          prose-pre:bg-[var(--bubble-bg)] prose-pre:text-[var(--text-color)] prose-pre:shadow-sm
+          prose-pre:border prose-pre:border-[var(--border-color)]
+          prose-li:text-[var(--text-secondary)]
+          prose-ol:text-[var(--text-secondary)]
+          prose-ul:text-[var(--text-secondary)]
+          prose-blockquote:text-[var(--text-secondary)] prose-blockquote:border-[var(--accent-color)]
+          prose-hr:border-[var(--border-color)]
+          prose-table:text-[var(--text-secondary)]
+          prose-th:text-[var(--text-color)] prose-th:bg-[var(--bubble-bg)]
+          prose-td:border-[var(--border-color)]
+          prose-img:rounded-lg prose-img:shadow-md
+          prose-figure:text-[var(--text-secondary)]
+          prose-figcaption:text-[var(--text-tertiary)]">
           <slot />
         </div>
         
         <!-- Footer -->
-        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-12 pt-8 border-t border-[var(--border-color)]">
           <div class="flex flex-col md:flex-row md:justify-between gap-4">
-            <a href="/notes" class="inline-flex items-center text-blue-600 hover:underline dark:text-blue-500">
+            <a href="/notes" class="inline-flex items-center px-4 py-2 rounded-full bg-[var(--bubble-bg)] text-[var(--text-color)] border border-[var(--border-color)] hover:bg-[var(--accent-color)] hover:text-white transition-all duration-300 hover:scale-105">
               <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
               </svg>
