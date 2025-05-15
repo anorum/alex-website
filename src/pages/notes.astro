@@ -75,19 +75,23 @@ function getPostUrl(url: string): string {
 ---
 
 <Layout title="Notes - Alex Norum" description="Blog posts, articles, and tutorials by Alex Norum">
-		<section class="section">
-			<div class="container">
+		<section class="relative overflow-hidden py-16 md:py-24">
+			<div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
+			<div class="relative z-10">
 				<!-- Hero Section -->
-				<div class="hero">
-					<h1>Notes</h1>
-					<p>My thoughts, ideas, and learnings</p>
-				</div>
+				<div class="max-w-4xl mx-auto px-4">
+					<div class="flex items-center gap-3 mb-10">
+						<div class="h-px flex-1 bg-accent-color opacity-30"></div>
+						<h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Notes</h2>
+						<div class="h-px flex-1 bg-accent-color opacity-30"></div>
+					</div>
+					<p class="text-md sm:text-lg text-muted leading-relaxed mb-8">My thoughts, ideas, and learnings about technology, data, and engineering.</p>
 				
 				<!-- Blog Posts -->
 				<div class="grid md:grid-cols-2 gap-8 mb-16 animate-fade-in">
 					{sortedPosts.map((post) => (
-						<article class="blog-card">
-							<div class="p-6">
+						<article class="p-6 rounded-xl bg-bubble-bg border border-border-color hover:transform hover:-translate-y-1 transition-all">
+							<div>
 								<div class="flex justify-between items-center mb-5">
 									<span class={`text-xs font-medium inline-flex items-center px-2.5 py-0.5 rounded ${getBadgeColor(post.frontmatter.category)}`}>
 										{post.frontmatter.category}
@@ -121,24 +125,25 @@ function getPostUrl(url: string): string {
 						<nav aria-label="Page navigation">
 							<ul class="flex gap-2">
 								<li>
-									<a href="#" class="nav-link">Previous</a>
+									<a href="#" class="px-3 py-2 rounded-md border border-border-color hover:bg-accent-color hover:text-white transition-all">Previous</a>
 								</li>
 								<li>
-									<a href="#" class="nav-link">1</a>
+									<a href="#" class="px-3 py-2 rounded-md border border-border-color hover:bg-accent-color hover:text-white transition-all">1</a>
 								</li>
 								<li>
-									<a href="#" aria-current="page" class="nav-link active">2</a>
+									<a href="#" aria-current="page" class="px-3 py-2 rounded-md bg-accent-color text-white">2</a>
 								</li>
 								<li>
-									<a href="#" class="nav-link">3</a>
+									<a href="#" class="px-3 py-2 rounded-md border border-border-color hover:bg-accent-color hover:text-white transition-all">3</a>
 								</li>
 								<li>
-									<a href="#" class="nav-link">Next</a>
+									<a href="#" class="px-3 py-2 rounded-md border border-border-color hover:bg-accent-color hover:text-white transition-all">Next</a>
 								</li>
 							</ul>
 						</nav>
 					</div>
 				)}
+				</div>
 			</div>
 		</section>
 </Layout>

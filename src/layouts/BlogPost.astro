@@ -15,8 +15,9 @@ function formatDate(date: Date): string {
 ---
 
 <Layout title={`${title} - Alex Norum`} description={description}>
-    <article class="bg-[var(--bg-color)] text-[var(--text-color)]">
-      <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 rounded-lg shadow-sm border border-[var(--border-color)] bg-[var(--bubble-bg)]">
+    <article class="relative">
+      <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
+      <div class="relative z-10 py-8 px-4 mx-auto max-w-4xl lg:py-16">
         <!-- Header -->
         <div class="mb-8">
           <div class="flex items-center gap-2 mb-4">

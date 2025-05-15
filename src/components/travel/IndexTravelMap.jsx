@@ -163,12 +163,22 @@ export default function IndexTravelMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  // Debug log
+  useEffect(() => {
+    console.log('IndexTravelMap component mounted');
+    return () => {
+      console.log('IndexTravelMap component unmounted');
+    };
+  }, []);
+
   // Load travel data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('Fetching travel data...');
         setIsLoading(true);
         const apiUrl = '/api/alexapi/api/v1/travel/data';
+        console.log('API URL:', apiUrl);
         const response = await fetch(apiUrl);
         
         if (!response.ok) {
@@ -230,7 +240,7 @@ export default function IndexTravelMap() {
   
   if (isLoading) {
     return (
-      <div className="h-64 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg" style={{ minHeight: '300px' }}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-color"></div>
       </div>
     );
@@ -238,7 +248,7 @@ export default function IndexTravelMap() {
   
   if (error) {
     return (
-      <div className="h-64 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg" style={{ minHeight: '300px' }}>
         <p className="text-red-500 dark:text-red-400">Error loading travel data: {error}</p>
       </div>
     );
@@ -246,7 +256,7 @@ export default function IndexTravelMap() {
   
   if (!travelData || travelData.length === 0) {
     return (
-      <div className="h-64 w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+      <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg" style={{ minHeight: '300px' }}>
         <p className="text-gray-500 dark:text-gray-400">No travel data available</p>
       </div>
     );
@@ -343,9 +353,9 @@ export default function IndexTravelMap() {
       <MapContainer 
         center={center} 
         zoom={1} 
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '400px' }}
         ref={mapRef}
-        className="z-0 h-full"
+        className="z-0"
         scrollWheelZoom={true}
         attributionControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
