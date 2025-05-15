@@ -352,29 +352,42 @@ export default function WorkoutTypesChart({ activityTypes = [] }) {
   }
   
   return (
-    <div className="stats-card p-2 sm:p-4 md:p-6">
-      <h3 className="text-base sm:text-lg md:text-xl font-semibold flex items-center mb-2 sm:mb-3 md:mb-4">
-        <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-orange-600 dark:text-orange-400" />
-        Activity Types
-      </h3>
-      
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 md:gap-6">
-        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-2 sm:p-3 md:p-4">
-          <h5 className="text-sm sm:text-base md:text-lg font-medium mb-1 sm:mb-1.5 md:mb-2">Activities by Type</h5>
-          <p className="text-xs sm:text-sm opacity-80 mb-1.5 sm:mb-2 md:mb-4">Number of activities per type</p>
-          <div className="chart-container mt-2 sm:mt-3 md:mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
-            <div id="activities-bar-chart"></div>
-          </div>
-        </div>
+  <div className="stats-card p-2 sm:p-4 md:p-6">
+    <h3 className="text-base sm:text-lg md:text-xl font-semibold flex items-center mb-2 sm:mb-3 md:mb-4">
+      <ChartBarIcon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-orange-600 dark:text-orange-400" />
+      Activity Types
+    </h3>
 
-        <div className="bg-white/70 dark:bg-gray-800/30 shadow-sm rounded-lg p-2 sm:p-3 md:p-4">
-          <h5 className="text-sm sm:text-base md:text-lg font-medium mb-1 sm:mb-1.5 md:mb-2">Distance by Type</h5>
-          <p className="text-xs sm:text-sm opacity-80 mb-1.5 sm:mb-2 md:mb-4">Total distance per activity type (miles)</p>
-          <div className="chart-container mt-2 sm:mt-3 md:mt-4 h-[30vh] sm:h-[35vh] md:h-[40vh]">
-            <div id="distance-bar-chart"></div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {types.map((type) => {
+        const iconMap = {
+          run: '🏃',
+          ride: '🚴',
+          yoga: '🧘',
+          weighttraining: '🏋️',
+          workout: '💪',
+          hike: '🥾',
+        };
+        const icon = iconMap[type.name.toLowerCase()] || '❓';
+        const percent = types[0].count > 0 ? (type.count / types[0].count) * 100 : 0;
+        const totalMi = formatDistance(type.total_distance);
+        const avgMi = type.count > 0 ? (totalMi / type.count).toFixed(1) : 0;
+
+        return (
+          <div key={type.name} className="bg-white/10 dark:bg-white/5 rounded-lg p-4 flex flex-col shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl">{icon}</span>
+              <h4 className="font-semibold capitalize">{type.name.replace('_', ' ')}</h4>
+            </div>
+            <p className="text-sm text-[var(--text-tertiary)] mb-1">{type.count} workouts</p>
+            <p className="text-sm text-[var(--text-tertiary)] mb-2">Total: {totalMi} mi • Avg: {avgMi} mi</p>
+            <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+              <div className="h-full bg-orange-400 dark:bg-orange-300" style={{ width: `${percent}%` }} />
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })}
     </div>
-  );
+  </div>
+);
 }

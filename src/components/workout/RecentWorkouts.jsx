@@ -63,8 +63,8 @@ const getChartColors = (isDarkMode) => {
 
 export default function RecentWorkouts({ recentActivities = [] }) {
   const [activities, setActivities] = useState(recentActivities);
-  
-  // Listen for data updates
+
+  // Listen for workout-data-ready event to update activities dynamically
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const handleDataReady = (event) => {
@@ -72,7 +72,6 @@ export default function RecentWorkouts({ recentActivities = [] }) {
           setActivities(event.detail.recentActivities);
         }
       };
-      
       document.addEventListener('workout-data-ready', handleDataReady);
       return () => document.removeEventListener('workout-data-ready', handleDataReady);
     }
@@ -99,6 +98,28 @@ export default function RecentWorkouts({ recentActivities = [] }) {
     const hours = Math.floor(minutes / 60);
     const mins = Math.round(minutes % 60);
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  };
+
+  // Group activities by date (for calendar grid)
+  const groupActivitiesByDate = (activities) => {
+    const grouped = {};
+    activities.forEach((activity) => {
+      const dateKey = formatDate(activity.date);
+      if (!grouped[dateKey]) grouped[dateKey] = [];
+      grouped[dateKey].push(activity);
+    });
+    return grouped;
+  };
+
+  // Helper to get intensity color based on total activity duration for a day
+  const getIntensityColor = (activities) => {
+    const totalMinutes = activities.reduce((sum, a) => sum + (a.duration || 0), 0);
+    if (totalMinutes > 180) return '#ef4444'; // red-500
+    if (totalMinutes > 120) return '#f97316'; // orange-500
+    if (totalMinutes > 60) return '#facc15';  // yellow-400
+    if (totalMinutes > 30) return '#4ade80';  // green-400
+    if (totalMinutes > 0) return '#bbf7d0';   // green-200
+    return 'transparent';
   };
   
   // Helper function to get activity icon
@@ -132,324 +153,6 @@ export default function RecentWorkouts({ recentActivities = [] }) {
     }
   };
   
-  // Initialize charts when data changes
-  useEffect(() => {
-    if (!activities || activities.length === 0) {
-      return;
-    }
-    
-    // Process data for charts
-    const recentActivitiesData = [...activities]
-      .slice(0, 10) // Take only the 10 most recent activities
-      .reverse(); // Reverse to show oldest to newest (left to right)
-    
-    // Prepare data for distance chart
-    const distanceData = recentActivitiesData
-      .filter(activity => activity.distance > 0)
-      .map(activity => ({
-        x: formatDate(activity.date),
-        y: formatDistance(activity.distance),
-        type: activity.type,
-        name: activity.name,
-        duration: formatDuration(activity.duration)
-      }));
-    
-    // Prepare data for duration chart
-    const durationData = recentActivitiesData
-      .filter(activity => activity.duration > 0)
-      .map(activity => ({
-        x: formatDate(activity.date),
-        y: Math.round(activity.duration / 60 * 10) / 10, // Convert to hours with 1 decimal
-        type: activity.type,
-        name: activity.name,
-        distance: activity.distance > 0 ? `${formatDistance(activity.distance)} mi` : 'N/A'
-      }));
-    
-    // Clean up any existing charts
-    ['recent-distance-chart', 'recent-duration-chart'].forEach(id => {
-      const chartElement = document.getElementById(id);
-      if (chartElement && chartElement.chart) {
-        chartElement.chart.destroy();
-        chartElement.chart = null;
-      }
-    });
-    
-    // Render distance chart
-    if (distanceData.length > 0) {
-      renderDistanceChart(distanceData);
-    }
-    
-    // Render duration chart
-    if (durationData.length > 0) {
-      renderDurationChart(durationData);
-    }
-    
-    // Add theme change listener
-    const handleThemeChange = () => {
-      // Clean up existing charts before rendering new ones
-      ['recent-distance-chart', 'recent-duration-chart'].forEach(id => {
-        const chartElement = document.getElementById(id);
-        if (chartElement && chartElement.chart) {
-          chartElement.chart.destroy();
-          chartElement.chart = null;
-        }
-      });
-      
-      // Re-render charts with new theme
-      if (distanceData.length > 0) {
-        renderDistanceChart(distanceData);
-      }
-      
-      if (durationData.length > 0) {
-        renderDurationChart(durationData);
-      }
-    };
-    
-    // Listen for theme changes
-    document.addEventListener('theme-changed', handleThemeChange);
-    
-    return () => {
-      // Clean up charts on unmount
-      ['recent-distance-chart', 'recent-duration-chart'].forEach(id => {
-        const chartElement = document.getElementById(id);
-        if (chartElement && chartElement.chart) {
-          chartElement.chart.destroy();
-          chartElement.chart = null;
-        }
-      });
-      
-      // Remove theme change listener
-      document.removeEventListener('theme-changed', handleThemeChange);
-    };
-  }, [activities]);
-  
-  // Render distance chart
-  const renderDistanceChart = (data) => {
-    const currentTheme = getThemeColors();
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    
-    const options = {
-      series: [{
-        name: 'Distance',
-        data: data.map(item => item.y)
-      }],
-      chart: {
-        id: 'recent-distance-chart',
-        type: 'bar',
-        height: 240,
-        fontFamily: 'Inter, sans-serif',
-        toolbar: { show: false },
-        background: 'transparent',
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: '70%',
-          borderRadius: 6
-        }
-      },
-      colors: [currentTheme.secondary],
-      dataLabels: {
-        enabled: false
-      },
-      xaxis: {
-        categories: data.map(item => item.x),
-        labels: {
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            colors: currentTheme.textMuted
-          },
-          rotate: -45,
-          rotateAlways: false,
-          hideOverlappingLabels: true
-        },
-        axisBorder: { 
-          show: true,
-          color: currentTheme.axisBorder
-        },
-        axisTicks: { 
-          show: true,
-          color: currentTheme.axisBorder
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Distance (miles)',
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            color: currentTheme.textMuted
-          }
-        },
-        labels: {
-          style: {
-            colors: currentTheme.textMuted
-          }
-        }
-      },
-      grid: {
-        borderColor: currentTheme.gridBorder,
-        strokeDashArray: 4
-      },
-      tooltip: {
-        theme: isDarkMode ? 'dark' : 'light',
-        x: {
-          show: true
-        },
-        y: {
-          formatter: (value) => `${value} mi`
-        },
-        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          const item = data[dataPointIndex];
-          return `
-            <div class="p-2">
-              <div class="flex items-center mb-2">
-                <span class="text-lg mr-2">${getActivityIcon(item.type)}</span>
-                <span class="font-medium">${item.name}</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <span class="text-xs opacity-70">Date:</span>
-                  <span class="block font-medium">${item.x}</span>
-                </div>
-                <div>
-                  <span class="text-xs opacity-70">Type:</span>
-                  <span class="block font-medium">${item.type}</span>
-                </div>
-                <div>
-                  <span class="text-xs opacity-70">Distance:</span>
-                  <span class="block font-medium">${item.y} mi</span>
-                </div>
-                <div>
-                  <span class="text-xs opacity-70">Duration:</span>
-                  <span class="block font-medium">${item.duration}</span>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-      }
-    };
-    
-    const chartElement = document.getElementById('recent-distance-chart');
-    if (chartElement) {
-      const chart = new ApexCharts(chartElement, options);
-      chartElement.chart = chart;
-      chart.render();
-    }
-  };
-  
-  // Render duration chart
-  const renderDurationChart = (data) => {
-    const currentTheme = getThemeColors();
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    
-    const options = {
-      series: [{
-        name: 'Duration',
-        data: data.map(item => item.y)
-      }],
-      chart: {
-        id: 'recent-duration-chart',
-        type: 'bar',
-        height: 240,
-        fontFamily: 'Inter, sans-serif',
-        toolbar: { show: false },
-        background: 'transparent',
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: '70%',
-          borderRadius: 6
-        }
-      },
-      colors: [currentTheme.secondary],
-      dataLabels: {
-        enabled: false
-      },
-      xaxis: {
-        categories: data.map(item => item.x),
-        labels: {
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            colors: currentTheme.textMuted
-          },
-          rotate: -45,
-          rotateAlways: false,
-          hideOverlappingLabels: true
-        },
-        axisBorder: { 
-          show: true,
-          color: currentTheme.axisBorder
-        },
-        axisTicks: { 
-          show: true,
-          color: currentTheme.axisBorder
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Duration (hours)',
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            color: currentTheme.textMuted
-          }
-        },
-        labels: {
-          style: {
-            colors: currentTheme.textMuted
-          }
-        }
-      },
-      grid: {
-        borderColor: currentTheme.gridBorder,
-        strokeDashArray: 4
-      },
-      tooltip: {
-        theme: isDarkMode ? 'dark' : 'light',
-        x: {
-          show: true
-        },
-        y: {
-          formatter: (value) => `${value} hrs`
-        },
-        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          const item = data[dataPointIndex];
-          return `
-            <div class="p-2">
-              <div class="flex items-center mb-2">
-                <span class="text-lg mr-2">${getActivityIcon(item.type)}</span>
-                <span class="font-medium">${item.name}</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <span class="text-xs opacity-70">Date:</span>
-                  <span class="block font-medium">${item.x}</span>
-                </div>
-                <div>
-                  <span class="text-xs opacity-70">Type:</span>
-                  <span class="block font-medium">${item.type}</span>
-                </div>
-                <div>
-                  <span class="text-xs opacity-70">Duration:</span>
-                  <span class="block font-medium">${item.y} hrs</span>
-                </div>
-                <div>
-                  <span class="text-xs opacity-70">Distance:</span>
-                  <span class="block font-medium">${item.distance}</span>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-      }
-    };
-    
-    const chartElement = document.getElementById('recent-duration-chart');
-    if (chartElement) {
-      const chart = new ApexCharts(chartElement, options);
-      chartElement.chart = chart;
-      chart.render();
-    }
-  };
   
   if (!activities || activities.length === 0) {
     return (
@@ -469,66 +172,54 @@ export default function RecentWorkouts({ recentActivities = [] }) {
         <FireIcon className="h-5 w-5 mr-2 text-orange-600 dark:text-orange-400" />
         Recent Workouts
       </h3>
-      
       <div className="grid grid-cols-1 gap-6">
         <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Recent Distances</h5>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Distance per recent activity (miles)</p>
-          <div id="recent-distance-chart" className="mt-4"></div>
-        </div>
-
-        <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Recent Durations</h5>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Duration per recent activity (hours)</p>
-          <div id="recent-duration-chart" className="mt-4"></div>
-        </div>
-        
-        <div className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg p-4">
-          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Recent Activities</h5>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Your latest workouts</p>
-          <div className="max-h-[400px] overflow-y-auto pr-1">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm workout-stats-table">
-                <thead className="bg-white/10 dark:bg-gray-700">
-                  <tr>
-                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Activity</th>
-                    <th className="p-2 text-left hidden sm:table-cell text-gray-700 dark:text-gray-200">Type</th>
-                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Date</th>
-                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Distance</th>
-                    <th className="p-2 text-left text-gray-700 dark:text-gray-200">Duration</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activities.slice(0, 10).map((activity, index) => (
-                    <tr key={index} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">
-                      <td className="p-2">
-                        <div className="flex items-center">
-                          <span className="text-xl mr-2">{getActivityIcon(activity.type)}</span>
-                          <span className="font-medium text-sm truncate max-w-[120px] sm:max-w-[150px] text-gray-800 dark:text-gray-200">{activity.name}</span>
-                        </div>
-                      </td>
-                      <td className="p-2 hidden sm:table-cell text-gray-700 dark:text-gray-300">
-                        {activity.type}
-                      </td>
-                      <td className="p-2 text-gray-700 dark:text-gray-300">
-                        {formatDate(activity.date)}
-                      </td>
-                      <td className="p-2">
-                        {activity.distance > 0 ? 
-                          <span className="px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full text-xs">
-                            {formatDistance(activity.distance)} mi
-                          </span> : '-'}
-                      </td>
-                      <td className="p-2">
-                        {activity.duration ? 
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300 rounded-full text-xs">
-                            {formatDuration(activity.duration)}
-                          </span> : '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <h5 className="text-lg font-medium text-gray-800 dark:text-white mb-2">Activity Calendar</h5>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Icons represent each type of activity by date</p>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-3">
+            {Object.entries(groupActivitiesByDate(activities)).map(([date, dayActivities]) => {
+              const bgColor = getIntensityColor(dayActivities);
+              return (
+                <div
+                  key={date}
+                  className={`stats-card p-4 rounded-xl shadow-sm hover:shadow-lg transition-all transform hover:scale-[1.02] hover:brightness-105 flex flex-col items-center text-center border border-[var(--border-color)]`}
+                  style={{ backgroundColor: 'var(--bubble-bg)', backgroundImage: `linear-gradient(to bottom, ${bgColor}, transparent)` }}
+                >
+                  <span className="text-[11px] font-semibold text-[var(--text-secondary)] mb-2 tracking-tight uppercase">
+                    {date}
+                  </span>
+                  <div className="flex flex-wrap justify-center gap-1 mb-2 text-lg sm:text-xl">
+                    {dayActivities.map((act, idx) => (
+                      <span key={idx} className="text-lg">{getActivityIcon(act.type)}</span>
+                    ))}
+                  </div>
+                  <div className="text-[10px] sm:text-xs text-[var(--text-tertiary)] leading-tight space-y-0.5">
+                    {dayActivities.map((act, idx) => (
+                      <div key={idx}>
+                        {act.duration ? formatDuration(act.duration) : ''}
+                        {act.distance ? ` • ${formatDistance(act.distance)}mi` : ''}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400 flex flex-wrap justify-center gap-4">
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#bbf7d0' }}></span> Light
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#4ade80' }}></span> Moderate
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#facc15' }}></span> Strong
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f97316' }}></span> Intense
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }}></span> Max Effort
             </div>
           </div>
         </div>

@@ -697,9 +697,38 @@ export default function GolfSummary({ summary = {} }) {
         </div>
         ))}
       </div>
-
+            {/* Scoring Stats */}
+      <div className="stats-card p-4 mt-4 pb-6">
+        <h3 className="text-lg font-semibold mb-4">Scoring Stats</h3>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
+            <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{data.total_aces}</p>
+            <p className="text-sm">Aces</p>
+          </div>
+          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
+            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{data.total_eagles}</p>
+            <p className="text-sm">Eagles</p>
+          </div>
+          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
+            <p className="text-xl font-bold text-green-600 dark:text-green-400">{data.total_birdies}</p>
+            <p className="text-sm">Birdies</p>
+          </div>
+          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
+            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{data.total_pars}</p>
+            <p className="text-sm">Pars</p>
+          </div>
+          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
+            <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{data.total_bogeys}</p>
+            <p className="text-sm">Bogeys</p>
+          </div>
+          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
+            <p className="text-xl font-bold text-red-600 dark:text-red-400">{data.total_double_bogey_or_worse}</p>
+            <p className="text-sm">Double+</p>
+          </div>
+        </div>
+      </div>
       {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {/* Green Accuracy Chart */}
         {/* Green Accuracy Dial */}
         <div className="stats-card p-4">
@@ -757,37 +786,6 @@ export default function GolfSummary({ summary = {} }) {
               Miss Right<br />
               {totalFairways > 0 ? Math.round((data.total_fairways_missed_right / totalFairways) * 100) : 0}%
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Scoring Stats */}
-      <div className="stats-card p-4 mt-4">
-        <h3 className="text-lg font-semibold mb-4">Scoring Stats</h3>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
-            <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{data.total_aces}</p>
-            <p className="text-sm">Aces</p>
-          </div>
-          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
-            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{data.total_eagles}</p>
-            <p className="text-sm">Eagles</p>
-          </div>
-          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
-            <p className="text-xl font-bold text-green-600 dark:text-green-400">{data.total_birdies}</p>
-            <p className="text-sm">Birdies</p>
-          </div>
-          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
-            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{data.total_pars}</p>
-            <p className="text-sm">Pars</p>
-          </div>
-          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
-            <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{data.total_bogeys}</p>
-            <p className="text-sm">Bogeys</p>
-          </div>
-          <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
-            <p className="text-xl font-bold text-red-600 dark:text-red-400">{data.total_double_bogey_or_worse}</p>
-            <p className="text-sm">Double+</p>
           </div>
         </div>
       </div>

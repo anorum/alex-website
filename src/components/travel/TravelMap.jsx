@@ -431,66 +431,42 @@ export default function TravelMap({ travelData = [] }) {
             <p className="text-sm sm:text-base md:text-lg mb-2 sm:mb-3 md:mb-4">{selectedLocation.visits.length} visits to this location</p>
             
             {selectedLocation.visits.map((visit, index) => (
-              <div key={visit.id || index} className="mb-4 sm:mb-6 md:mb-8 bg-white/10 dark:bg-white/5 rounded-lg p-2 sm:p-3 md:p-4 shadow-md backdrop-blur-md transition-transform hover:translate-y-[-5px]">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2 text-white">{formatDate(visit.date)}</h3>
-                
-                {visit.notes && (
-                  <p className="text-white/90 mb-2 sm:mb-3 md:mb-4 text-xs sm:text-sm md:text-base">{visit.notes}</p>
-                )}
-                
-                {visit.imageUrls && visit.imageUrls.length > 0 && (
-                  <div className="mt-2 sm:mt-3 md:mt-4">
-                    <h4 className="text-sm sm:text-base md:text-lg font-medium mb-1 sm:mb-2 text-[#77647b]">Photos</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 md:gap-4">
-                      {visit.imageUrls.map((url, imgIndex) => (
-                        <div key={imgIndex} className="relative aspect-video rounded-lg overflow-hidden shadow-md">
-                          <div className="w-full h-full relative">
-                            {/* Show loading placeholder if image is not yet loaded */}
-                            {(!loadedImages[selectedLocation.id] || 
-                              !loadedImages[selectedLocation.id][visit.id] || 
-                              !loadedImages[selectedLocation.id][visit.id][imgIndex]) && (
-                              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
-                                <div className="animate-pulse flex space-x-4">
-                                  <div className="flex-1 space-y-4 py-1">
-                                    <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
-                                    <div className="space-y-2">
-                                      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                                      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6"></div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            
-                            <img 
-                              src={url} 
+              <div
+                key={visit.id || index}
+                className="mb-6 sm:mb-8 md:mb-10 bg-[var(--bubble-bg)] border border-[var(--border-color)] rounded-lg shadow-md backdrop-blur-md transition-transform hover:translate-y-[-4px]"
+              >
+                <div className="p-4 sm:p-5 md:p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm text-[var(--text-tertiary)] font-medium">
+                      {formatDate(visit.date)}
+                    </div>
+                    <div className="text-xl">{selectedLocation.flag}</div>
+                  </div>
+
+                  {visit.notes && (
+                    <p className="text-base text-[var(--text-secondary)] mb-4 whitespace-pre-wrap">
+                      {visit.notes}
+                    </p>
+                  )}
+
+                  {visit.imageUrls && visit.imageUrls.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-[var(--text-tertiary)] mb-2">Photos</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {visit.imageUrls.map((url, imgIndex) => (
+                          <div key={imgIndex} className="relative aspect-video rounded-md overflow-hidden shadow-sm">
+                            <img
+                              src={url}
                               alt={`Visit to ${selectedLocation.city} - Image ${imgIndex + 1}`}
-                              className="w-full h-full object-cover cursor-pointer"
-                              style={{ 
-                                opacity: loadedImages[selectedLocation.id] && 
-                                        loadedImages[selectedLocation.id][visit.id] && 
-                                        loadedImages[selectedLocation.id][visit.id][imgIndex] ? 1 : 0 
-                              }}
-                              onLoad={() => {
-                                // Mark this image as loaded when it finishes loading
-                                const newLoadedImages = { ...loadedImages };
-                                if (!newLoadedImages[selectedLocation.id]) {
-                                  newLoadedImages[selectedLocation.id] = {};
-                                }
-                                if (!newLoadedImages[selectedLocation.id][visit.id]) {
-                                  newLoadedImages[selectedLocation.id][visit.id] = {};
-                                }
-                                newLoadedImages[selectedLocation.id][visit.id][imgIndex] = true;
-                                setLoadedImages(newLoadedImages);
-                              }}
+                              className="w-full h-full object-cover cursor-pointer transition-transform hover:scale-105"
                               onClick={() => createFullscreenViewer(visit, imgIndex)}
                             />
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -502,7 +478,7 @@ export default function TravelMap({ travelData = [] }) {
         zoom={1} 
         style={{ width: '100%' }}
         ref={mapRef}
-        className="z-0 h-[50vh] sm:h-[60vh] md:h-[70vh]"
+        className="z-0 h-[50vh] sm:h-[50vh] md:h-[50vh]"
         scrollWheelZoom={true}
         attributionControl={false}
         maxBounds={[[-90, -180], [90, 180]]}

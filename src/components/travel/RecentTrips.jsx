@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 export default function RecentTrips({ recentVisits: initialVisits = [] }) {
+  // Helper to resolve image URLs
+  const resolveImageUrl = (url) => {
+    return url.startsWith('/api/v1') ? `/api/alexapi${url}` : url;
+  };
+
   const [recentVisits, setRecentVisits] = useState(initialVisits);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -94,7 +99,7 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                           style={{ zIndex: 3 - index }}
                         >
                           <img 
-                            src={url.startsWith('/api/v1') ? `/api/alexapi${url}` : url} 
+                            src={resolveImageUrl(url)} 
                             alt={`${visit.city} photo ${index + 1}`}
                             className="w-full h-full object-cover"
                           />
@@ -157,7 +162,7 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                     style={{ zIndex: 3 - index }}
                   >
                     <img 
-                      src={url.startsWith('/api/v1') ? `/api/alexapi${url}` : url} 
+                      src={resolveImageUrl(url)} 
                       alt={`${visit.city} photo ${index + 1}`}
                       className="w-full h-full object-cover"
                     />

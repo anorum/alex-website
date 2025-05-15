@@ -32,6 +32,7 @@ export default function WorkoutSummary({ summary = {}, yearlyStats = [] }) {
       return () => document.removeEventListener('workout-data-ready', handleDataReady);
     }
   }, []);
+
   
   const defaultStats = {
     total_distance: 0,
@@ -476,31 +477,58 @@ export default function WorkoutSummary({ summary = {}, yearlyStats = [] }) {
   ];
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {statItems.map((item, index) => (
-        <div key={index} className="stats-card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3`}>
-                {item.icon}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {statItems.map((item, index) => (
+          <div
+            key={index}
+            className="stats-card"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3 bg-white/20 dark:bg-white/10 shadow-sm`}
+                >
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-xl font-semibold">{item.value}</p>
+                  <p className="text-sm opacity-80">{item.label}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xl font-semibold">{item.value}</p>
-                <p className="text-sm opacity-80">{item.label}</p>
-              </div>
+              {index === 0 && yoyChange !== 0 && (
+                <div
+                  className={`flex items-center px-2.5 py-0.5 text-base font-semibold ${
+                    yoyChange >= 0 ? 'text-green-400' : 'text-red-400'
+                  } text-center`}
+                >
+                  {yoyChange}%
+                  <svg
+                    className="w-3 h-3 ms-1"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 14"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d={
+                        yoyChange >= 0
+                          ? "M5 13V1m0 0L1 5m4-4 4 4"
+                          : "M5 1v12m0 0l4-4m-4 4l-4-4"
+                      }
+                    />
+                  </svg>
+                </div>
+              )}
             </div>
-            {index === 0 && yoyChange !== 0 && (
-              <div className={`flex items-center px-2.5 py-0.5 text-base font-semibold ${yoyChange >= 0 ? 'text-green-400' : 'text-red-400'} text-center`}>
-                {yoyChange}%
-                <svg className="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={yoyChange >= 0 ? "M5 13V1m0 0L1 5m4-4 4 4" : "M5 1v12m0 0l4-4m-4 4l-4-4"}/>
-                </svg>
-              </div>
-            )}
+            <div id={item.chartId} className="h-[120px] mt-2"></div>
           </div>
-          <div id={item.chartId} className="h-[120px] mt-2"></div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import WorkoutSummary from './workout/WorkoutSummary.jsx';
 import RecentWorkouts from './workout/RecentWorkouts.jsx';
 import YearlyWorkouts from './workout/YearlyWorkouts.jsx';
 import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
-import ColumnChartCard from './workout/example'
+import TimeSinceLastWorkout from './workout/TimeSinceLastWorkout';
 ---
 
 <div class="stats-card p-0.5 sm:p-2 md:p-4 transition-all duration-300">
@@ -41,22 +41,22 @@ import ColumnChartCard from './workout/example'
     <div id="workout-stats-container" class="hidden">
       <!-- Workout Summary -->
       <div class="mb-8" id="workout-summary">
-          <WorkoutSummary client:only="react" summary={{}} yearlyStats={[]} />
+          <WorkoutSummary client:only="react" />
       </div>
-
+      
       <!-- Workout Types Chart -->
       <div class="mb-8" id="workout-types-chart">
-          <WorkoutTypesChart client:only="react" activityTypes={[]} />
+          <WorkoutTypesChart client:only="react" />
       </div>
       
       <!-- Recent Workouts -->
       <div class="mb-8" id="recent-workouts">
-          <RecentWorkouts client:only="react" recentActivities={[]} />
+          <RecentWorkouts client:only="react" />
       </div>
       
       <!-- Yearly Workouts -->
       <div class="mb-8" id="yearly-workouts">
-          <YearlyWorkouts client:only="react" yearlyStats={[]} />
+          <YearlyWorkouts client:only="react" />
       </div>
 
     </div>

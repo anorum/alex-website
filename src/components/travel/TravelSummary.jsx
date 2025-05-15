@@ -450,23 +450,31 @@ export default function TravelSummary({ summary = {} }) {
   ];
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {statItems.map((item, index) => (
-        <div key={index} className="stats-card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3`}>
-                {item.icon}
-              </div>
-              <div>
-                <p className="text-xl font-semibold text-gray-800 dark:text-white">{item.value}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{item.label}</p>
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {statItems.map((item, index) => (
+          <div
+            key={index}
+            className="p-4 rounded-lg bg-[var(--bubble-bg)] border border-[var(--border-color)] shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3 bg-white/20 dark:bg-white/10 shadow-sm`}
+                >
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-xl font-semibold text-gray-800 dark:text-white">{item.value}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">{item.label}</p>
+                </div>
               </div>
             </div>
+            <div id={item.chartId} className="h-[120px] mt-2"></div>
+            <p className="text-xs text-[var(--text-tertiary)] mt-1 text-center">by year</p>
           </div>
-          <div id={item.chartId} className="h-[120px] mt-2"></div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
