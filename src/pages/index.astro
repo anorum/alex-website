@@ -18,7 +18,7 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
         <!-- Text Content -->
         <div class="lg:w-3/5 space-y-6">
           <div class="space-y-2">
-            <span class="inline-block text-sm font-semibold px-3 py-1 rounded-full bg-secondary-color text-white">Hello there 👋</span>
+            <span class="inline-block text-sm font-semibold px-3 py-1 rounded-full bg-secondary-color dark:bg-secondary-color/80 text-sm dark:text-white">Hello there 👋</span>
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
               I'm <span class="relative inline-block">
                 <span class="relative z-10">Alex Norum</span>
@@ -40,7 +40,7 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
           </div>
           
           <div class="pt-4 flex flex-wrap gap-3">
-            <a href="#contact" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-color text-white hover:bg-opacity-90 transition-all">
+            <a href="#contact" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-color dark:bg-accent-color/90 text-md dark:text-white hover:bg-opacity-90 dark:hover:bg-opacity-100 transition-all">
               <span>Get in touch</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -176,44 +176,20 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
           <div class="h-px flex-1 bg-accent-color opacity-30"></div>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
           <!-- Data Engineering Skills -->
           <div class="skills-category">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-800 dark:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-                </svg>
-              </div>
-              <h3 class="text-xl font-semibold">Data Engineering</h3>
-            </div>
-            
+            <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-3">Data Engineering</h3>
             <SkillsGroup 
-              title="Data Platforms" 
-              skills={["Snowflake", "BigQuery", "Redshift", "Databricks"]}
-              colorScheme="blue"
-            />
-            
-            <div class="h-4"></div>
-            
-            <SkillsGroup 
-              title="Data Processing" 
-              skills={["Airflow", "dbt", "Spark", "Kafka"]}
+              title="Data Platforms & Processing" 
+              skills={["Snowflake", "BigQuery", "Redshift", "Databricks", "Airflow", "dbt", "Spark", "Kafka"]}
               colorScheme="blue"
             />
           </div>
           
           <!-- Infrastructure Skills -->
           <div class="skills-category">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-800 dark:text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-              <h3 class="text-xl font-semibold">Infrastructure</h3>
-            </div>
-            
+            <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-3">Infrastructure</h3>
             <SkillsGroup 
               title="Cloud & DevOps" 
               skills={["AWS", "GCP", "Terraform", "Kubernetes"]}
@@ -230,16 +206,8 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
           </div>
           
           <!-- Leadership Skills -->
-          <div class="skills-category md:col-span-2">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-800 dark:text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 class="text-xl font-semibold">Leadership & Strategy</h3>
-            </div>
-            
+          <div class="skills-category md:col-span-2 mt-12">
+            <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-4">Leadership & Strategy</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <SkillsGroup 
                 title="Team Leadership" 
@@ -261,11 +229,11 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
           <h3 class="text-xl font-semibold mb-4">My Engineering Philosophy</h3>
           
           <ul class="space-y-4 text-muted">
-            <li>💡 Build for scale — mostly so your future self doesn’t hate you.</li>
-            <li>🧠 Keep it simple. Complexity adds up fast.</li>
-            <li>⚙️ Good defaults go a long way.</li>
-            <li>🤝 If a tool gets out of the way, that’s a win.</li>
-            <li>📈 If I’m doing it more than once, I’m probably tracking it.</li>
+            <li>🧰 A great system isn’t just well-designed — it’s usable, intuitive, and easy to hand off.</li>
+            <li>🚦 Good platforms enable self-sufficiency. They guide teams toward best practices without requiring constant involvement.</li>
+            <li>🪄 Make the right path easy, the wrong path hard — but never block flexibility where it’s needed.</li>
+            <li>📦 Simplicity beats technical novelty. Solve the real problem, not the most interesting one.</li>
+            <li>📚 Clear documentation, practical playbooks, and reusable patterns scale more than heroics.</li>
           </ul>
         </div>
       </div>

@@ -21,8 +21,22 @@ import Layout from '../layouts/Layout.astro';
           <!-- Contact Form -->
           <div class="p-6 rounded-xl bg-bubble-bg border border-border-color hover:shadow-lg hover:-translate-y-1 transition-all">
             <h3 class="text-xl font-semibold mb-6">Send a Message</h3>
-            <!-- Formspree form - replace YOUR_FORM_ID with your actual form ID -->
-            <form action="https://formspree.io/f/mdkgyrld" method="POST" class="space-y-6">
+            
+            <!-- Success message (hidden by default) -->
+            <div id="contact-success" class="hidden success-message">
+              <div class="flex flex-col items-center text-center p-6">
+                <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h4 class="text-xl font-semibold mb-2">Message Sent!</h4>
+                <p class="text-muted">Thank you for reaching out. I'll get back to you as soon as possible.</p>
+              </div>
+            </div>
+            
+            <!-- Form (shown by default) -->
+            <form id="contact-form" action="https://formspree.io/f/mdkgyrld" method="POST" class="space-y-6">
               <div>
                 <label for="name" class="block mb-2 text-sm font-medium">Your name</label>
                 <input type="text" id="name" name="name" class="w-full px-4 py-2 rounded-lg border border-border-color bg-bubble-bg focus:ring-2 focus:ring-accent-color focus:border-accent-color transition-all" placeholder="Your name" required>
@@ -37,14 +51,17 @@ import Layout from '../layouts/Layout.astro';
               </div>
               <div>
                 <label for="message" class="block mb-2 text-sm font-medium">Your message</label>
-                <textarea id="message" name="message" rows="6" class="w-full px-4 py-2 rounded-lg border border-border-color bg-bubble-bg focus:ring-2 focus:ring-accent-color focus:border-accent-color transition-all" placeholder="Your message here..."></textarea>
+                <textarea id="message" name="message" rows="6" class="w-full px-4 py-2 rounded-lg border border-border-color bg-bubble-bg focus:ring-2 focus:ring-accent-color focus:border-accent-color transition-all" placeholder="Your message here..." required></textarea>
               </div>
-              <button type="submit" class="px-6 py-3 bg-accent-color hover:bg-accent-color/90 text-white font-medium rounded-lg transition-all transform hover:-translate-y-1 inline-flex items-center gap-2">
-                <span>Send message</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </button>
+              <div class="flex items-center justify-between">
+                <button type="submit" id="submit-button" class="px-6 py-3 bg-accent-color hover:bg-accent-color/90 text-white font-medium rounded-lg transition-all transform hover:-translate-y-1 inline-flex items-center gap-2">
+                  <span>Send message</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </button>
+                <div id="form-status" class="text-sm"></div>
+              </div>
             </form>
           </div>
           
@@ -124,4 +141,72 @@ import Layout from '../layouts/Layout.astro';
   border-color: var(--accent-color);
   box-shadow: 0 4px 12px rgba(var(--accent-color-rgb), 0.3);
 }
+
+/* Success message animation */
+.success-message {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const form = document.getElementById('contact-form') as HTMLFormElement;
+    const formStatus = document.getElementById('form-status') as HTMLDivElement;
+    const successMessage = document.getElementById('contact-success') as HTMLDivElement;
+    const submitButton = document.getElementById('submit-button') as HTMLButtonElement;
+    
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Show loading state
+        if (submitButton) submitButton.disabled = true;
+        if (formStatus) formStatus.textContent = 'Sending...';
+        
+        try {
+          const formData = new FormData(form);
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            // Show success message
+            form.style.display = 'none';
+            if (successMessage) successMessage.classList.remove('hidden');
+            if (formStatus) formStatus.textContent = '';
+          } else {
+            // Show error message
+            const data = await response.json();
+            if (formStatus) {
+              formStatus.textContent = data.error || 'Something went wrong. Please try again.';
+              formStatus.classList.add('text-red-500');
+            }
+            if (submitButton) submitButton.disabled = false;
+          }
+        } catch (error) {
+          // Show error message
+          if (formStatus) {
+            formStatus.textContent = 'Network error. Please try again.';
+            formStatus.classList.add('text-red-500');
+          }
+          if (submitButton) submitButton.disabled = false;
+        }
+      });
+    }
+  });
+</script>
