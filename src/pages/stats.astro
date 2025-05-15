@@ -17,7 +17,13 @@ const year = Astro.url.searchParams.get('year');
 let isLoading = false;
 ---
 
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+</style>
 <Layout title="Stats - Alex Norum" description="Personal statistics and data visualizations">
+  <div id="top">
 		<section class="section overflow-x-hidden">
 			<div class="container max-w-full px-2 sm:px-4">
 				<!-- Hero Section -->
@@ -25,13 +31,39 @@ let isLoading = false;
 					<h1>Stats</h1>
 					<p>Personal data visualizations from various platforms</p>
 				</div>
+
+				<!-- Anchor Navigation -->
+				<nav class="w-full max-w-3xl mx-auto flex flex-wrap justify-center gap-6 text-sm font-medium mb-10 border-b border-white/10 pb-4 text-[var(--text-secondary)]">
+				  <a href="#travel" class="nav-link">🌍 Travel</a>
+				  <a href="#golf" class="nav-link">⛳ Golf</a>
+				  <a href="#fitness" class="nav-link">🏃 Fitness</a>
+				  <a href="#books" class="nav-link">📚 Reading</a>
+				  <a href="#music" class="nav-link">🎧 Music</a>
+				</nav>
 				
 				<!-- Stats Cards -->
-				<div class="grid md:grid-cols-1 gap-8 mb-16 animate-fade-in overflow-hidden">
+				<!-- Travel -->
+				<div id="travel" class="mb-20 scroll-mt-44 animate-fade-in overflow-hidden">
 					<TravelStats />
+				</div>
+
+				<!-- Golf -->
+				<div id="golf" class="mb-20 scroll-mt-44 animate-fade-in overflow-hidden">
 					<GolfStats />
+				</div>
+
+				<!-- Fitness -->
+				<div id="fitness" class="mb-20 scroll-mt-44 animate-fade-in overflow-hidden">
 					<StravaStats />
+				</div>
+
+				<!-- Reading -->
+				<div id="books" class="mb-20 scroll-mt-44 animate-fade-in overflow-hidden">
 					<GoodreadsStats />
+				</div>
+
+				<!-- Music -->
+				<div id="music" class="mb-20 scroll-mt-44 animate-fade-in overflow-hidden">
 					<SpotifyStats />
 				</div>
 				
@@ -63,6 +95,9 @@ let isLoading = false;
 						</div>
 					</div>
 				</div>
-			</div>
+</div>
+      <a href="#top" class="fixed bottom-4 left-4 z-50 rounded-full p-2 sm:p-3 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm backdrop-blur shadow transition">
+        ↑ Top
+      </a>
 		</section>
 </Layout>

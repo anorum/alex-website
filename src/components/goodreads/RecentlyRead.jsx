@@ -82,7 +82,7 @@ export default function RecentlyRead({ recentlyRead = [] }) {
   // Generate star rating display
   const renderStarRating = (rating) => {
     return (
-      <div className="flex">
+      <div className="flex items-center gap-[1px]">
         {[1, 2, 3, 4, 5].map((star) => (
           <svg 
             key={star} 
@@ -118,8 +118,8 @@ export default function RecentlyRead({ recentlyRead = [] }) {
       </h3>
       
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-white/10 dark:bg-gray-700">
+        <table className="w-full text-sm text-left border-separate border-spacing-y-1">
+          <thead className="bg-white/5 dark:bg-white/10 text-[var(--text-tertiary)] text-xs uppercase tracking-wide">
             <tr>
               <th className="p-2 text-left">Book</th>
               <th className="p-2 text-left hidden md:table-cell">Author</th>
@@ -130,8 +130,8 @@ export default function RecentlyRead({ recentlyRead = [] }) {
           </thead>
           <tbody>
             {books.map((book, index) => (
-              <tr key={index} className="border-b border-white/10 dark:border-gray-700 hover:bg-white/5 dark:hover:bg-gray-800">
-                <td className="p-2">
+              <tr key={index} className="border border-transparent rounded-md hover:border-[var(--border-color)] hover:bg-white/5 dark:hover:bg-gray-800 transition-all">
+                <td className="px-2 py-1 text-sm sm:text-xs align-middle">
                   <div className="flex items-center">
                     <div className="w-10 h-14 mr-3 rounded overflow-hidden flex-shrink-0">
                       {renderBookCover(book)}
@@ -139,16 +139,16 @@ export default function RecentlyRead({ recentlyRead = [] }) {
                     <span className="font-medium text-sm line-clamp-2">{book.title}</span>
                   </div>
                 </td>
-                <td className="p-2 hidden md:table-cell">
+                <td className="px-2 py-1 text-sm sm:text-xs align-middle hidden md:table-cell">
                   {book.author}
                 </td>
-                <td className="p-2 hidden md:table-cell">
+                <td className="px-2 py-1 text-sm sm:text-xs align-middle hidden md:table-cell">
                   {book.original_publication_year || book.year_published}
                 </td>
-                <td className="p-2">
+                <td className="px-2 py-1 text-sm sm:text-xs align-middle">
                   {book.my_rating > 0 ? renderStarRating(book.my_rating) : '-'}
                 </td>
-                <td className="p-2 hidden sm:table-cell">
+                <td className="px-2 py-1 text-sm sm:text-xs align-middle hidden sm:table-cell">
                   {formatDate(book.date_read)}
                 </td>
               </tr>

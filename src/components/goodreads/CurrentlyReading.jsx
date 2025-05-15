@@ -71,7 +71,7 @@ export default function CurrentlyReading({ currentlyReading = [] }) {
       .reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
     
     return (
-      <div className={`${colors[colorIndex]} text-white flex flex-col items-center justify-center p-2 rounded-md h-full`}>
+      <div className={`${colors[colorIndex]} text-white flex flex-col items-center justify-center p-2 rounded-md h-full shadow-inner`}>
         <div className="text-2xl font-bold">{titleInitials}</div>
         <div className="text-xs mt-2 text-center line-clamp-2">{title}</div>
         <div className="text-xs mt-1 opacity-80 text-center line-clamp-1">{author}</div>
@@ -98,16 +98,16 @@ export default function CurrentlyReading({ currentlyReading = [] }) {
         Currently Reading
       </h3>
       
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         {books.map((book, index) => (
-          <div key={index} className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg overflow-hidden">
-            <div className="aspect-[2/3] w-full">
+          <div key={index} className="stats-card px-2 py-1 border border-[var(--border-color)] bg-white/10 dark:bg-white/5 shadow-sm hover:shadow-md transition-all rounded-lg overflow-hidden">
+            <div className="aspect-[3/4] w-full">
               {renderBookCover(book)}
             </div>
             <div className="p-3">
-              <h4 className="font-medium text-sm line-clamp-2 mb-1">{book.title}</h4>
-              <p className="text-xs text-gray-300 mb-2">{book.author}</p>
-              <div className="flex justify-between items-center text-xs">
+              <h4 className="font-medium text-xs sm:text-sm line-clamp-2 mb-1">{book.title}</h4>
+              <p className="text-[11px] text-gray-400 mb-2">{book.author}</p>
+              <div className="flex justify-between items-center text-[10px] sm:text-xs">
                 <span className="text-gray-400">Added: {formatDate(book.date_added)}</span>
                 {book.average_rating > 0 && (
                   <span className="flex items-center">

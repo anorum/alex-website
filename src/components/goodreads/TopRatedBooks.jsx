@@ -88,19 +88,19 @@ export default function TopRatedBooks({ topRatedBooks = [] }) {
       
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {books.map((book, index) => (
-          <div key={index} className="bg-white/10 dark:bg-gray-800/30 shadow-sm rounded-lg overflow-hidden">
-            <div className="aspect-[2/3] w-full relative">
+          <div key={index} className="stats-card p-2 border border-[var(--border-color)] bg-white/5 dark:bg-white/10 shadow-sm hover:shadow-md transition-all rounded-lg overflow-hidden">
+            <div className="aspect-[3/4] w-full relative">
               {renderBookCover(book)}
-              <div className="absolute top-2 right-2 bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
-                {book.my_rating}
+              <div className="absolute top-2 right-2 bg-yellow-400 text-black rounded-full w-7 h-7 flex items-center justify-center font-semibold text-xs shadow">
+                {book.my_rating > 0 ? book.my_rating : 'NR'}
               </div>
             </div>
-            <div className="p-3">
-              <h4 className="font-medium text-sm line-clamp-2 mb-1">{book.title}</h4>
-              <p className="text-xs text-gray-300 mb-2 line-clamp-1">{book.author}</p>
-              <div className="flex justify-between items-center text-xs">
+            <div className="px-2 py-2">
+              <h4 className="font-medium text-xs sm:text-sm line-clamp-2 mb-1">{book.title}</h4>
+              <p className="text-[11px] text-gray-400 mb-2 line-clamp-1">{book.author}</p>
+              <div className="flex justify-between items-center text-[10px] sm:text-xs gap-1">
                 <span className="text-gray-400">{book.year_published}</span>
-                <span className="flex items-center">
+                <span className="flex items-center" title={`${book.average_rating.toFixed(2)} average`}>
                   <svg className="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                   </svg>

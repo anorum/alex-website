@@ -208,7 +208,7 @@ export default function BookSummary({ summary = {} }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {statItems.map((item, index) => (
-        <div key={index} className="stats-card p-4">
+        <div key={index} className="stats-card p-4 rounded-xl shadow-sm hover:shadow-md transition-all border border-[var(--border-color)] bg-white/10 dark:bg-white/5">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3`}>
@@ -221,8 +221,9 @@ export default function BookSummary({ summary = {} }) {
             </div>
           </div>
           {item.chartId && (
-            <div className="chart-container h-[120px] mt-2">
-              <div id={item.chartId}></div>
+            <div className="chart-container h-[120px] mt-4 flex flex-col justify-between">
+              <div id={item.chartId} className="w-full h-full" />
+              <p className="text-[10px] text-center mt-1 text-[var(--text-tertiary)]">{item.label} per year</p>
             </div>
           )}
           {!item.chartId && (
