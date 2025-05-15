@@ -37,7 +37,7 @@ const timeline = [
 
 <div class="space-y-12 sm:space-y-10">
   {timeline.map((item, index) => (
-    <div class="relative flex flex-col sm:flex-row gap-4 sm:gap-6 items-start animate-fade-in-up opacity-0 animate-delay-[150ms] animate-fill-forwards">
+    <div class="relative flex flex-col sm:flex-row gap-4 sm:gap-6 items-start animate-fade-in-up opacity-0 animate-delay-[150ms] animate-fill-forwards" style="opacity: 1;">
       <img src={item.logo.src} alt={item.company + ' logo'} class="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-md bg-white p-1 shadow" />
       <div class="flex-1">
         <h3 class="text-lg sm:text-xl font-semibold">{item.role}</h3>

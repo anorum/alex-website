@@ -6,6 +6,7 @@ import Timeline from '../components/Timeline.astro';
 import SkillsGroup from '../components/SkillsGroup.astro';
 import InterestItem from '../components/InterestItem.astro';
 import TravelMap from '../components/travel/TravelMap';
+import IndexTravelMap from '../components/travel/IndexTravelMap';
 ---
 
 <Layout title="Alex Norum - Data Platform Engineer" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and system simplifier. Based in Portland, OR.">
@@ -378,10 +379,8 @@ import TravelMap from '../components/travel/TravelMap';
             </a>
           </div>
           
-          <div class="relative h-64 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-            <div class="absolute inset-0 flex items-center justify-center">
-              <TravelMap client:only="react" travelData={[]}/>
-            </div>
+          <div id="travel-map-container">
+            <IndexTravelMap client:only="react" />
           </div>
         </div>
       </div>
@@ -410,6 +409,10 @@ import TravelMap from '../components/travel/TravelMap';
     </div>
   </section>
 </Layout>
+
+<!-- Load Leaflet CSS and JS for the travel map -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 <style>
 /* Animation classes */
@@ -460,6 +463,14 @@ import TravelMap from '../components/travel/TravelMap';
   opacity: 0;
 }
 
+.animate-delay-\[150ms\] {
+  animation-delay: 150ms;
+}
+
+.animate-fill-forwards {
+  animation-fill-mode: forwards;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -469,6 +480,53 @@ import TravelMap from '../components/travel/TravelMap';
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Leaflet map styles */
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+  z-index: 1 !important;
+}
+
+.leaflet-overlay-pane { z-index: 2 !important; }
+.leaflet-shadow-pane { z-index: 3 !important; }
+.leaflet-marker-pane { z-index: 4 !important; }
+.leaflet-tooltip-pane { z-index: 5 !important; }
+.leaflet-popup-pane { z-index: 6 !important; }
+.leaflet-control { z-index: 7 !important; }
+.leaflet-top, .leaflet-bottom { z-index: 8 !important; }
+
+/* Fix popup styling */
+.leaflet-popup-content-wrapper {
+  border-radius: 0.5rem !important;
+  padding: 0.5rem !important;
+  box-shadow: var(--card-shadow) !important;
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  overflow: visible !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: var(--card-shadow) !important;
+}
+
+/* Make sure popups are above other elements */
+.leaflet-popup {
+  z-index: 1000 !important;
+  margin-bottom: 60px !important; /* Add more space at the bottom */
 }
 </style>
 
@@ -490,5 +548,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
   });
+  
+  // Specifically observe timeline items
+  setTimeout(() => {
+    document.querySelectorAll('.animate-fade-in-up.opacity-0').forEach(item => {
+      observer.observe(item);
+    });
+  }, 100); // Small delay to ensure DOM is fully loaded
 });
 </script>

@@ -39,7 +39,7 @@ const ImageCarousel = ({ images, locationName, initialIndex = 0 }) => {
   
   if (isFullscreen) {
     return (
-      <div className="fixed inset-0 z-50 bg-[#2a4535]/95 flex items-center justify-center p-4" onClick={toggleFullscreen}>
+      <div className="fixed inset-0 z-50 bg-[var(--bg-color)]/95 flex items-center justify-center p-4" onClick={toggleFullscreen}>
         <div className="relative max-w-4xl max-h-full backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
           <img 
             src={images[currentIndex]} 
@@ -48,7 +48,7 @@ const ImageCarousel = ({ images, locationName, initialIndex = 0 }) => {
           />
           <button 
             onClick={toggleFullscreen}
-            className="absolute top-2 right-2 bg-[#77647b] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#77647b]/80 transition-colors"
+            className="absolute top-2 right-2 bg-[var(--accent-color)] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[var(--accent-color)]/80 transition-colors"
             aria-label="Close fullscreen"
           >
             ×
@@ -57,14 +57,14 @@ const ImageCarousel = ({ images, locationName, initialIndex = 0 }) => {
             <>
               <button 
                 onClick={prevImage}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-[var(--accent-color)] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[var(--accent-color)]/80 transition-colors"
                 aria-label="Previous image"
               >
                 ←
               </button>
               <button 
                 onClick={nextImage}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[var(--accent-color)] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[var(--accent-color)]/80 transition-colors"
                 aria-label="Next image"
               >
                 →
@@ -311,7 +311,7 @@ export default function TravelMap({ travelData = [] }) {
   const createFullscreenViewer = (visit, imgIndex) => {
     // Create a fullscreen image viewer with carousel
     const fullscreenDiv = document.createElement('div');
-    fullscreenDiv.className = 'fixed inset-0 z-50 bg-[#2a4535]/95 flex items-center justify-center p-4 backdrop-blur-md';
+    fullscreenDiv.className = 'fixed inset-0 z-50 bg-[var(--bg-color)]/95 flex items-center justify-center p-4 backdrop-blur-md';
     
     // Create container for image and controls
     const container = document.createElement('div');
@@ -325,7 +325,7 @@ export default function TravelMap({ travelData = [] }) {
     
     // Create close button
     const closeBtn = document.createElement('button');
-    closeBtn.className = 'absolute top-2 right-2 bg-[#77647b] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[#77647b]/80 transition-colors';
+    closeBtn.className = 'absolute top-2 right-2 bg-[var(--accent-color)] text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-[var(--accent-color)]/80 transition-colors';
     closeBtn.innerHTML = '×';
     closeBtn.onclick = () => document.body.removeChild(fullscreenDiv);
     
@@ -360,7 +360,7 @@ export default function TravelMap({ travelData = [] }) {
       
       // Previous button
       const prevBtn = document.createElement('button');
-      prevBtn.className = 'absolute left-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors';
+      prevBtn.className = 'absolute left-2 top-1/2 transform -translate-y-1/2 bg-[var(--accent-color)] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[var(--accent-color)]/80 transition-colors';
       prevBtn.innerHTML = '←';
       prevBtn.onclick = (e) => {
         e.stopPropagation();
@@ -370,7 +370,7 @@ export default function TravelMap({ travelData = [] }) {
       
       // Next button
       const nextBtn = document.createElement('button');
-      nextBtn.className = 'absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#77647b] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[#77647b]/80 transition-colors';
+      nextBtn.className = 'absolute right-2 top-1/2 transform -translate-y-1/2 bg-[var(--accent-color)] text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-[var(--accent-color)]/80 transition-colors';
       nextBtn.innerHTML = '→';
       nextBtn.onclick = (e) => {
         e.stopPropagation();
@@ -408,8 +408,8 @@ export default function TravelMap({ travelData = [] }) {
     <div className="rounded-lg overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700 relative">
       {/* Location detail overlay */}
       {selectedLocation && (
-        <div className="absolute inset-0 bg-[#2a4535] dark:bg-[#1a2e24] z-20 overflow-y-auto">
-          <div className="sticky top-0 z-30 bg-[#2a4535] dark:bg-[#1a2e24] shadow-md p-2 sm:p-3 md:p-4 backdrop-blur-md border-b border-white/10">
+        <div className="absolute inset-0 bg-[var(--bg-color)] z-20 overflow-y-auto">
+          <div className="sticky top-0 z-30 bg-[var(--bg-color)] shadow-md p-2 sm:p-3 md:p-4 backdrop-blur-md border-b border-[var(--border-color)]">
             <div className="flex items-center justify-between max-w-3xl mx-auto">
               <div className="flex items-center">
                 <span className="text-xl sm:text-2xl md:text-3xl mr-1.5 sm:mr-2 md:mr-3">{selectedLocation.flag}</span>
