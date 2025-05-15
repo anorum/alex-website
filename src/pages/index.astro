@@ -19,8 +19,8 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
       <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
     </div>
 
-    <div class="container max-w-6xl mx-auto px-4 relative z-10">
-      <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
+    <div class="relative z-10">
+      <div class="max-w-4xl mx-auto px-4 flex flex-col-reverse lg:flex-row items-center gap-12">
         <!-- Text Content -->
         <div class="lg:w-3/5 space-y-6">
           <div class="space-y-2">
@@ -95,9 +95,10 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
   </section>
 
   <!-- What I Do Section -->
-  <section class="py-16 bg-white/5 border-y border-white/10">
-    <div class="container max-w-6xl mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
+  <section class="py-16 relative">
+    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
+    <div class="relative z-10">
+      <div class="max-w-4xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-6">
           <div class="h-px flex-1 bg-accent-color opacity-30"></div>
           <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">What I Do</h2>
@@ -150,9 +151,10 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
   </section>
 
   <!-- Work Experience Timeline -->
-  <section class="py-16" id="experience">
-    <div class="container max-w-6xl mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
+  <section class="py-16 relative" id="experience">
+    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
+    <div class="relative z-10">
+      <div class="max-w-4xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-10">
           <div class="h-px flex-1 bg-accent-color opacity-30"></div>
           <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Work Experience</h2>
@@ -176,9 +178,10 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
   </section>
 
   <!-- Skills Section -->
-  <section class="py-16 bg-white/5 border-y border-white/10" id="skills">
-    <div class="container max-w-6xl mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
+  <section class="py-16 relative" id="skills">
+    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
+    <div class="relative z-10">
+      <div class="max-w-4xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-10">
           <div class="h-px flex-1 bg-accent-color opacity-30"></div>
           <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Core Skills</h2>
@@ -297,9 +300,10 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
   </section>
 
   <!-- Beyond Work Section -->
-  <section class="py-16" id="beyond-work">
-    <div class="container max-w-6xl mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
+  <section class="py-16 relative" id="beyond-work">
+    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
+    <div class="relative z-10">
+      <div class="max-w-4xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-10">
           <div class="h-px flex-1 bg-accent-color opacity-30"></div>
           <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Beyond Work</h2>
@@ -379,7 +383,7 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
             </a>
           </div>
           
-          <div id="travel-map-container">
+          <div id="travel-map-container" class="h-[400px]">
             <IndexTravelMap client:only="react" />
           </div>
         </div>
@@ -388,9 +392,10 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
   </section>
 
   <!-- Mara AI Assistant Section -->
-  <section class="py-16 bg-white/5 border-t border-white/10" id="chat">
-    <div class="container max-w-6xl mx-auto px-4">
-      <div class="max-w-4xl mx-auto">
+  <section class="py-16 relative" id="chat">
+    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-t border-white/10"></div>
+    <div class="relative z-10">
+      <div class="max-w-4xl mx-auto px-4">
         <div class="flex items-center gap-3 mb-10">
           <div class="h-px flex-1 bg-accent-color opacity-30"></div>
           <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Chat with Mara</h2>

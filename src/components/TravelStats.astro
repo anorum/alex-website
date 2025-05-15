@@ -8,18 +8,19 @@ import CountriesStats from './travel/CountriesStats';
 import CitiesStats from './travel/CitiesStats';
 ---
 
-<div class="stats-card p-0.5 sm:p-2 md:p-4">
-  <div class="mb-6">
-    <div class="flex items-center mb-4">
-      <div class="w-10 h-10 flex items-center justify-center bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400 me-4">
-        <GlobeAltIcon className="h-6 w-6" />
-      </div>
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Travel Stats</h2>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Explore my journy around the world</p>
+<div class="relative">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="mb-6">
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 flex items-center justify-center bg-green-100 dark:bg-green-900 rounded-full text-green-600 dark:text-green-400 me-4">
+          <GlobeAltIcon className="h-6 w-6" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Travel Stats</h2>
+          <p class="text-gray-500 dark:text-gray-400 text-sm">Explore my journy around the world</p>
+        </div>
       </div>
     </div>
-  </div>
   
   <div id="travel-stats-content">
     <!-- Initial loading state - this will be shown immediately -->

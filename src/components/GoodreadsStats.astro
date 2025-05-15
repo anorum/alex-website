@@ -7,18 +7,19 @@ import TopRatedBooks from './goodreads/TopRatedBooks';
 import Authors from './goodreads/Authors';
 ---
 
-<div class="stats-card p-0.5 sm:p-2 md:p-4">
-  <div class="mb-6">
-    <div class="flex items-center mb-4">
-      <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 dark:bg-yellow-900 rounded-full text-yellow-600 dark:text-yellow-400 me-4">
-        <BookOpenIcon className="h-6 w-6" />
-      </div>
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Reading Stats</h2>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Track my reading journey</p>
+<div class="relative">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="mb-6">
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 flex items-center justify-center bg-yellow-100 dark:bg-yellow-900 rounded-full text-yellow-600 dark:text-yellow-400 me-4">
+          <BookOpenIcon className="h-6 w-6" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Reading Stats</h2>
+          <p class="text-gray-500 dark:text-gray-400 text-sm">Track my reading journey</p>
+        </div>
       </div>
     </div>
-  </div>
   
   <div id="reading-stats-content">
     <!-- Initial loading state - this will be shown immediately -->

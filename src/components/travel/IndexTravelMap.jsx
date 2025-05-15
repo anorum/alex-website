@@ -343,9 +343,9 @@ export default function IndexTravelMap() {
       <MapContainer 
         center={center} 
         zoom={1} 
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '100%' }}
         ref={mapRef}
-        className="z-0 h-64"
+        className="z-0 h-full"
         scrollWheelZoom={true}
         attributionControl={false}
         maxBounds={[[-90, -180], [90, 180]]}

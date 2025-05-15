@@ -7,18 +7,19 @@ import WorkoutTypesChart from './workout/WorkoutTypesChart.jsx';
 import TimeSinceLastWorkout from './workout/TimeSinceLastWorkout';
 ---
 
-<div class="stats-card p-0.5 sm:p-2 md:p-4 transition-all duration-300">
-  <div class="mb-6">
-    <div class="flex items-center mb-4">
-      <div class="w-10 h-10 flex items-center justify-center bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400 me-4">
-        <FireIcon className="h-6 w-6" />
-      </div>
-      <div>
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workout Stats</h2>
-        <p class="text-sm">Track my fitness journey</p>
+<div class="relative">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="mb-6">
+      <div class="flex items-center mb-4">
+        <div class="w-10 h-10 flex items-center justify-center bg-orange-100 dark:bg-orange-900 rounded-full text-orange-600 dark:text-orange-400 me-4">
+          <FireIcon className="h-6 w-6" />
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Workout Stats</h2>
+          <p class="text-sm">Track my fitness journey</p>
+        </div>
       </div>
     </div>
-  </div>
   
   <div id="workout-stats-content">
     <!-- Initial loading state - this will be shown immediately -->

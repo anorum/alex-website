@@ -476,9 +476,9 @@ export default function TravelMap({ travelData = [] }) {
       <MapContainer 
         center={center} 
         zoom={1} 
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '500px' }}
         ref={mapRef}
-        className="z-0 h-[50vh] sm:h-[50vh] md:h-[50vh]"
+        className="z-0 h-[50vh] sm:h-[60vh] md:h-[70vh]"
         scrollWheelZoom={true}
         attributionControl={false}
         maxBounds={[[-90, -180], [90, 180]]}
