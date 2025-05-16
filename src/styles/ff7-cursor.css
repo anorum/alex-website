@@ -1,0 +1,14 @@
+/* FF7 Cursor Styles */
+.theme-rpg {
+  cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA7UlEQVR4nO2UMQrCQBBFXyqtpZdQ8BQKHkDBc3gIwUuIjZ21jQcQPIFgayUewM5C0ogW4o4ZSIgbNtmAhYWveJn5f3Z2dvmLABgBKZADJbAFRl0KD4ECKIA3UANbYNxWfALsgCqqgRzot4lnmvgLyIBhk/gAOGjxGkhbvRdwBBZABERADJyAm9Z4AKOm4lPgqsRLYPEpPtDiNxUfNRUHmOmGSvzcJh7q+EJtU9xGPNTxSW1T3EY8BCZK/AKMbcV7wEGJF8DcVhxgrjcoJeJWcYmZ3qJCIm4lLjHTm1QocWtxiVkXcYmZ3qYOcAeKtVzI8XkWpQAAAABJRU5ErkJggg==') 12 12, auto;
+}
+
+.theme-rpg a, 
+.theme-rpg button,
+.theme-rpg [role="button"],
+.theme-rpg input[type="submit"],
+.theme-rpg input[type="button"],
+.theme-rpg input[type="reset"],
+.theme-rpg select {
+  cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAA7UlEQVR4nO2UMQrCQBBFXyqtpZdQ8BQKHkDBc3gIwUuIjZ21jQcQPIFgayUewM5C0ogW4o4ZSIgbNtmAhYWveJn5f3Z2dvmLABgBKZADJbAFRl0KD4ECKIA3UANbYNxWfALsgCqqgRzot4lnmvgLyIBhk/gAOGjxGkhbvRdwBBZABERADJyAm9Z4AKOm4lPgqsRLYPEpPtDiNxUfNRUHmOmGSvzcJh7q+EJtU9xGPNTxSW1T3EY8BCZK/AKMbcV7wEGJF8DcVhxgrjcoJeJWcYmZ3qJCIm4lLjHTm1QocWtxiVkXcYmZ3qYOcAeKtVzI8XkWpQAAAABJRU5ErkJggg==') 12 12, pointer;
+}

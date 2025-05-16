@@ -9,9 +9,11 @@ import SectionTitleWrapper from '../components/SectionTitleWrapper.astro';
 import InterestItemWrapper from '../components/InterestItemWrapper.astro';
 import TravelMap from '../components/travel/TravelMap';
 import IndexTravelMap from '../components/travel/IndexTravelMap';
+import RPGWrapper from '../components/RPGWrapper.astro';
 ---
 
 <Layout title="Alex Norum - Data Platform Engineer" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and system simplifier. Based in Portland, OR.">
+<RPGWrapper>
   <!-- Hero Section with About Me -->
   <section class="relative overflow-hidden py-16 md:py-24">
     <HeroWrapper />
@@ -165,6 +167,7 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
       </div>
     </div>
   </section>
+</RPGWrapper>
 </Layout>
 
 <!-- Load Leaflet CSS and JS for the travel map -->
@@ -274,6 +277,11 @@ import IndexTravelMap from '../components/travel/IndexTravelMap';
 </style>
 
 <script>
+// Declare the switchRPGSection function as a global type
+declare global {
+  function switchRPGSection(sectionId: string): boolean;
+}
+
 // Intersection Observer for scroll animations
 document.addEventListener('DOMContentLoaded', () => {
   const observer = new IntersectionObserver((entries) => {
@@ -298,5 +306,26 @@ document.addEventListener('DOMContentLoaded', () => {
       observer.observe(item);
     });
   }, 100); // Small delay to ensure DOM is fully loaded
+  
+  // Check for section parameter in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const sectionParam = urlParams.get('section');
+  
+  if (sectionParam) {
+    // If we have a section parameter, switch to that section
+    console.log('Found section parameter:', sectionParam);
+    
+    // Store the section in session storage
+    sessionStorage.setItem('rpg-active-section', sectionParam);
+    
+    // If we have a switchRPGSection function, call it
+    if (typeof switchRPGSection === 'function') {
+      setTimeout(() => {
+        switchRPGSection(sectionParam);
+      }, 300); // Small delay to ensure DOM is fully loaded
+    } else {
+      console.log('switchRPGSection function not found');
+    }
+  }
 });
 </script>
