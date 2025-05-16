@@ -3,7 +3,7 @@ import meImage from '../../assets/me.jpeg';
 ---
 
 <div class="ff7-menu">
-  <div class="ff7-menu-header">STATUS</div>
+  <div class="ff7-menu-header">CHARACTER DATA</div>
   
   <div class="ff7-character-status">
     <!-- Character Info Section -->
@@ -14,12 +14,12 @@ import meImage from '../../assets/me.jpeg';
       
       <div class="ff7-character-info">
         <div class="ff7-character-name">ALEX</div>
-        <div class="ff7-character-class">DATA ARCHITECT</div>
+        <div class="ff7-character-class">DATA PLATFORM ENGINEER</div>
         <div class="ff7-character-level">LV 99</div>
       </div>
     </div>
     
-    <!-- Stats Section -->
+      <!-- Stats Section -->
     <div class="ff7-stats-section">
       <!-- HP/MP Bars -->
       <div class="ff7-stat-row">
@@ -38,7 +38,7 @@ import meImage from '../../assets/me.jpeg';
         </div>
       </div>
       
-      <!-- Character Stats -->
+      <!-- Character Stats - FF7 specific stats -->
       <div class="ff7-attributes">
         <div class="ff7-attribute-row">
           <div class="ff7-attribute">
@@ -46,28 +46,37 @@ import meImage from '../../assets/me.jpeg';
             <span class="ff7-attribute-value">95</span>
           </div>
           <div class="ff7-attribute">
-            <span class="ff7-attribute-label">MAG</span>
-            <span class="ff7-attribute-value">99</span>
+            <span class="ff7-attribute-label">VIT</span>
+            <span class="ff7-attribute-value">80</span>
           </div>
           <div class="ff7-attribute">
-            <span class="ff7-attribute-label">DEX</span>
-            <span class="ff7-attribute-value">85</span>
+            <span class="ff7-attribute-label">MAG</span>
+            <span class="ff7-attribute-value">99</span>
           </div>
         </div>
         
         <div class="ff7-attribute-row">
           <div class="ff7-attribute">
-            <span class="ff7-attribute-label">VIT</span>
-            <span class="ff7-attribute-value">80</span>
-          </div>
-          <div class="ff7-attribute">
             <span class="ff7-attribute-label">SPR</span>
             <span class="ff7-attribute-value">90</span>
+          </div>
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">DEX</span>
+            <span class="ff7-attribute-value">85</span>
           </div>
           <div class="ff7-attribute">
             <span class="ff7-attribute-label">LCK</span>
             <span class="ff7-attribute-value">70</span>
           </div>
+        </div>
+      </div>
+      
+      <!-- Limit Break Gauge - FF7 specific -->
+      <div class="ff7-limit-gauge-row">
+        <div class="ff7-limit-label">LIMIT</div>
+        <div class="ff7-limit-level">LV.4</div>
+        <div class="ff7-limit-bar">
+          <div class="ff7-limit-bar-fill" style="width: 100%;"></div>
         </div>
       </div>
       
@@ -78,30 +87,51 @@ import meImage from '../../assets/me.jpeg';
       </div>
     </div>
     
-    <!-- Equipment Section -->
+    <!-- Equipment Section - FF7 style -->
     <div class="ff7-equipment-section">
-      <div class="ff7-section-title">EQUIP</div>
+      <div class="ff7-section-title">EQUIPMENT</div>
       
       <div class="ff7-equipment-row">
         <div class="ff7-equipment-label">WEAPON</div>
-        <div class="ff7-equipment-value">TERRAFORM MATERIA</div>
+        <div class="ff7-equipment-value">TERRAFORM ENGINE</div>
+        <div class="ff7-materia-slots">
+          <div class="ff7-materia-slot linked">
+            <div class="ff7-materia-orb magic"></div>
+          </div>
+          <div class="ff7-materia-slot linked">
+            <div class="ff7-materia-orb summon"></div>
+          </div>
+          <div class="ff7-materia-slot">
+            <div class="ff7-materia-orb command"></div>
+          </div>
+        </div>
       </div>
       
       <div class="ff7-equipment-row">
         <div class="ff7-equipment-label">ARMOR</div>
         <div class="ff7-equipment-value">KUBERNETES CLUSTER</div>
+        <div class="ff7-materia-slots">
+          <div class="ff7-materia-slot linked">
+            <div class="ff7-materia-orb magic"></div>
+          </div>
+          <div class="ff7-materia-slot linked">
+            <div class="ff7-materia-orb support"></div>
+          </div>
+        </div>
       </div>
       
       <div class="ff7-equipment-row">
-        <div class="ff7-equipment-label">ACC</div>
+        <div class="ff7-equipment-label">ACCESSORY</div>
         <div class="ff7-equipment-value">SNOWFLAKE CRYSTAL</div>
       </div>
     </div>
     
-    <!-- Limit Break -->
+    <!-- Limit Break - FF7 style -->
     <div class="ff7-limit-section">
-      <div class="ff7-section-title">LIMIT</div>
-      <div class="ff7-limit-name">DATA PIPELINE OPTIMIZATION</div>
+      <div class="ff7-section-title">LIMIT BREAK</div>
+      <div class="ff7-limit-name">PLATFORM OMNISLASH</div>
+      <div class="ff7-limit-description">Unleashes a full-stack data platform assault: automates workflows, deploys secure self-service pipelines, and slices legacy runtimes from hours to minutes. Grants party-wide observability and governance buffs.
+</div></div>
     </div>
     
     <!-- Location -->
@@ -159,9 +189,10 @@ import meImage from '../../assets/me.jpeg';
   .ff7-character-row {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding-bottom: 0.5rem;
+    gap: 1.5rem;
+    padding: 0.75rem 0.5rem;
     border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+    margin-bottom: 0.5rem;
   }
   
   .ff7-character-portrait {
@@ -179,6 +210,9 @@ import meImage from '../../assets/me.jpeg';
   
   .ff7-character-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
   
   .ff7-character-name {
@@ -201,9 +235,10 @@ import meImage from '../../assets/me.jpeg';
   .ff7-stats-section {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding-bottom: 0.5rem;
+    gap: 0.75rem;
+    padding: 0.5rem 0.25rem 0.75rem;
     border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+    margin-bottom: 0.5rem;
   }
   
   .ff7-stat-row {
@@ -213,20 +248,22 @@ import meImage from '../../assets/me.jpeg';
   }
   
   .ff7-stat-label {
-    width: 30px;
+    width: 35px;
     color: var(--ff7-text);
     font-weight: bold;
+    margin-right: 5px;
   }
   
   .ff7-stat-value {
-    width: 80px;
+    width: 90px;
     color: var(--ff7-text);
     text-align: right;
+    margin-right: 10px;
   }
   
   .ff7-stat-bar {
     flex: 1;
-    height: var(--stat-bar-height);
+    height: calc(var(--stat-bar-height) * 1.25);
     background-color: var(--stat-bar-bg);
     border: var(--stat-bar-border);
   }
@@ -243,12 +280,46 @@ import meImage from '../../assets/me.jpeg';
     background-color: var(--mp-color);
   }
   
+  /* Limit Break Gauge */
+  .ff7-limit-gauge-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .ff7-limit-label {
+    width: 45px;
+    color: var(--ff7-text);
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  .ff7-limit-level {
+    width: 45px;
+    color: var(--ff7-text-highlight);
+    text-align: center;
+    margin-right: 10px;
+  }
+  
+  .ff7-limit-bar {
+    flex: 1;
+    height: calc(var(--stat-bar-height) * 1.25);
+    background-color: var(--stat-bar-bg);
+    border: var(--stat-bar-border);
+  }
+  
+  .ff7-limit-bar-fill {
+    height: 100%;
+    background-color: #ff9900;
+  }
+  
   /* Attributes */
   .ff7-attributes {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin: 0.5rem 0;
+    gap: 0.75rem;
+    margin: 0.75rem 0;
   }
   
   .ff7-attribute-row {
@@ -303,52 +374,128 @@ import meImage from '../../assets/me.jpeg';
   }
   
   .ff7-equipment-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    padding: 0.25rem 0;
   }
   
   .ff7-equipment-label {
-    width: 60px;
+    width: auto;
     color: var(--ff7-text);
   }
   
   .ff7-equipment-value {
     color: var(--ff7-text-highlight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+  }
+  
+  /* Materia slots */
+  .ff7-materia-slots {
+    display: flex;
+    gap: 0.5rem;
+    justify-self: end;
+  }
+  
+  .ff7-materia-slot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+  
+  .ff7-materia-slot.linked::after {
+    content: "=";
+    position: absolute;
+    right: -10px;
+    top: -2px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 10px;
+    z-index: 1;
+  }
+  
+  .ff7-materia-orb {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+  }
+  
+  .ff7-materia-orb.magic {
+    background-color: #00ffff;
+    box-shadow: 0 0 3px #00ffff;
+  }
+  
+  .ff7-materia-orb.summon {
+    background-color: #ff6666;
+    box-shadow: 0 0 3px #ff6666;
+  }
+  
+  .ff7-materia-orb.command {
+    background-color: #ffff00;
+    box-shadow: 0 0 3px #ffff00;
+  }
+  
+  .ff7-materia-orb.support {
+    background-color: #9966ff;
+    box-shadow: 0 0 3px #9966ff;
   }
   
   /* Limit Break */
   .ff7-limit-section {
-    padding-bottom: 0.5rem;
+    padding: 0.5rem 0.25rem 0.75rem;
     border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+    margin-bottom: 0.5rem;
   }
   
   .ff7-limit-name {
     color: var(--ff7-text-highlight);
+    font-weight: bold;
+    margin-top: 0.25rem;
+  }
+  
+  .ff7-limit-description {
+    color: var(--ff7-text);
+    font-size: 0.9em;
+    margin-top: 0.5rem;
+    font-style: italic;
+    line-height: 1.4;
   }
   
   /* Location */
   .ff7-location-section {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding-bottom: 0.5rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem 0.75rem;
     border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+    margin-bottom: 0.5rem;
   }
   
   .ff7-location-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
   }
   
   .ff7-location-label {
-    width: 80px;
+    width: auto;
     color: var(--ff7-text);
   }
   
   .ff7-location-value {
     color: var(--ff7-text-highlight);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   /* Action Button */
