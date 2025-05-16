@@ -20,41 +20,26 @@
   --ff7-mp-color: #00ffff;
   --ff7-menu-bg: rgba(0, 0, 102, 0.95);
   
-  /* Light mode colors (FF7 menu theme) */
-  --bg-color-light: var(--ff7-blue-dark);
-  --text-color-light: var(--ff7-text);
-  --text-secondary-light: #c0c0c0;
-  --text-tertiary-light: #a0a0a0;
-  --accent-color-light: var(--ff7-blue-light);
-  --secondary-color-light: var(--ff7-border);
-  --tertiary-color-light: #808080;
-  --bubble-bg-light: var(--ff7-menu-bg);
-  --card-shadow-light: 0 0 0 1px var(--ff7-border), 0 4px 6px rgba(0, 0, 0, 0.5);
-  --border-color-light: var(--ff7-border);
+  /* Override all theme colors with FF7 colors regardless of light/dark mode */
+  /* This ensures consistent RPG styling */
+  --bg-color: var(--ff7-blue-dark);
+  --text-color: var(--ff7-text);
+  --text-secondary: #c0c0c0;
+  --text-tertiary: #a0a0a0;
+  --accent-color: var(--ff7-blue-light);
+  --secondary-color: var(--ff7-border);
+  --tertiary-color: #808080;
+  --bubble-bg: var(--ff7-menu-bg);
+  --card-shadow: 0 0 0 1px var(--ff7-border), 0 4px 6px rgba(0, 0, 0, 0.5);
+  --border-color: var(--ff7-border);
   
-  /* Dark mode colors (same as light mode for FF7 theme) */
-  --bg-color-dark: var(--ff7-blue-dark);
-  --text-color-dark: var(--ff7-text);
-  --text-secondary-dark: #c0c0c0;
-  --text-tertiary-dark: #a0a0a0;
-  --accent-color-dark: var(--ff7-blue-light);
-  --secondary-color-dark: var(--ff7-border);
-  --tertiary-color-dark: #808080;
-  --bubble-bg-dark: var(--ff7-menu-bg);
-  --card-shadow-dark: 0 0 0 1px var(--ff7-border), 0 4px 6px rgba(0, 0, 0, 0.5);
-  --border-color-dark: var(--ff7-border);
-  
-  /* Default to light mode */
-  --bg-color: var(--bg-color-light);
-  --text-color: var(--text-color-light);
-  --text-secondary: var(--text-secondary-light);
-  --text-tertiary: var(--text-tertiary-light);
-  --accent-color: var(--accent-color-light);
-  --secondary-color: var(--secondary-color-light);
-  --tertiary-color: var(--tertiary-color-light);
-  --bubble-bg: var(--bubble-bg-light);
-  --card-shadow: var(--card-shadow-light);
-  --border-color: var(--border-color-light);
+  /* Additional color overrides to ensure consistency */
+  --color-green500: var(--ff7-text);
+  --color-green600: var(--ff7-text);
+  --color-green700: var(--ff7-text);
+  --color-green400: var(--ff7-blue-light);
+  --color-green300: var(--ff7-blue);
+  --color-beige: var(--ff7-blue-dark);
   
   /* FF7-specific variables */
   --menu-border: 2px solid var(--ff7-border);
@@ -70,18 +55,19 @@
   --stat-bar-border: 1px solid var(--ff7-border);
 }
 
-/* Dark mode - same as light mode for FF7 theme */
+/* Dark mode - keep same styling as light mode for FF7 theme */
 .theme-rpg.dark {
-  --bg-color: var(--bg-color-dark);
-  --text-color: var(--text-color-dark);
-  --text-secondary: var(--text-secondary-dark);
-  --text-tertiary: var(--text-tertiary-dark);
-  --accent-color: var(--accent-color-dark);
-  --secondary-color: var(--secondary-color-dark);
-  --tertiary-color: var(--tertiary-color-dark);
-  --bubble-bg: var(--bubble-bg-dark);
-  --card-shadow: var(--card-shadow-dark);
-  --border-color: var(--border-color-dark);
+  /* Keep the same colors as non-dark mode for consistency */
+  --bg-color: var(--ff7-blue-dark);
+  --text-color: var(--ff7-text);
+  --text-secondary: #c0c0c0;
+  --text-tertiary: #a0a0a0;
+  --accent-color: var(--ff7-blue-light);
+  --secondary-color: var(--ff7-border);
+  --tertiary-color: #808080;
+  --bubble-bg: var(--ff7-menu-bg);
+  --card-shadow: 0 0 0 1px var(--ff7-border), 0 4px 6px rgba(0, 0, 0, 0.5);
+  --border-color: var(--ff7-border);
 }
 
 /* RPG Theme Base Styles */
@@ -92,6 +78,31 @@
   line-height: 1.6;
   font-size: 12px;
   letter-spacing: 0;
+}
+
+/* Force all text elements to use RPG theme colors */
+.theme-rpg p,
+.theme-rpg span,
+.theme-rpg div,
+.theme-rpg a,
+.theme-rpg li,
+.theme-rpg td,
+.theme-rpg th,
+.theme-rpg label,
+.theme-rpg input,
+.theme-rpg textarea,
+.theme-rpg select,
+.theme-rpg option {
+  color: var(--text-color);
+}
+
+/* Force links to use RPG theme colors */
+.theme-rpg a {
+  color: var(--ff7-text-highlight);
+}
+
+.theme-rpg a:hover {
+  color: var(--ff7-blue-light);
 }
 
 /* Typography */

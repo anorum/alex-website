@@ -1,0 +1,433 @@
+---
+// Import the chocobo icon
+import chocoboIcon from '../assets/cocoboicon.png';
+---
+
+<div class="chocobo-theme-toggle">
+  <button id="chocobo-toggle-btn" aria-label="Toggle RPG Theme">
+    <img src={chocoboIcon.src} alt="Chocobo" class="chocobo-icon" />
+  </button>
+  <div id="chocobo-tooltip" class="tooltip hidden">Wark?</div>
+</div>
+
+<div id="ff-achievement" class="achievement hidden">
+  <div class="achievement-content">
+    <img src={chocoboIcon.src} alt="Chocobo" class="achievement-icon" />
+    <div class="achievement-text">
+      <h3>Achievement Unlocked!</h3>
+      <p>Final Fantasy Mode Unlocked</p>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  // Main initialization function that can be called on both initial load and page transitions
+  function initChocoboToggle() {
+    console.log('Initializing Chocobo Toggle');
+    const chocoboBtn = document.getElementById('chocobo-toggle-btn');
+    const chocoboToggle = document.querySelector('.chocobo-theme-toggle');
+    
+    if (!chocoboBtn || !chocoboToggle) {
+      console.warn('Chocobo toggle elements not found');
+      return;
+    }
+    
+    // Remove any existing event listeners to prevent duplicates
+    const newChocoboBtn = chocoboBtn.cloneNode(true);
+    const newChocoboToggle = chocoboToggle.cloneNode(true);
+    
+    if (chocoboBtn.parentNode) {
+      chocoboBtn.parentNode.replaceChild(newChocoboBtn, chocoboBtn);
+    }
+    
+    if (chocoboToggle.parentNode) {
+      // Keep the children (button and tooltip)
+      while (newChocoboToggle.firstChild) {
+        newChocoboToggle.removeChild(newChocoboToggle.firstChild);
+      }
+      
+      while (chocoboToggle.firstChild) {
+        newChocoboToggle.appendChild(chocoboToggle.firstChild);
+      }
+      
+      chocoboToggle.parentNode.replaceChild(newChocoboToggle, chocoboToggle);
+    }
+    
+    // Get fresh references after DOM replacement
+    const refreshedBtn = document.getElementById('chocobo-toggle-btn');
+    const refreshedToggle = document.querySelector('.chocobo-theme-toggle');
+    
+    if (!refreshedBtn || !refreshedToggle) {
+      console.warn('Failed to refresh Chocobo toggle elements');
+      return;
+    }
+    
+    // Set initial state
+    const currentTheme = localStorage.getItem('site-theme') || 'standard';
+    updateButtonState(refreshedBtn, currentTheme);
+    
+    // Toggle theme on click
+    refreshedBtn.addEventListener('click', function() {
+      const currentTheme = localStorage.getItem('site-theme') || 'standard';
+      const newTheme = currentTheme === 'rpg' ? 'standard' : 'rpg';
+      
+      // Set the new theme
+      setTheme(newTheme);
+      
+      // Update button state
+      updateButtonState(refreshedBtn, newTheme);
+      
+      // Play sound effect when toggling to RPG mode
+      if (newTheme === 'rpg') {
+        playChocoboSound();
+        
+        // Check if this is the first time toggling to RPG mode
+        const hasUnlockedFF = localStorage.getItem('ff-mode-unlocked');
+        if (!hasUnlockedFF) {
+          // Mark as unlocked
+          localStorage.setItem('ff-mode-unlocked', 'true');
+          
+          // Show achievement
+          showAchievement();
+          
+          // Play level up sound
+          playLevelUpSound();
+        }
+      }
+    });
+    
+    // Show on hover
+    refreshedToggle.addEventListener('mouseenter', function() {
+      refreshedToggle.classList.add('hover');
+      
+      // Show tooltip
+      const tooltip = document.getElementById('chocobo-tooltip');
+      if (tooltip) {
+        tooltip.classList.remove('hidden');
+        tooltip.classList.add('visible');
+      }
+      
+      // Random chance to play sound on hover
+      if (Math.random() > 0.7) { // 30% chance
+        playChocoboSound(0.1); // Lower volume
+      }
+    });
+    
+    // Hide on mouse leave
+    refreshedToggle.addEventListener('mouseleave', function() {
+      refreshedToggle.classList.remove('hover');
+      
+      // Hide tooltip
+      const tooltip = document.getElementById('chocobo-tooltip');
+      if (tooltip) {
+        tooltip.classList.remove('visible');
+        tooltip.classList.add('hidden');
+      }
+    });
+    
+    console.log('Chocobo Toggle initialized successfully');
+  }
+  
+  function setTheme(theme) {
+    // Remove any existing theme classes
+    document.documentElement.classList.forEach(function(className) {
+      if (className.startsWith('theme-')) {
+        document.documentElement.classList.remove(className);
+      }
+    });
+    
+    // Add new theme class
+    document.documentElement.classList.add(`theme-${theme}`);
+    
+    // Save to localStorage
+    localStorage.setItem('site-theme', theme);
+    
+    // Dispatch a custom event for theme changes
+    document.dispatchEvent(new CustomEvent('themeChanged'));
+    
+    console.log('Theme changed to:', theme);
+  }
+  
+  function updateButtonState(btnElement, theme) {
+    if (!btnElement) return;
+    
+    if (theme === 'rpg') {
+      btnElement.classList.add('active');
+    } else {
+      btnElement.classList.remove('active');
+    }
+  }
+  
+  function playChocoboSound(volume = 0.3) {
+    // Create audio element for chocobo sound
+    const audio = new Audio();
+    
+    // Chocobo "wark" sound (base64 encoded or URL)
+    audio.src = 'data:audio/wav;base64,UklGRpYBAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YXIBAABBAAAAKgAAABUAAAAKAAAABQAAAAEAAAABAAAAAgAAAAcAAAAOAAAAGQAAACYAAAAyAAAAPgAAAEgAAABQAAAAVQAAAFgAAABYAAAAVgAAAFIAAABMAAAARAAAADsAAAAxAAAAJwAAAB0AAAAUAAAACwAAAAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAEAAAACQAAABEAAAAaAAAAJAAAAC4AAAA3AAAAPwAAAEUAAABJAAAATAAAAE0AAABMAAAASgAAAEYAAABBAAAAOwAAADQAAAAsAAAAJAAAABsAAAATAAAADQAAAAcAAAADAAAAAgAAAAEAAAAAAAAAAQAAAAEAAAACAAAAAwAAAAUAAAAIAAAACwAAAA8AAAASAAAAFQAAABgAAAAaAAAAGwAAABsAAAAbAAAAGgAAABgAAAAWAAAAFAAAABEAAAAOAAAACwAAAAkAAAAGAAAABQAAAAMAAAADAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAABAAAA';
+    
+    // Play the sound
+    audio.volume = volume;
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  }
+  
+  function playLevelUpSound() {
+    // Create audio element for level up sound
+    const audio = new Audio();
+    
+    // FF7 level up sound (base64 encoded or URL)
+    audio.src = 'data:audio/wav;base64,UklGRqQCAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YYACAACAf3x5dnNwbWpnZGFfXFlXVFJPTUtJR0VDQkFAP0A/QEBBQkNFRkhKTU9RU1ZYW11gYmVoam1vcnR3eXx+gIKEhoeJiouMjY2Ojo+Pj4+Pjo2MjIuJiIaEg4F/fXt5d3VzcW9ta2lnZWRiYV9eXVxbW1taWlpbW1xdXl9hYmRmZ2lrbW9xc3V3eXt9f4GDhYeJi42OkJKTlZaXmJmZmpmZmJeWlJOSkI6Mi4mHhYOBf317eXd1c3Fvb2xramhnZWRjYmFgYF9fX19fYGBhYmNkZWdpam1ucHJ0dnh6fH6AgoSGiIqMjY+RkpSVlpeYmZmZmZmYl5aVk5KQj42LiYeEgoB+fHp4dnRycG5samlnZWRjYWBfXl1dXFxcXF1dXl9gYWNkZmhqa21vcXN1d3l7fX+BgoSGiImLjY6QkZOUlZaXl5iYmJeXlpWUk5GQj42LiomHhYOBgH58e3l3dnRycG9ta2poZ2VlY2JhYWBfX19fX2BgYWJjZGZnaWpsbm9xc3V3eXt9f4GDhIaIiouNj5CRk5SVlpeXmJiYmJeWlZSTkZCOjYuJh4WDgYB+fHp4d3VzcXBubGtpaGdmZGNiYWFgYGBgYGBhYWJjZGVmaGlrbW5wcnR2eHp8fX+BgoSFh4mLjI6PkZKTlJWWlpeXl5eXlpWUk5KRj46Mi4mIhoSCgX99e3p4dnVzcXBubGtpaGdmZWRjYmJhYWFhYWFiYmNkZWZnaWpsbm9xc3R2eHp7fX+AgoOFh4iKjI2PkJGSk5SVlZaWlpaWlZSTkpGQj42MiomHhYSCgX9+fHt5eHZ1c3Jw';
+    
+    // Play the sound
+    audio.volume = 0.4;
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  }
+  
+  function showAchievement() {
+    const achievement = document.getElementById('ff-achievement');
+    if (achievement) {
+      // Show achievement
+      achievement.classList.remove('hidden');
+      achievement.classList.add('visible');
+      
+      // Hide achievement after 5 seconds
+      setTimeout(() => {
+        achievement.classList.remove('visible');
+        setTimeout(() => {
+          achievement.classList.add('hidden');
+        }, 500);
+      }, 5000);
+    }
+  }
+  
+  // Initialize on DOMContentLoaded (first page load)
+  document.addEventListener('DOMContentLoaded', function() {
+    initChocoboToggle();
+  });
+  
+  // Initialize on Astro page transitions
+  document.addEventListener('astro:page-load', function() {
+    initChocoboToggle();
+  });
+  
+  // Also handle view transitions
+  document.addEventListener('astro:after-swap', function() {
+    initChocoboToggle();
+  });
+</script>
+
+<style>
+  .chocobo-theme-toggle {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 1001; /* Higher than menu z-index */
+    transform: translateX(-80%); /* Start mostly off-screen */
+    transition: transform 0.3s ease;
+  }
+  
+  /* Show more of the chocobo when hovered */
+  .chocobo-theme-toggle.hover {
+    transform: translateX(0);
+  }
+  
+  #chocobo-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  /* Subtle floating animation */
+  @keyframes gentleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  
+  #chocobo-toggle-btn {
+    animation: gentleFloat 3s ease-in-out infinite;
+  }
+  
+  #chocobo-toggle-btn:hover {
+    transform: rotate(5deg);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  #chocobo-toggle-btn:active {
+    transform: translateY(1px);
+  }
+  
+  .chocobo-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+  }
+  
+  /* Subtle glow effect for active state */
+  #chocobo-toggle-btn.active .chocobo-icon {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+  }
+  
+  #chocobo-toggle-btn:hover .chocobo-icon {
+    transform: scale(1.1);
+  }
+  
+  /* Animation for active state - more subtle */
+  @keyframes gentleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  
+  #chocobo-toggle-btn.active .chocobo-icon {
+    animation: gentleBounce 2.5s ease infinite;
+  }
+  
+  /* Tooltip styles */
+  .tooltip {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    font-family: 'Press Start 2P', monospace;
+    white-space: nowrap;
+  }
+  
+  .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 15px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.7) transparent transparent transparent;
+  }
+  
+  .tooltip.visible {
+    opacity: 1;
+  }
+  
+  /* Achievement notification */
+  .achievement {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background-color: rgba(0, 0, 0, 0.85);
+    border: 2px solid #ffcc00;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    z-index: 2000;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 280px;
+  }
+  
+  .achievement.visible {
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  .achievement-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .achievement-icon {
+    width: 35px;
+    height: 35px;
+    margin-right: 12px;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+  }
+  
+  .achievement-text {
+    color: white;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+  }
+  
+  .achievement-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    color: #ffcc00;
+    position: relative;
+  }
+  
+  /* FF7 cursor before the title */
+  .achievement-text h3::before {
+    content: "▶";
+    position: absolute;
+    left: -15px;
+    color: #ffcc00;
+    animation: blink 1s infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  
+  .achievement-text p {
+    margin: 0;
+    font-size: 0.7rem;
+    letter-spacing: -0.5px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .chocobo-theme-toggle {
+      left: 0.5rem;
+      bottom: 0.5rem;
+    }
+    
+    #chocobo-toggle-btn {
+      width: 35px;
+      height: 35px;
+    }
+    
+    .chocobo-icon {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .achievement {
+      width: 250px;
+    }
+    
+    .achievement-text {
+      font-size: 0.7rem;
+    }
+    
+    .achievement-text h3 {
+      font-size: 0.8rem;
+    }
+    
+    .achievement-text p {
+      font-size: 0.6rem;
+    }
+  }
+  
+  /* Hide elements */
+  .hidden {
+    display: none;
+  }
+</style>

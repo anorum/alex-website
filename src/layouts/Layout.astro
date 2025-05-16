@@ -3,7 +3,8 @@ import { ClientRouter } from "astro:transitions";
 
 import ChainlitCopilot from '../components/ChainlitCopilot.jsx';
 import NavigationWrapper from '../components/NavigationWrapper.astro';
-import Footer from '../components/Footer.astro'
+import Footer from '../components/Footer.astro';
+import ChocoboThemeToggle from '../components/ChocoboThemeToggle.astro';
 
 import "../styles/global.css";
 import "../styles/redesign.css";
@@ -87,6 +88,7 @@ const {
 		
 		<ChainlitCopilot client:load />
     <NavigationWrapper />
+    <ChocoboThemeToggle />
 		<div id="content-container" class="animate-fade-in relative z-10 w-full">
 			<main class="w-full py-4 sm:py-8">
 				<slot />

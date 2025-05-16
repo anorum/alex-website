@@ -172,13 +172,44 @@ const rpgLinks = [
   // Global function to exit RPG mode
   function exitRPGMode() {
     console.log('Exit RPG Mode called');
+    
+    // Update localStorage
     localStorage.setItem('site-theme', 'standard');
-    document.dispatchEvent(new CustomEvent('themeChanged'));
+    
+    // Directly update DOM classes
+    document.documentElement.classList.forEach(className => {
+      if (className.startsWith('theme-')) {
+        document.documentElement.classList.remove(className);
+      }
+    });
+    document.documentElement.classList.add('theme-standard');
+    
+    // Force update of navigation components
+    const standardNavigation = document.querySelector('.standard-navigation');
+    const rpgNavigation = document.querySelector('.rpg-navigation');
+    
+    if (standardNavigation && rpgNavigation) {
+      standardNavigation.classList.remove('hidden');
+      rpgNavigation.classList.add('hidden');
+    }
+    
+    // Dispatch event for other components to react
+    document.dispatchEvent(new CustomEvent('themeChanged', { 
+      detail: { theme: 'standard' } 
+    }));
+    
+    // Play sound and hide menu
     playFF7MenuSound('select');
     const menu = document.getElementById('ff7-nav');
     if (menu) {
       menu.classList.add('hidden');
     }
+    
+    // Force refresh of theme-dependent components
+    setTimeout(() => {
+      window.dispatchEvent(new Event('storage'));
+    }, 50);
+    
     return false; // Prevent default link behavior
   }
   
