@@ -1,28 +1,98 @@
 ---
 import ThemeToggle from "../components/ThemeToggle.astro";
+import ThemeSelector from "../components/ThemeSelector.astro";
 
-const links = [
+// Standard theme navigation links
+const standardLinks = [
   { name: "About", href: "/" },
   { name: "Notes", href: "/notes" },
   { name: "Stats", href: "/stats" },
   { name: "Contact", href: "/contact" },
 ];
+
+// RPG theme navigation links (same URLs but RPG-themed names)
+const rpgLinks = [
+  { name: "Character", href: "/" },
+  { name: "Spell Tome", href: "/notes" },
+  { name: "Adventure Log", href: "/stats" },
+  { name: "Send Raven", href: "/contact" },
+];
+
+// Get current theme from client-side script
+const currentTheme = "standard"; // Default, will be overridden by client-side script
+const links = standardLinks; // Default to standard links
 ---
 
 <nav class="nav-container">
   <div class="nav-links">
-    {links.map((link) => (
-      <a 
-        href={link.href} 
-        class={`nav-link ${Astro.url.pathname === link.href ? "active" : ""}`}
-        aria-current={Astro.url.pathname === link.href ? "page" : undefined}
-      >
-        {link.name}
-      </a>
-    ))}
-    <ThemeToggle />
+    <!-- Standard theme links -->
+    <div class="standard-links">
+      {standardLinks.map((link) => (
+        <a 
+          href={link.href} 
+          class={`nav-link standard-link ${Astro.url.pathname === link.href ? "active" : ""}`}
+          aria-current={Astro.url.pathname === link.href ? "page" : undefined}
+        >
+          {link.name}
+        </a>
+      ))}
+    </div>
+    
+    <!-- RPG theme links -->
+    <div class="rpg-links hidden">
+      {rpgLinks.map((link) => (
+        <a 
+          href={link.href} 
+          class={`nav-link rpg-link ${Astro.url.pathname === link.href ? "active" : ""}`}
+          aria-current={Astro.url.pathname === link.href ? "page" : undefined}
+        >
+          {link.name}
+        </a>
+      ))}
+    </div>
+    
+    <div class="theme-controls">
+      <ThemeToggle />
+      <div class="ml-2">
+        <ThemeSelector />
+      </div>
+    </div>
   </div>
 </nav>
+
+<script>
+  import { getTheme } from '../utils/theme-context';
+  
+  function updateNavigation() {
+    const currentTheme = getTheme();
+    const standardLinks = document.querySelector('.standard-links');
+    const rpgLinks = document.querySelector('.rpg-links');
+    
+    if (currentTheme === 'rpg') {
+      standardLinks?.classList.add('hidden');
+      rpgLinks?.classList.remove('hidden');
+    } else {
+      standardLinks?.classList.remove('hidden');
+      rpgLinks?.classList.add('hidden');
+    }
+  }
+  
+  // Run on initial load
+  document.addEventListener('DOMContentLoaded', updateNavigation);
+  
+  // Run when theme changes
+  document.addEventListener('astro:page-load', updateNavigation);
+  
+  // Listen for theme changes
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'site-theme') {
+      updateNavigation();
+    }
+  });
+  
+  // Custom event for theme changes
+  document.addEventListener('themeChanged', updateNavigation);
+</script>
 
 <style>
   /* Mobile-friendly navigation styles */
@@ -35,5 +105,14 @@ const links = [
       padding: 0.4rem 0.8rem;
       font-size: 0.9rem;
     }
+  }
+  
+  .theme-controls {
+    display: flex;
+    align-items: center;
+  }
+  
+  .hidden {
+    display: none;
   }
 </style>

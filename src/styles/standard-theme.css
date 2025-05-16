@@ -1,0 +1,80 @@
+/* Standard Theme - Based on the current website design */
+
+/* Theme-specific CSS variables */
+.theme-standard {
+  /* Light mode colors */
+  --bg-color-light: var(--color-beige);
+  --text-color-light: var(--color-green500);
+  --text-secondary-light: var(--color-green600);
+  --text-tertiary-light: var(--color-green700);
+  --accent-color-light: var(--color-green500);
+  --secondary-color-light: var(--color-green400);
+  --tertiary-color-light: var(--color-green300);
+  --bubble-bg-light: rgba(255, 255, 255, 0.7);
+  --card-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --border-color-light: rgba(0, 0, 0, 0.1);
+  
+  /* Dark mode colors */
+  --bg-color-dark: #1a2e24;
+  --text-color-dark: #ffffff;
+  --text-secondary-dark: #e0e0e0;
+  --text-tertiary-dark: #c0c0c0;
+  --accent-color-dark: #77647b;
+  --secondary-color-dark: #8fb996;
+  --tertiary-color-dark: #d1e2c4;
+  --bubble-bg-dark: rgba(255, 255, 255, 0.05);
+  --card-shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-color-dark: rgba(255, 255, 255, 0.1);
+  
+  /* Default to light mode */
+  --bg-color: var(--bg-color-light);
+  --text-color: var(--text-color-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-tertiary: var(--text-tertiary-light);
+  --accent-color: var(--accent-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --tertiary-color: var(--tertiary-color-light);
+  --bubble-bg: var(--bubble-bg-light);
+  --card-shadow: var(--card-shadow-light);
+  --border-color: var(--border-color-light);
+}
+
+/* Dark mode */
+.theme-standard.dark {
+  --bg-color: var(--bg-color-dark);
+  --text-color: var(--text-color-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-tertiary: var(--text-tertiary-dark);
+  --accent-color: var(--accent-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --tertiary-color: var(--tertiary-color-dark);
+  --bubble-bg: var(--bubble-bg-dark);
+  --card-shadow: var(--card-shadow-dark);
+  --border-color: var(--border-color-dark);
+}
+
+/* Standard theme specific styles */
+.theme-standard .profile-image {
+  border: 5px solid rgba(143, 185, 150, 0.3);
+}
+
+.theme-standard.dark .profile-image {
+  border: 5px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-standard .experience-bubble:hover {
+  background-color: rgba(143, 185, 150, 0.2);
+}
+
+.theme-standard.dark .experience-bubble:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Standard theme navigation */
+.theme-standard .nav-container.scrolled {
+  background-color: rgba(236, 227, 212, 0.9);
+}
+
+.theme-standard.dark .nav-container.scrolled {
+  background-color: rgba(26, 46, 36, 0.9);
+}

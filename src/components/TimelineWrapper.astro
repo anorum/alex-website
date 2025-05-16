@@ -1,0 +1,58 @@
+---
+import Timeline from './Timeline.astro';
+import TimelineRPG from './rpg/TimelineRPG.astro';
+---
+
+<!-- Standard Timeline (visible by default) -->
+<div class="standard-timeline">
+  <Timeline />
+</div>
+
+<!-- RPG Timeline (hidden by default) -->
+<div class="rpg-timeline hidden">
+  <TimelineRPG />
+</div>
+
+<script>
+  import { getTheme } from '../utils/theme-context';
+  
+  function updateTimeline() {
+    const currentTheme = getTheme();
+    const standardTimeline = document.querySelector('.standard-timeline');
+    const rpgTimeline = document.querySelector('.rpg-timeline');
+    
+    console.log('TimelineWrapper - Current theme:', currentTheme);
+    
+    if (currentTheme === 'rpg') {
+      standardTimeline?.classList.add('hidden');
+      rpgTimeline?.classList.remove('hidden');
+      console.log('TimelineWrapper - Showing RPG timeline');
+    } else {
+      standardTimeline?.classList.remove('hidden');
+      rpgTimeline?.classList.add('hidden');
+      console.log('TimelineWrapper - Showing standard timeline');
+    }
+  }
+  
+  // Run on initial load
+  document.addEventListener('DOMContentLoaded', updateTimeline);
+  
+  // Run when theme changes
+  document.addEventListener('astro:page-load', updateTimeline);
+  
+  // Listen for theme changes
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'site-theme') {
+      updateTimeline();
+    }
+  });
+  
+  // Custom event for theme changes
+  document.addEventListener('themeChanged', updateTimeline);
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>

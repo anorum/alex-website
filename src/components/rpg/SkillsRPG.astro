@@ -1,0 +1,130 @@
+---
+import SkillsGroup from '../SkillsGroup.astro';
+---
+
+<div class="rpg-skills">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="flex items-center gap-3 mb-10">
+      <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+      <h2 class="text-2xl sm:text-3xl font-bold whitespace-nowrap">Character Abilities</h2>
+      <div class="h-px flex-1 bg-accent-color opacity-30"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
+      <!-- Data Engineering Skills -->
+      <div class="skills-category">
+        <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-3">Arcane Knowledge</h3>
+        <SkillsGroup 
+          title="Data Enchantments & Rituals" 
+          skills={["Snowflake", "BigQuery", "Redshift", "Databricks", "Airflow", "dbt", "Spark", "Kafka"]}
+          colorScheme="blue"
+        />
+      </div>
+      
+      <!-- Infrastructure Skills -->
+      <div class="skills-category">
+        <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-3">Realm Construction</h3>
+        <SkillsGroup 
+          title="Cloud & Fortress Building" 
+          skills={["AWS", "GCP", "Terraform", "Kubernetes"]}
+          colorScheme="green"
+        />
+        
+        <div class="h-4"></div>
+        
+        <SkillsGroup 
+          title="Scrying & Warding" 
+          skills={["Datadog", "Prometheus", "Grafana", "SLOs"]}
+          colorScheme="green"
+        />
+      </div>
+      
+      <!-- Leadership Skills -->
+      <div class="skills-category md:col-span-2 mt-12">
+        <h3 class="text-lg font-semibold text-[var(--text-secondary)] mb-4">Guild Leadership</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <SkillsGroup 
+            title="Fellowship Command" 
+            skills={["Guild Management", "Apprentice Mentoring", "Quest Planning", "Alliance Forging"]}
+            colorScheme="purple"
+          />
+          
+          <SkillsGroup 
+            title="Strategic Divination" 
+            skills={["Realm Architecture", "Arcane Strategy", "Ritual Optimization", "Noble Diplomacy"]}
+            colorScheme="purple"
+          />
+        </div>
+      </div>
+    </div>
+    
+    <!-- Interactive skills visualization -->
+    <div class="mt-12 p-6 rounded-xl bg-bubble-bg border border-secondary-color rpg-scroll">
+      <h3 class="text-xl font-semibold mb-4">My Enchanter's Creed</h3>
+      
+      <ul class="space-y-4 text-muted rpg-list">
+        <li>🧰 A masterful enchantment isn't merely well-crafted — it's intuitive to wield, clear in purpose, and easily passed to other mages.</li>
+        <li>🚦 Powerful arcane platforms enable self-reliance. They guide apprentices toward proper practices without requiring constant oversight from the masters.</li>
+        <li>🪄 Make the righteous path smooth, the dangerous path treacherous — yet never seal off passages where true innovation might flourish.</li>
+        <li>📦 Elegant simplicity trumps arcane complexity. Solve the true quest, not the one that merely showcases your magical prowess.</li>
+        <li>📚 Clear grimoires, practical ritual guides, and reusable enchantment patterns extend further than heroic feats of individual magic.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .rpg-skills {
+    font-family: var(--font-body);
+  }
+  
+  .rpg-skills h2 {
+    font-family: var(--font-heading);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  .rpg-skills h3 {
+    font-family: var(--font-heading);
+  }
+  
+  .rpg-scroll {
+    position: relative;
+    background-image: var(--parchment-texture);
+    border: 2px solid var(--secondary-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .rpg-scroll::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--border-decoration);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 0;
+  }
+  
+  .rpg-scroll > * {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .rpg-list li {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  
+  .rpg-list li::before {
+    content: "✧";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent-color);
+    font-weight: bold;
+  }
+</style>

@@ -1,0 +1,320 @@
+/* RPG Theme - Inspired by Final Fantasy and Elder Scrolls */
+
+/* Import fantasy-style fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Theme-specific CSS variables */
+.theme-rpg {
+  /* Typography */
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Lora', serif;
+  
+  /* Light mode colors (parchment theme) */
+  --bg-color-light: #f5e6cc; /* Aged parchment */
+  --text-color-light: #3a2921; /* Dark brown ink */
+  --text-secondary-light: #5a4534; /* Medium brown */
+  --text-tertiary-light: #7d5e45; /* Light brown */
+  --accent-color-light: #8b0000; /* Deep red/burgundy */
+  --secondary-color-light: #9b7653; /* Wood brown */
+  --tertiary-color-light: #c19a6b; /* Light wood */
+  --bubble-bg-light: rgba(255, 250, 227, 0.7); /* Light parchment */
+  --card-shadow-light: 0 4px 8px rgba(58, 41, 33, 0.15);
+  --border-color-light: rgba(58, 41, 33, 0.2);
+  
+  /* Dark mode colors (torch-lit dungeon theme) */
+  --bg-color-dark: #1a1410; /* Dark stone */
+  --text-color-dark: #e8d8a3; /* Faded gold text */
+  --text-secondary-dark: #c0a080; /* Muted gold */
+  --text-tertiary-dark: #a08060; /* Bronze */
+  --accent-color-dark: #a92f2f; /* Glowing ember red */
+  --secondary-color-dark: #7e5e3f; /* Aged wood */
+  --tertiary-color-dark: #c19a6b; /* Light wood */
+  --bubble-bg-dark: rgba(58, 41, 33, 0.4); /* Dark wood with transparency */
+  --card-shadow-dark: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --border-color-dark: rgba(155, 118, 83, 0.3);
+  
+  /* Default to light mode */
+  --bg-color: var(--bg-color-light);
+  --text-color: var(--text-color-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-tertiary: var(--text-tertiary-light);
+  --accent-color: var(--accent-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --tertiary-color: var(--tertiary-color-light);
+  --bubble-bg: var(--bubble-bg-light);
+  --card-shadow: var(--card-shadow-light);
+  --border-color: var(--border-color-light);
+  
+  /* RPG-specific variables */
+  --parchment-texture: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii4wNSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjEgMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjYSkiLz48L3N2Zz4=');
+  --wood-texture: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii4xNSIgbnVtT2N0YXZlcz0iMiIgc2VlZD0iMiIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjEgMCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWx0ZXI9InVybCgjYSkiLz48L3N2Zz4=');
+  --stone-texture: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii4yIiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIiB0eXBlPSJmcmFjdGFsTm9pc2UiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMSAwIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIvPjwvc3ZnPg==');
+  
+  /* Border decorations */
+  --border-decoration: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHBhdGggZD0iTTAgMCBMIDEwMCAwIEwgMTAwIDEwMCBMIDAgMTAwIFoiIHN0cm9rZT0iIzlCNzY1MyIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTIwIDAgTCAyMCAyMCBMIDAgMjAiIHN0cm9rZT0iIzlCNzY1MyIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTgwIDAgTCA4MCAyMCBMIDEwMCAyMCIgc3Ryb2tlPSIjOUI3NjUzIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMjAgMTAwIEwgMjAgODAgTCAwIDgwIiBzdHJva2U9IiM5Qjc2NTMiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik04MCAxMDAgTCA4MCA4MCBMIDEwMCA4MCIgc3Ryb2tlPSIjOUI3NjUzIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=');
+}
+
+/* Dark mode */
+.theme-rpg.dark {
+  --bg-color: var(--bg-color-dark);
+  --text-color: var(--text-color-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-tertiary: var(--text-tertiary-dark);
+  --accent-color: var(--accent-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --tertiary-color: var(--tertiary-color-dark);
+  --bubble-bg: var(--bubble-bg-dark);
+  --card-shadow: var(--card-shadow-dark);
+  --border-color: var(--border-color-dark);
+}
+
+/* RPG Theme Base Styles */
+.theme-rpg body {
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  background-image: var(--parchment-texture);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.theme-rpg.dark body {
+  background-image: var(--stone-texture);
+}
+
+/* Typography */
+.theme-rpg h1, 
+.theme-rpg h2, 
+.theme-rpg h3, 
+.theme-rpg h4, 
+.theme-rpg h5, 
+.theme-rpg h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.theme-rpg h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.theme-rpg h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.theme-rpg h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .theme-rpg h1 {
+    font-size: 3.5rem;
+  }
+  
+  .theme-rpg h2 {
+    font-size: 2.5rem;
+  }
+  
+  .theme-rpg h3 {
+    font-size: 2rem;
+  }
+}
+
+/* Fancy first letter for paragraphs in certain sections */
+.theme-rpg .profile-content p:first-of-type::first-letter {
+  font-size: 3em;
+  font-family: var(--font-heading);
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.1em;
+  color: var(--accent-color);
+}
+
+/* Section headers with decorative elements */
+.theme-rpg .section h2 {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-rpg .section h2::before,
+.theme-rpg .section h2::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 100px;
+  height: 2px;
+  background-color: var(--accent-color);
+}
+
+.theme-rpg .section h2::before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.theme-rpg .section h2::after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+/* Navigation */
+.theme-rpg .nav-container {
+  background-color: var(--secondary-color);
+  background-image: var(--wood-texture);
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.theme-rpg .nav-link {
+  font-family: var(--font-heading);
+  color: var(--bg-color-light);
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--tertiary-color);
+  padding: 0.5rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.theme-rpg .nav-link:hover,
+.theme-rpg .nav-link.active {
+  background-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Cards and Bubbles */
+.theme-rpg .experience-bubble,
+.theme-rpg .stats-card,
+.theme-rpg .principle-card,
+.theme-rpg .blog-card {
+  background-color: var(--bubble-bg);
+  background-image: var(--parchment-texture);
+  border: 2px solid var(--secondary-color);
+  border-radius: 0.5rem;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-rpg .experience-bubble::before,
+.theme-rpg .stats-card::before,
+.theme-rpg .principle-card::before,
+.theme-rpg .blog-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--border-decoration);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.theme-rpg .experience-bubble:hover,
+.theme-rpg .stats-card:hover,
+.theme-rpg .principle-card:hover,
+.theme-rpg .blog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent-color);
+}
+
+/* Profile Image */
+.theme-rpg .profile-image {
+  border: 8px solid var(--secondary-color);
+  box-shadow: 0 0 0 2px var(--accent-color), 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Skills */
+.theme-rpg .skill-tag {
+  background-color: var(--bubble-bg);
+  border: 1px solid var(--secondary-color);
+  color: var(--text-color);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  padding: 0.4rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.theme-rpg .skill-tag:hover {
+  background-color: var(--accent-color);
+  color: var(--bg-color-light);
+  transform: translateY(-3px) rotate(1deg);
+}
+
+/* Buttons */
+.theme-rpg button {
+  background-color: var(--secondary-color);
+  background-image: var(--wood-texture);
+  color: var(--bg-color-light);
+  border: 1px solid var(--tertiary-color);
+  font-family: var(--font-heading);
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.theme-rpg button:hover {
+  background-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Timeline */
+.theme-rpg .timeline-progress {
+  background-color: var(--accent-color);
+  height: 4px;
+  border-radius: 2px;
+}
+
+/* Footer */
+.theme-rpg .footer {
+  border-top: 2px solid var(--accent-color);
+  background-color: var(--secondary-color);
+  background-image: var(--wood-texture);
+  color: var(--bg-color-light);
+}
+
+/* Torch light effect for dark mode */
+.theme-rpg.dark .nav-container,
+.theme-rpg.dark .footer {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-rpg.dark .nav-container::after,
+.theme-rpg.dark .footer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 150, 50, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Scrollbar */
+.theme-rpg ::-webkit-scrollbar {
+  width: 12px;
+}
+
+.theme-rpg ::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  border-left: 1px solid var(--border-color);
+}
+
+.theme-rpg ::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border: 2px solid var(--bg-color);
+  border-radius: 10px;
+}
+
+.theme-rpg ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}

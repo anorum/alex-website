@@ -1,0 +1,96 @@
+---
+import InterestItem from './InterestItem.astro';
+import InterestItemRPG from './rpg/InterestItemRPG.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  icon: string;
+  colorScheme: string;
+}
+
+const { title, description, icon, colorScheme } = Astro.props;
+
+// RPG-themed titles and descriptions
+const rpgTitles: Record<string, string> = {
+  "Running & Fitness": "Agility Training",
+  "Golf": "Precision Archery",
+  "Reading": "Ancient Scrolls",
+  "Traveling": "Realm Exploration"
+};
+
+const rpgDescriptions: Record<string, string> = {
+  "Running & Fitness": "Honing my agility to outrun forest beasts. Sometimes for endurance training. Always tracking my progress in the guild's ledger.",
+  "Golf": "Perfecting my aim with enchanted arrows, tracking my misses, and lamenting most longbow shots.",
+  "Reading": "I study ancient tomes of fantasy, philosophy, and whatever scrolls remain too long on my bedside table.",
+  "Traveling": "One of my favorite inscriptions: 'Travel is not a reward for completing quests, it's education for living in the realm.'"
+};
+
+// Get RPG versions if they exist, otherwise use standard
+const rpgTitle = title in rpgTitles ? rpgTitles[title] : title;
+const rpgDescription = description in rpgDescriptions ? rpgDescriptions[description] : description;
+---
+
+<!-- Standard InterestItem (visible by default) -->
+<div class="standard-interest-item">
+  <InterestItem 
+    title={title}
+    description={description}
+    icon={icon}
+    colorScheme={colorScheme}
+  >
+    <slot />
+  </InterestItem>
+</div>
+
+<!-- RPG InterestItem (hidden by default) -->
+<div class="rpg-interest-item hidden">
+  <InterestItemRPG
+    title={rpgTitle}
+    description={rpgDescription}
+    icon={icon}
+    colorScheme={colorScheme}
+  >
+    <slot />
+  </InterestItemRPG>
+</div>
+
+<script>
+  import { getTheme } from '../utils/theme-context';
+  
+  function updateInterestItems() {
+    const currentTheme = getTheme();
+    const standardItems = document.querySelectorAll('.standard-interest-item');
+    const rpgItems = document.querySelectorAll('.rpg-interest-item');
+    
+    if (currentTheme === 'rpg') {
+      standardItems.forEach(item => item.classList.add('hidden'));
+      rpgItems.forEach(item => item.classList.remove('hidden'));
+    } else {
+      standardItems.forEach(item => item.classList.remove('hidden'));
+      rpgItems.forEach(item => item.classList.add('hidden'));
+    }
+  }
+  
+  // Run on initial load
+  document.addEventListener('DOMContentLoaded', updateInterestItems);
+  
+  // Run when theme changes
+  document.addEventListener('astro:page-load', updateInterestItems);
+  
+  // Listen for theme changes
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'site-theme') {
+      updateInterestItems();
+    }
+  });
+  
+  // Custom event for theme changes
+  document.addEventListener('themeChanged', updateInterestItems);
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
