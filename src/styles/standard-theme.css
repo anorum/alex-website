@@ -83,12 +83,45 @@
 }
 
 /* Standard theme navigation */
+.theme-standard .nav-container {
+  padding: 1.2rem 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .theme-standard .nav-container {
+    padding: 1rem 1.5rem;
+  }
+}
+
 .theme-standard .nav-container.scrolled {
   background-color: rgba(236, 227, 212, 0.9);
+  padding: 0.8rem 2.5rem;
 }
 
 .theme-standard.dark .nav-container.scrolled {
   background-color: rgba(26, 46, 36, 0.9);
+  padding: 0.8rem 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .theme-standard .nav-container.scrolled {
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+/* Navigation link active state */
+.theme-standard .nav-link.active {
+  background-color: var(--accent-color);
+  color: #ffffff; /* White text for contrast against green background */
+  border: 2px solid var(--secondary-color);
+  font-weight: 600;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-standard.dark .nav-link.active {
+  color: #ffffff; /* White text for dark mode too */
+  border-color: var(--tertiary-color);
 }
 
 /* Standard theme typography */

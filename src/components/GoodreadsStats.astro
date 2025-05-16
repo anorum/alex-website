@@ -76,10 +76,7 @@ import Authors from './goodreads/Authors';
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/books/data';
       console.log('Fetching books data from:', apiUrl);
-      
-      // For now, use the example data
-      const exampleDataUrl = '/exampe/example_books.json';
-      const response = await fetch(exampleDataUrl);
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
