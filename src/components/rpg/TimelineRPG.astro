@@ -1,188 +1,345 @@
 ---
-import legalZoomLogo from '../../assets/logos/LegalZoomlogo.webp';
-import newRelicLogo from '../../assets/logos/newreliclogo.svg';
-import oracleLogo from '../../assets/logos/oraclelogo.png';
-
-// RPG-themed timeline data
-const questLog = [
-  {
-    guild: "LegalZoom",
-    logo: legalZoomLogo,
-    title: "Archmage of Data Realms",
-    period: "Year 2023 of the Modern Era – Present",
-    year: "2023",
-    description: "Leading a fellowship of data wizards to harness the powers of Snowflake, Airflow, and ancient Terraform scrolls to empower the realm with self-service divination.",
-    achievements: ["Constructed a grand data citadel", "Led a company of skilled enchanters", "Forged self-service scrying tools"],
-    isPromotion: true
-  },
-  {
-    guild: "LegalZoom",
-    logo: legalZoomLogo,
-    title: "Master Data Enchanter",
-    period: "Year 2021 – 2023",
-    year: "2021",
-    description: "Summoned Airflow spirits within the Kubernetes realm, transformed the ancient Snowflake infrastructure, and crafted powerful tools for fellow enchanters.",
-    achievements: ["Bound Airflow to K8s vessels", "Transmuted Snowflake crystals", "Forged enchanter's implements"],
-    isPromotion: false
-  },
-  {
-    guild: "New Relic",
-    logo: newRelicLogo,
-    title: "Senior Data Mage → Divination Master",
-    period: "Year 2018 – 2021",
-    year: "2018",
-    description: "Contributed to the legendary Data OS grimoire, constructed real-time scrying networks, and supported the product divination circle.",
-    achievements: ["Inscribed the Data OS grimoire", "Crafted real-time scrying pools", "Enhanced product divination"],
-    isPromotion: false
-  },
-  {
-    guild: "Oracle",
-    logo: oracleLogo,
-    title: "Analytics Sage",
-    period: "Year 2013 – 2018",
-    year: "2013",
-    description: "Allied with Research Wizards and Operations Warriors to build powerful scrying tools and divination capabilities across the realm.",
-    achievements: ["Crafted far-seeing lenses", "Established divination circles", "Forged cross-realm alliances"],
-    isPromotion: false
-  }
-];
-
-// Generate unique IDs for tooltips
-const tooltipIds = questLog.map((_, index) => `timeline-tooltip-${index}`);
 ---
 
-<div class="quest-log relative w-full pt-6 pb-12 px-4 sm:px-6 space-y-8">
-  <div class="quest-log-title">
-    <h2 class="text-center text-2xl font-bold mb-6">Quest Log</h2>
-  </div>
+<div class="ff7-menu">
+  <div class="ff7-menu-header">QUEST LOG</div>
   
-  {[...questLog].map((quest, index) => (
-    <div class="quest-scroll bg-bubble-bg backdrop-blur-md rounded-xl p-5 shadow-md border-2 border-secondary-color relative">
-      <!-- Decorative elements -->
-      <div class="absolute left-[-1rem] top-6 w-3 h-3 bg-accent-color rounded-full hidden sm:block"></div>
-      <div class="quest-seal absolute -top-3 -right-3 w-8 h-8 rounded-full bg-accent-color flex items-center justify-center text-white text-xs font-bold">
-        {quest.year}
+  <div class="ff7-quest-list">
+    <!-- LegalZoom Quest -->
+    <div class="ff7-quest">
+      <div class="ff7-quest-header">
+        <div class="ff7-quest-title">
+          <span class="ff7-cursor">▶</span> DATA ARCANUM GUILD MASTER
+        </div>
+        <div class="ff7-quest-location">LEGALZOOM</div>
       </div>
       
-      <div class="flex items-center gap-3 mb-3">
-        <div class="guild-emblem w-12 h-12 rounded-full bg-white p-1 shadow-md border border-secondary-color flex items-center justify-center">
-          <img src={quest.logo.src} alt={quest.guild + ' emblem'} class="object-contain max-w-full max-h-full" />
+      <div class="ff7-quest-details">
+        <div class="ff7-quest-status">
+          <span class="ff7-quest-status-label">STATUS</span>
+          <span class="ff7-quest-status-value active">ACTIVE</span>
         </div>
-        <div>
-          <h3 class="text-base font-bold leading-tight">{quest.title}</h3>
-          <p class="text-xs text-secondary">{quest.guild} Guild</p>
-        </div>
-      </div>
-      
-      <div class="quest-details">
-        <p class="text-xs mb-2">
-          <span class="font-semibold">Era:</span> {quest.period}
-        </p>
-        <p class="text-xs mb-4">
-          <span class="font-semibold">Chronicle:</span> {quest.description}
-        </p>
         
-        {quest.achievements?.length > 0 && (
-          <div class="achievements">
-            <p class="text-xs font-semibold mb-1">Accomplishments:</p>
-            <ul class="list-none space-y-1 text-xs">
-              {quest.achievements.map((ach) => (
-                <li class="flex items-center">
-                  <span class="text-accent-color mr-1">✧</span> {ach}
-                </li>
-              ))}
-            </ul>
+        <div class="ff7-quest-period">
+          <span class="ff7-quest-period-label">PERIOD</span>
+          <span class="ff7-quest-period-value">2022 - PRESENT</span>
+        </div>
+        
+        <div class="ff7-quest-description">
+          Leading a team of data enchanters to build reliable, secure, and self-service data infrastructure. Crafting powerful artifacts using Snowflake, Airflow, and Terraform runes.
+        </div>
+        
+        <div class="ff7-quest-objectives">
+          <div class="ff7-quest-objectives-title">OBJECTIVES</div>
+          <ul class="ff7-quest-objectives-list">
+            <li class="ff7-quest-objective completed">Build data platform architecture</li>
+            <li class="ff7-quest-objective completed">Implement data governance</li>
+            <li class="ff7-quest-objective">Optimize data pipelines</li>
+            <li class="ff7-quest-objective">Train apprentice data engineers</li>
+          </ul>
+        </div>
+        
+        <div class="ff7-quest-rewards">
+          <div class="ff7-quest-rewards-title">REWARDS</div>
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">⬆️</span>
+            <span class="ff7-quest-reward-name">Leadership +10</span>
           </div>
-        )}
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">⬆️</span>
+            <span class="ff7-quest-reward-name">Architecture +15</span>
+          </div>
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">🔮</span>
+            <span class="ff7-quest-reward-name">Snowflake Mastery</span>
+          </div>
+        </div>
       </div>
     </div>
-  ))}
+    
+    <!-- New Relic Quest -->
+    <div class="ff7-quest">
+      <div class="ff7-quest-header">
+        <div class="ff7-quest-title">SENIOR DATA ENGINEER</div>
+        <div class="ff7-quest-location">NEW RELIC</div>
+      </div>
+      
+      <div class="ff7-quest-details">
+        <div class="ff7-quest-status">
+          <span class="ff7-quest-status-label">STATUS</span>
+          <span class="ff7-quest-status-value completed">COMPLETED</span>
+        </div>
+        
+        <div class="ff7-quest-period">
+          <span class="ff7-quest-period-label">PERIOD</span>
+          <span class="ff7-quest-period-value">2020 - 2022</span>
+        </div>
+        
+        <div class="ff7-quest-description">
+          Engineered data pipelines and infrastructure for the observability realm. Mastered the arts of BigQuery and Kubernetes.
+        </div>
+        
+        <div class="ff7-quest-objectives">
+          <div class="ff7-quest-objectives-title">OBJECTIVES</div>
+          <ul class="ff7-quest-objectives-list">
+            <li class="ff7-quest-objective completed">Design data architecture</li>
+            <li class="ff7-quest-objective completed">Implement ETL processes</li>
+            <li class="ff7-quest-objective completed">Optimize query performance</li>
+          </ul>
+        </div>
+        
+        <div class="ff7-quest-rewards">
+          <div class="ff7-quest-rewards-title">REWARDS</div>
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">⬆️</span>
+            <span class="ff7-quest-reward-name">BigQuery +20</span>
+          </div>
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">⬆️</span>
+            <span class="ff7-quest-reward-name">Kubernetes +15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Oracle Quest -->
+    <div class="ff7-quest">
+      <div class="ff7-quest-header">
+        <div class="ff7-quest-title">DATA ENGINEER</div>
+        <div class="ff7-quest-location">ORACLE</div>
+      </div>
+      
+      <div class="ff7-quest-details">
+        <div class="ff7-quest-status">
+          <span class="ff7-quest-status-label">STATUS</span>
+          <span class="ff7-quest-status-value completed">COMPLETED</span>
+        </div>
+        
+        <div class="ff7-quest-period">
+          <span class="ff7-quest-period-label">PERIOD</span>
+          <span class="ff7-quest-period-value">2018 - 2020</span>
+        </div>
+        
+        <div class="ff7-quest-description">
+          Developed data solutions for the Oracle Cloud Infrastructure. Specialized in database optimization and cloud migration spells.
+        </div>
+        
+        <div class="ff7-quest-objectives">
+          <div class="ff7-quest-objectives-title">OBJECTIVES</div>
+          <ul class="ff7-quest-objectives-list">
+            <li class="ff7-quest-objective completed">Migrate databases to cloud</li>
+            <li class="ff7-quest-objective completed">Optimize database performance</li>
+            <li class="ff7-quest-objective completed">Implement monitoring solutions</li>
+          </ul>
+        </div>
+        
+        <div class="ff7-quest-rewards">
+          <div class="ff7-quest-rewards-title">REWARDS</div>
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">⬆️</span>
+            <span class="ff7-quest-reward-name">Oracle DB +25</span>
+          </div>
+          <div class="ff7-quest-reward">
+            <span class="ff7-quest-reward-icon">⬆️</span>
+            <span class="ff7-quest-reward-name">Cloud +10</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <style>
-  .quest-log {
-    position: relative;
-    overflow: hidden;
+  /* FF7 Menu Styling */
+  .ff7-menu {
+    background-color: var(--ff7-menu-bg);
+    border: var(--menu-border);
+    padding: var(--menu-padding);
+    margin: 0 auto;
+    max-width: 600px;
     font-family: var(--font-body);
+    color: var(--ff7-text);
+    font-size: 12px;
   }
   
-  .quest-log-title {
-    font-family: var(--font-heading);
+  .ff7-menu-header {
+    background-color: var(--ff7-blue);
+    border-bottom: var(--menu-border);
+    padding: 0.25rem 0.5rem;
+    margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Quest List */
+  .ff7-quest-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Quest Item */
+  .ff7-quest {
+    border: 1px solid rgba(192, 192, 192, 0.3);
+    margin-bottom: 0.5rem;
+  }
+  
+  .ff7-quest-header {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+  }
+  
+  .ff7-quest-title {
+    color: var(--ff7-text-highlight);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .ff7-cursor {
+    color: var(--cursor-color);
+    animation: ff7-cursor-blink 1s infinite;
+  }
+  
+  @keyframes ff7-cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  
+  .ff7-quest-location {
+    color: var(--ff7-text);
+    font-size: 0.9em;
+  }
+  
+  /* Quest Details */
+  .ff7-quest-details {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .ff7-quest-status,
+  .ff7-quest-period {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .ff7-quest-status-label,
+  .ff7-quest-period-label {
+    color: var(--ff7-text);
+    font-size: 0.9em;
+  }
+  
+  .ff7-quest-status-value {
+    font-weight: bold;
+  }
+  
+  .ff7-quest-status-value.active {
+    color: var(--ff7-text-highlight);
+  }
+  
+  .ff7-quest-status-value.completed {
+    color: var(--hp-color);
+  }
+  
+  .ff7-quest-period-value {
+    color: var(--ff7-text);
+  }
+  
+  .ff7-quest-description {
+    color: var(--ff7-text);
+    margin: 0.5rem 0;
+    line-height: 1.4;
+    border-top: 1px solid rgba(192, 192, 192, 0.3);
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+    padding: 0.5rem 0;
+  }
+  
+  /* Quest Objectives */
+  .ff7-quest-objectives {
+    margin-top: 0.25rem;
+  }
+  
+  .ff7-quest-objectives-title {
+    color: var(--ff7-text);
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  
+  .ff7-quest-objectives-list {
+    list-style-type: none;
+    padding-left: 0.5rem;
+  }
+  
+  .ff7-quest-objective {
+    color: var(--ff7-text);
+    margin-bottom: 0.25rem;
     position: relative;
-    margin-bottom: 2rem;
+    padding-left: 1rem;
   }
   
-  .quest-log-title h2 {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .quest-log-title h2::after {
-    content: "";
+  .ff7-quest-objective::before {
+    content: "○";
     position: absolute;
-    bottom: -0.5rem;
-    left: 25%;
-    width: 50%;
-    height: 2px;
-    background-color: var(--accent-color);
-  }
-  
-  .quest-scroll {
-    position: relative;
-    background-image: var(--parchment-texture);
-    border: 2px solid var(--secondary-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .quest-scroll:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    border-color: var(--accent-color);
-  }
-  
-  .quest-scroll::before {
-    content: "";
-    position: absolute;
-    top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: var(--border-decoration);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    pointer-events: none;
-    opacity: 0.5;
+    color: var(--ff7-text);
   }
   
-  .guild-emblem {
-    position: relative;
-    overflow: hidden;
+  .ff7-quest-objective.completed {
+    color: var(--hp-color);
   }
   
-  .guild-emblem::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 50%;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-    pointer-events: none;
+  .ff7-quest-objective.completed::before {
+    content: "●";
+    color: var(--hp-color);
   }
   
-  .quest-seal {
-    border: 2px solid var(--secondary-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    z-index: 10;
+  /* Quest Rewards */
+  .ff7-quest-rewards {
+    margin-top: 0.25rem;
+    border-top: 1px solid rgba(192, 192, 192, 0.3);
+    padding-top: 0.5rem;
+  }
+  
+  .ff7-quest-rewards-title {
+    color: var(--ff7-text);
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  
+  .ff7-quest-reward {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .ff7-quest-reward-icon {
+    font-size: 0.9em;
+  }
+  
+  .ff7-quest-reward-name {
+    color: var(--ff7-text-highlight);
   }
   
   /* Responsive adjustments */
   @media (max-width: 640px) {
-    .quest-log {
-      padding-left: 0;
-      padding-right: 0;
+    .ff7-menu {
+      max-width: 100%;
+    }
+    
+    .ff7-quest-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
     }
   }
 </style>

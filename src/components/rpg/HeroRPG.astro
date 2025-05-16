@@ -2,132 +2,402 @@
 import meImage from '../../assets/me.jpeg';
 ---
 
-<div class="rpg-hero relative z-10">
-  <div class="max-w-4xl mx-auto px-4 flex flex-col-reverse lg:flex-row items-center gap-12">
-    <!-- Text Content -->
-    <div class="lg:w-3/5 space-y-6">
-      <div class="space-y-2">
-        <span class="inline-block text-sm font-semibold px-3 py-1 rounded-full bg-secondary-color dark:bg-secondary-color/80 text-sm dark:text-white">Hail, Traveler! 🏆</span>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-          I am <span class="relative inline-block">
-            <span class="relative z-10">Alex Norum</span>
-            <span class="absolute bottom-2 left-0 w-full h-3 bg-accent-color opacity-30"></span>
-          </span>
-        </h1>
-        <div class="rpg-title-decoration mx-auto w-32 h-2 mt-2"></div>
+<div class="ff7-menu">
+  <div class="ff7-menu-header">STATUS</div>
+  
+  <div class="ff7-character-status">
+    <!-- Character Info Section -->
+    <div class="ff7-character-row">
+      <div class="ff7-character-portrait">
+        <img src={meImage.src} alt="Alex Norum" />
       </div>
       
-      <p class="text-lg sm:text-xl text-muted max-w-xl leading-relaxed rpg-text">
-        Master Architect of Digital Realms, I forge platforms and enchanted tools that empower data wizards to complete their quests without unnecessary trials. I craft systems that are elegant in their simplicity, steadfast in their reliability, and perhaps even imbued with a touch of magic.
-      </p>
-      
-      <div class="flex flex-col sm:flex-row gap-4 sm:items-center">
-        <p class="text-base text-muted rpg-text">
-          Residing in the Portland Highlands. Currently serving the LegalZoom Guild. Former sage of New Relic and Oracle realms.
-        </p>
-        <span class="hidden sm:block h-1 w-1 bg-accent-color rounded-full"></span>
-        <p class="text-base text-muted italic rpg-text">Forever seeking knowledge, forever evolving.</p>
-      </div>
-      
-      <div class="pt-4 flex flex-wrap gap-3">
-        <a href="#contact" class="rpg-button inline-flex items-center gap-2 px-4 py-2 rounded-md bg-accent-color dark:bg-accent-color/90 text-md dark:text-white hover:bg-opacity-90 dark:hover:bg-opacity-100 transition-all">
-          <span>Send a Raven</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        </a>
+      <div class="ff7-character-info">
+        <div class="ff7-character-name">ALEX</div>
+        <div class="ff7-character-class">DATA ARCHITECT</div>
+        <div class="ff7-character-level">LV 99</div>
       </div>
     </div>
     
-    <!-- Profile Image -->
-    <div class="lg:w-2/5 flex justify-center">
-      <div class="relative">
-        <!-- Decorative elements around image -->
-        <div class="absolute -top-4 -right-4 w-24 h-24 border-2 border-secondary-color rounded-full rpg-decoration"></div>
-        <div class="absolute -bottom-4 -left-4 w-16 h-16 border-2 border-accent-color rounded-full rpg-decoration"></div>
-        
-        <!-- Main image with fancy border -->
-        <div class="relative z-10 rounded-2xl overflow-hidden border-4 border-secondary-color dark:border-accent-color shadow-2xl transform hover:rotate-2 transition-transform duration-300 rpg-portrait">
-          <img 
-            src={meImage.src} 
-            alt="Alex Norum" 
-            class="w-64 sm:w-80 object-cover"
-            loading="eager"
-          />
-          
-          <!-- Overlay gradient -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+    <!-- Stats Section -->
+    <div class="ff7-stats-section">
+      <!-- HP/MP Bars -->
+      <div class="ff7-stat-row">
+        <div class="ff7-stat-label">HP</div>
+        <div class="ff7-stat-value">9999/9999</div>
+        <div class="ff7-stat-bar">
+          <div class="ff7-stat-bar-fill hp" style="width: 100%;"></div>
         </div>
       </div>
+      
+      <div class="ff7-stat-row">
+        <div class="ff7-stat-label">MP</div>
+        <div class="ff7-stat-value">999/999</div>
+        <div class="ff7-stat-bar">
+          <div class="ff7-stat-bar-fill mp" style="width: 100%;"></div>
+        </div>
+      </div>
+      
+      <!-- Character Stats -->
+      <div class="ff7-attributes">
+        <div class="ff7-attribute-row">
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">STR</span>
+            <span class="ff7-attribute-value">95</span>
+          </div>
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">MAG</span>
+            <span class="ff7-attribute-value">99</span>
+          </div>
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">DEX</span>
+            <span class="ff7-attribute-value">85</span>
+          </div>
+        </div>
+        
+        <div class="ff7-attribute-row">
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">VIT</span>
+            <span class="ff7-attribute-value">80</span>
+          </div>
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">SPR</span>
+            <span class="ff7-attribute-value">90</span>
+          </div>
+          <div class="ff7-attribute">
+            <span class="ff7-attribute-label">LCK</span>
+            <span class="ff7-attribute-value">70</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Experience -->
+      <div class="ff7-exp-row">
+        <div class="ff7-exp-label">EXP</div>
+        <div class="ff7-exp-value">9999999</div>
+      </div>
+    </div>
+    
+    <!-- Equipment Section -->
+    <div class="ff7-equipment-section">
+      <div class="ff7-section-title">EQUIP</div>
+      
+      <div class="ff7-equipment-row">
+        <div class="ff7-equipment-label">WEAPON</div>
+        <div class="ff7-equipment-value">TERRAFORM MATERIA</div>
+      </div>
+      
+      <div class="ff7-equipment-row">
+        <div class="ff7-equipment-label">ARMOR</div>
+        <div class="ff7-equipment-value">KUBERNETES CLUSTER</div>
+      </div>
+      
+      <div class="ff7-equipment-row">
+        <div class="ff7-equipment-label">ACC</div>
+        <div class="ff7-equipment-value">SNOWFLAKE CRYSTAL</div>
+      </div>
+    </div>
+    
+    <!-- Limit Break -->
+    <div class="ff7-limit-section">
+      <div class="ff7-section-title">LIMIT</div>
+      <div class="ff7-limit-name">DATA PIPELINE OPTIMIZATION</div>
+    </div>
+    
+    <!-- Location -->
+    <div class="ff7-location-section">
+      <div class="ff7-location-row">
+        <div class="ff7-location-label">LOCATION</div>
+        <div class="ff7-location-value">PORTLAND</div>
+      </div>
+      
+      <div class="ff7-location-row">
+        <div class="ff7-location-label">GUILD</div>
+        <div class="ff7-location-value">LEGALZOOM</div>
+      </div>
+    </div>
+    
+    <!-- Action Button -->
+    <div class="ff7-action-section">
+      <a href="#contact" class="ff7-action-button">
+        <span class="ff7-cursor">▶</span> SEND MESSAGE
+      </a>
     </div>
   </div>
 </div>
 
 <style>
-  .rpg-hero {
+  /* FF7 Menu Styling */
+  .ff7-menu {
+    background-color: var(--ff7-menu-bg);
+    border: var(--menu-border);
+    padding: var(--menu-padding);
+    margin: 0 auto;
+    max-width: 600px;
     font-family: var(--font-body);
+    color: var(--ff7-text);
+    font-size: 12px;
   }
   
-  .rpg-hero h1 {
-    font-family: var(--font-heading);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  }
-  
-  .rpg-title-decoration {
-    background: linear-gradient(to right, transparent, var(--accent-color), transparent);
-    height: 2px;
-    margin: 0.5rem auto 1.5rem;
-  }
-  
-  .rpg-text {
-    font-family: var(--font-body);
-    line-height: 1.7;
-  }
-  
-  .rpg-text::first-letter {
-    font-size: 1.5em;
-    font-family: var(--font-heading);
+  .ff7-menu-header {
+    background-color: var(--ff7-blue);
+    border-bottom: var(--menu-border);
+    padding: 0.25rem 0.5rem;
+    margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+    text-transform: uppercase;
     font-weight: bold;
-    color: var(--accent-color);
+    text-align: center;
   }
   
-  .rpg-button {
-    font-family: var(--font-heading);
-    border: 2px solid var(--secondary-color);
-    background-color: var(--accent-color);
-    color: var(--bg-color-light);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+  /* Character Status */
+  .ff7-character-status {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
   
-  .rpg-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+  .ff7-character-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
   }
   
-  .rpg-decoration {
-    border-width: 3px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  .ff7-character-portrait {
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--ff7-border);
+    overflow: hidden;
   }
   
-  .rpg-portrait {
-    position: relative;
-    border-width: 5px;
-    box-shadow: 0 0 0 2px var(--accent-color), 0 0 20px rgba(0, 0, 0, 0.4);
+  .ff7-character-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   
-  .rpg-portrait::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: var(--border-decoration);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    pointer-events: none;
-    opacity: 0.3;
-    z-index: 2;
+  .ff7-character-info {
+    flex: 1;
+  }
+  
+  .ff7-character-name {
+    color: var(--ff7-text-highlight);
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+  
+  .ff7-character-class {
+    color: var(--ff7-text);
+    font-size: 0.9em;
+  }
+  
+  .ff7-character-level {
+    color: var(--ff7-text-highlight);
+    font-size: 0.9em;
+  }
+  
+  /* Stats Section */
+  .ff7-stats-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+  }
+  
+  .ff7-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .ff7-stat-label {
+    width: 30px;
+    color: var(--ff7-text);
+    font-weight: bold;
+  }
+  
+  .ff7-stat-value {
+    width: 80px;
+    color: var(--ff7-text);
+    text-align: right;
+  }
+  
+  .ff7-stat-bar {
+    flex: 1;
+    height: var(--stat-bar-height);
+    background-color: var(--stat-bar-bg);
+    border: var(--stat-bar-border);
+  }
+  
+  .ff7-stat-bar-fill {
+    height: 100%;
+  }
+  
+  .ff7-stat-bar-fill.hp {
+    background-color: var(--hp-color);
+  }
+  
+  .ff7-stat-bar-fill.mp {
+    background-color: var(--mp-color);
+  }
+  
+  /* Attributes */
+  .ff7-attributes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+  }
+  
+  .ff7-attribute-row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .ff7-attribute {
+    display: flex;
+    gap: 0.5rem;
+    width: 30%;
+  }
+  
+  .ff7-attribute-label {
+    color: var(--ff7-text);
+  }
+  
+  .ff7-attribute-value {
+    color: var(--ff7-text-highlight);
+  }
+  
+  /* Experience */
+  .ff7-exp-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .ff7-exp-label {
+    width: 30px;
+    color: var(--ff7-text);
+    font-weight: bold;
+  }
+  
+  .ff7-exp-value {
+    color: var(--ff7-text-highlight);
+  }
+  
+  /* Equipment Section */
+  .ff7-equipment-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+  }
+  
+  .ff7-section-title {
+    color: var(--ff7-text);
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  
+  .ff7-equipment-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .ff7-equipment-label {
+    width: 60px;
+    color: var(--ff7-text);
+  }
+  
+  .ff7-equipment-value {
+    color: var(--ff7-text-highlight);
+  }
+  
+  /* Limit Break */
+  .ff7-limit-section {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+  }
+  
+  .ff7-limit-name {
+    color: var(--ff7-text-highlight);
+  }
+  
+  /* Location */
+  .ff7-location-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+  }
+  
+  .ff7-location-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .ff7-location-label {
+    width: 80px;
+    color: var(--ff7-text);
+  }
+  
+  .ff7-location-value {
+    color: var(--ff7-text-highlight);
+  }
+  
+  /* Action Button */
+  .ff7-action-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .ff7-action-button {
+    background-color: var(--ff7-blue);
+    color: var(--ff7-text);
+    border: 1px solid var(--ff7-border);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .ff7-action-button:hover {
+    background-color: var(--ff7-blue-light);
+    color: var(--ff7-text-highlight);
+  }
+  
+  .ff7-cursor {
+    color: var(--cursor-color);
+    animation: ff7-cursor-blink 1s infinite;
+  }
+  
+  @keyframes ff7-cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .ff7-menu {
+      max-width: 100%;
+    }
+    
+    .ff7-attribute-row {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    .ff7-attribute {
+      width: 100%;
+    }
   }
 </style>
