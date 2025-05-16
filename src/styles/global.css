@@ -1,15 +1,20 @@
 @import "tailwindcss";
 @import "flowbite/src/themes/default";
+@plugin '@tailwindcss/typography';
+@plugin "flowbite/plugin";
 
-/* Typography and Flowbite plugins */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Sean Halpin inspired redesign */
+@source "../../node_modules/flowbite";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+
 
 :root {
-  /* Sean Halpin's color palette */
+
   --color-white: hsla(0, 0%, 100%, 1);
   --color-white50: hsla(0, 0%, 100%, .5);
   --color-white20: hsla(0, 0%, 100%, .2);
@@ -227,23 +232,60 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Typography */
+/* Typography - Base heading styles with theme variables */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading, 'Inter', sans-serif);
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
+  color: var(--text-color);
+  transition: color 0.3s ease, font-family 0.3s ease;
 }
 
 h1 {
   font-size: 3.5rem;
+  color: var(--text-color);
 }
 
 h2 {
   font-size: 2.5rem;
+  color: var(--text-color);
 }
 
 h3 {
   font-size: 2rem;
+  color: var(--text-color);
+}
+
+h4 {
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+h5 {
+  font-size: 1.25rem;
+  color: var(--text-color);
+}
+
+h6 {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* Heading variants */
+.section-title {
+  color: var(--accent-color);
+  margin-bottom: 1.5rem;
+}
+
+.card-title {
+  color: var(--text-color);
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 /* Animations */
@@ -381,7 +423,4 @@ h3 {
   overflow-x: hidden;
 }
 
-/* Legend responsiveness */
-.apexcharts-legend {
-  flex-wrap: wrap !important;
-}
+/* Legend responsiveness - handled by Tailwind */

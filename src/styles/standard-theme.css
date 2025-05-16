@@ -2,6 +2,10 @@
 
 /* Theme-specific CSS variables */
 .theme-standard {
+  /* Typography */
+  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
   /* Light mode colors */
   --bg-color-light: var(--color-beige);
   --text-color-light: var(--color-green500);
@@ -13,6 +17,8 @@
   --bubble-bg-light: rgba(255, 255, 255, 0.7);
   --card-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
   --border-color-light: rgba(0, 0, 0, 0.1);
+  --heading-color-light: var(--color-green500);
+  --heading-secondary-light: var(--color-green600);
   
   /* Dark mode colors */
   --bg-color-dark: #1a2e24;
@@ -25,6 +31,8 @@
   --bubble-bg-dark: rgba(255, 255, 255, 0.05);
   --card-shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.1);
   --border-color-dark: rgba(255, 255, 255, 0.1);
+  --heading-color-dark: #ffffff;
+  --heading-secondary-dark: #e0e0e0;
   
   /* Default to light mode */
   --bg-color: var(--bg-color-light);
@@ -37,6 +45,8 @@
   --bubble-bg: var(--bubble-bg-light);
   --card-shadow: var(--card-shadow-light);
   --border-color: var(--border-color-light);
+  --heading-color: var(--heading-color-light);
+  --heading-secondary: var(--heading-secondary-light);
 }
 
 /* Dark mode */
@@ -51,6 +61,8 @@
   --bubble-bg: var(--bubble-bg-dark);
   --card-shadow: var(--card-shadow-dark);
   --border-color: var(--border-color-dark);
+  --heading-color: var(--heading-color-dark);
+  --heading-secondary: var(--heading-secondary-dark);
 }
 
 /* Standard theme specific styles */
@@ -77,4 +89,67 @@
 
 .theme-standard.dark .nav-container.scrolled {
   background-color: rgba(26, 46, 36, 0.9);
+}
+
+/* Standard theme typography */
+.theme-standard h1,
+.theme-standard h2,
+.theme-standard h3,
+.theme-standard h4,
+.theme-standard h5,
+.theme-standard h6 {
+  font-family: var(--font-heading);
+  color: var(--heading-color);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.theme-standard h1 {
+  font-size: 3.5rem;
+  color: var(--heading-color);
+}
+
+.theme-standard h2 {
+  font-size: 2.5rem;
+  color: var(--heading-color);
+}
+
+.theme-standard h3 {
+  font-size: 2rem;
+  color: var(--heading-color);
+}
+
+.theme-standard h4 {
+  font-size: 1.5rem;
+  color: var(--heading-color);
+}
+
+.theme-standard h5 {
+  font-size: 1.25rem;
+  color: var(--heading-secondary);
+}
+
+.theme-standard h6 {
+  font-size: 1rem;
+  color: var(--heading-secondary);
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  .theme-standard h1 {
+    font-size: 2.5rem;
+  }
+  
+  .theme-standard h2 {
+    font-size: 2rem;
+  }
+  
+  .theme-standard h3 {
+    font-size: 1.75rem;
+  }
+  
+  .theme-standard h4 {
+    font-size: 1.25rem;
+  }
 }
