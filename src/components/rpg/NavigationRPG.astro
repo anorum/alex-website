@@ -1,0 +1,270 @@
+---
+// RPG theme navigation links
+const rpgLinks = [
+  { 
+    name: "CHARACTER", 
+    href: "/",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>`
+  },
+  { 
+    name: "JOURNAL", 
+    href: "/notes",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>`
+  },
+  { 
+    name: "PARAMETERS", 
+    href: "/stats",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>`
+  },
+  { 
+    name: "LINKSHELL", 
+    href: "/contact",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>`
+  },
+  { 
+    name: "EXIT", 
+    href: "#",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+    </svg>`,
+    action: "exit"
+  },
+];
+---
+
+<!-- Menu Button -->
+<div class="ff7-menu-button-container">
+  <button id="ff7-menu-button" class="ff7-menu-button" onclick="toggleFF7Menu()">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <span>MENU</span>
+  </button>
+</div>
+
+<!-- Menu (hidden by default) -->
+<div id="ff7-nav" class="ff7-nav hidden">
+  <div class="ff7-menu-header">MENU</div>
+  <div class="ff7-nav-links">
+    {rpgLinks.map((link) => (
+      <a 
+        href={link.href} 
+        class={`ff7-nav-link ${Astro.url.pathname === link.href ? "active" : ""} ${link.action ? `ff7-action-${link.action}` : ""}`}
+        aria-current={Astro.url.pathname === link.href ? "page" : undefined}
+        data-action={link.action || ""}
+      >
+        {Astro.url.pathname === link.href && !link.action && <span class="ff7-cursor">▶</span>}
+        <span class="ff7-nav-icon" set:html={link.icon} />
+        {link.name}
+      </a>
+    ))}
+  </div>
+</div>
+
+<script is:inline>
+  // Global function to toggle the menu
+  function toggleFF7Menu() {
+    console.log('Toggle FF7 Menu called');
+    const menu = document.getElementById('ff7-nav');
+    if (menu) {
+      menu.classList.toggle('hidden');
+      playFF7MenuSound('open');
+    }
+  }
+  
+  // Global function to exit RPG mode
+  function exitRPGMode() {
+    console.log('Exit RPG Mode called');
+    localStorage.setItem('site-theme', 'standard');
+    document.dispatchEvent(new CustomEvent('themeChanged'));
+    playFF7MenuSound('select');
+    const menu = document.getElementById('ff7-nav');
+    if (menu) {
+      menu.classList.add('hidden');
+    }
+    return false; // Prevent default link behavior
+  }
+  
+  // Global function to play menu sounds
+  function playFF7MenuSound(type) {
+    console.log('Playing menu sound:', type);
+    // Create audio element for menu sounds
+    const audio = new Audio();
+    
+    switch(type) {
+      case 'open':
+        // Menu open sound (short beep)
+        audio.src = 'data:audio/wav;base64,UklGRpYBAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YXIBAABBAAAAKgAAABUAAAAKAAAABQAAAAEAAAABAAAAAgAAAAcAAAAOAAAAGQAAACYAAAAyAAAAPgAAAEgAAABQAAAAVQAAAFgAAABYAAAAVgAAAFIAAABMAAAARAAAADsAAAAxAAAAJwAAAB0AAAAUAAAACwAAAAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAEAAAACQAAABEAAAAaAAAAJAAAAC4AAAA3AAAAPwAAAEUAAABJAAAATAAAAE0AAABMAAAASgAAAEYAAABBAAAAOwAAADQAAAAsAAAAJAAAABsAAAATAAAADQAAAAcAAAADAAAAAgAAAAEAAAAAAAAAAQAAAAEAAAACAAAAAwAAAAUAAAAIAAAACwAAAA8AAAASAAAAFQAAABgAAAAaAAAAGwAAABsAAAAbAAAAGgAAABgAAAAWAAAAFAAAABEAAAAOAAAACwAAAAkAAAAGAAAABQAAAAMAAAADAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAABAAAA';
+        break;
+      case 'close':
+        // Menu close sound (short lower beep)
+        audio.src = 'data:audio/wav;base64,UklGRpYBAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YXIBAABBAAAAKgAAABUAAAAKAAAABQAAAAEAAAABAAAAAgAAAAcAAAAOAAAAGQAAACYAAAAyAAAAPgAAAEgAAABQAAAAVQAAAFgAAABYAAAAVgAAAFIAAABMAAAARAAAADsAAAAxAAAAJwAAAB0AAAAUAAAACwAAAAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAEAAAACQAAABEAAAAaAAAAJAAAAC4AAAA3AAAAPwAAAEUAAABJAAAATAAAAE0AAABMAAAASgAAAEYAAABBAAAAOwAAADQAAAAsAAAAJAAAABsAAAATAAAADQAAAAcAAAADAAAAAgAAAAEAAAAAAAAAAQAAAAEAAAACAAAAAwAAAAUAAAAIAAAACwAAAA8AAAASAAAAFQAAABgAAAAaAAAAGwAAABsAAAAbAAAAGgAAABgAAAAWAAAAFAAAABEAAAAOAAAACwAAAAkAAAAGAAAABQAAAAMAAAADAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAABAAAA';
+        break;
+      case 'select':
+        // Menu select sound (short higher beep)
+        audio.src = 'data:audio/wav;base64,UklGRpYBAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YXIBAABBAAAAKgAAABUAAAAKAAAABQAAAAEAAAABAAAAAgAAAAcAAAAOAAAAGQAAACYAAAAyAAAAPgAAAEgAAABQAAAAVQAAAFgAAABYAAAAVgAAAFIAAABMAAAARAAAADsAAAAxAAAAJwAAAB0AAAAUAAAACwAAAAQAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAEAAAACQAAABEAAAAaAAAAJAAAAC4AAAA3AAAAPwAAAEUAAABJAAAATAAAAE0AAABMAAAASgAAAEYAAABBAAAAOwAAADQAAAAsAAAAJAAAABsAAAATAAAADQAAAAcAAAADAAAAAgAAAAEAAAAAAAAAAQAAAAEAAAACAAAAAwAAAAUAAAAIAAAACwAAAA8AAAASAAAAFQAAABgAAAAaAAAAGwAAABsAAAAbAAAAGgAAABgAAAAWAAAAFAAAABEAAAAOAAAACwAAAAkAAAAGAAAABQAAAAMAAAADAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAACAAAAAgAAAAIAAAABAAAA';
+        break;
+    }
+    
+    // Play the sound
+    audio.volume = 0.3; // Lower volume
+    audio.play().catch(e => console.log('Audio play failed:', e));
+  }
+  
+  // Setup click handlers for menu items
+  document.addEventListener('DOMContentLoaded', function() {
+    // Setup exit button
+    const exitButton = document.querySelector('.ff7-action-exit');
+    if (exitButton) {
+      exitButton.setAttribute('onclick', 'return exitRPGMode()');
+    }
+    
+    // Add click sound to all menu items
+    const menuItems = document.querySelectorAll('.ff7-nav-link:not(.ff7-action-exit)');
+    menuItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        playFF7MenuSound('select');
+      });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('ff7-nav');
+      const menuButton = document.getElementById('ff7-menu-button');
+      
+      if (menu && !menu.classList.contains('hidden') && 
+          !menu.contains(event.target) && 
+          !menuButton.contains(event.target)) {
+        menu.classList.add('hidden');
+        playFF7MenuSound('close');
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Menu Button */
+  .ff7-menu-button-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+  }
+  
+  .ff7-menu-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--ff7-blue);
+    color: var(--ff7-text);
+    border: var(--menu-border);
+    padding: 0.25rem 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .ff7-menu-button:hover {
+    background-color: var(--ff7-blue-light);
+    color: var(--ff7-text-highlight);
+  }
+  
+  /* Menu */
+  .ff7-nav {
+    position: fixed;
+    top: 3rem;
+    right: 1rem;
+    width: 200px;
+    background-color: var(--ff7-menu-bg);
+    border: var(--menu-border);
+    padding-bottom: var(--menu-padding);
+    font-family: var(--font-body);
+    color: var(--ff7-text);
+    font-size: 12px;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .ff7-menu-header {
+    background-color: var(--ff7-blue);
+    border-bottom: var(--menu-border);
+    padding: 0.25rem 0.5rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .ff7-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+  }
+  
+  .ff7-nav-link {
+    color: var(--ff7-text);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s ease;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(192, 192, 192, 0.2);
+    width: 100%;
+  }
+  
+  .ff7-nav-link:hover,
+  .ff7-nav-link.active {
+    color: var(--ff7-text-highlight);
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  .ff7-action-exit {
+    margin-top: 0.5rem;
+    border-top: 1px solid rgba(192, 192, 192, 0.3);
+    padding-top: 0.5rem;
+  }
+  
+  .ff7-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ff7-text-highlight);
+  }
+  
+  .ff7-cursor {
+    color: var(--cursor-color);
+    animation: ff7-cursor-blink 1s infinite;
+    margin-right: -0.25rem;
+  }
+  
+  @keyframes ff7-cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .ff7-nav {
+      width: 180px;
+    }
+  }
+</style>
