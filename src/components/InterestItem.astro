@@ -74,7 +74,11 @@ const defaultIcon = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20
 </svg>`;
 ---
 
-<div class="relative flex flex-col sm:flex-row items-start gap-4 p-5 bg-white/40 dark:bg-white/5 rounded-xl ring-1 ring-inset ring-black/5 dark:ring-white/10 hover:shadow-md hover:-translate-y-[2px] transition-all group">
+<div class="relative flex flex-col sm:flex-row items-start gap-4 p-5 
+  bg-white/40 dark:bg-gray-800/90 
+  rounded-xl 
+  ring-1 ring-inset ring-black/5 dark:ring-white/15 
+  hover:shadow-md hover:-translate-y-[2px] transition-all group">
   <div class={`relative flex-shrink-0 ${colors.bg} ${colors.darkBg} p-3 rounded-full shadow-sm transform group-hover:scale-105 transition-all`}>
     <div class={`absolute -inset-1 blur-sm opacity-10 ${colors.bg} rounded-full`}></div>
     {icon ? 
