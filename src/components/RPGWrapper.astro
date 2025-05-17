@@ -1,0 +1,58 @@
+---
+import RPGContainer from './rpg/RPGContainer.astro';
+---
+
+<!-- Standard Content (visible by default) -->
+<div class="standard-content">
+  <slot />
+</div>
+
+<!-- RPG Content (hidden by default) -->
+<div class="rpg-content hidden">
+  <RPGContainer />
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    updateRPGContent();
+  });
+  
+  document.addEventListener('astro:page-load', function() {
+    updateRPGContent();
+  });
+  
+  function updateRPGContent() {
+    const currentTheme = localStorage.getItem('site-theme') || 'standard';
+    const standardContent = document.querySelector('.standard-content');
+    const rpgContent = document.querySelector('.rpg-content');
+    
+    console.log('RPGWrapper - Current theme:', currentTheme);
+    
+    if (currentTheme === 'rpg') {
+      standardContent?.classList.add('hidden');
+      rpgContent?.classList.remove('hidden');
+      console.log('RPGWrapper - Showing RPG content');
+    } else {
+      standardContent?.classList.remove('hidden');
+      rpgContent?.classList.add('hidden');
+    }
+  }
+  
+  // Listen for theme changes
+  window.addEventListener('storage', function(event) {
+    if (event.key === 'site-theme') {
+      updateRPGContent();
+    }
+  });
+  
+  // Custom event for theme changes
+  document.addEventListener('themeChanged', function() {
+    updateRPGContent();
+  });
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>

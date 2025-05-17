@@ -72,6 +72,9 @@ function setupThemeToggle() {
                 localStorage.setItem("color-theme", "dark");
             }
         }
+        
+        // Dispatch a custom event for theme changes
+        document.dispatchEvent(new CustomEvent('themeChanged'));
     });
 }
 

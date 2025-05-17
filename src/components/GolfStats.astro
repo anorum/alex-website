@@ -11,8 +11,8 @@ import GolfSummary from './golf/GolfSummary';
           <FlagIcon className="h-6 w-6" />
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Golf Stats</h2>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">Track my golf performance and progress</p>
+          <h2 class="text-2xl font-bold text-gray-900">Golf Stats</h2>
+          <p class="text-sm font-medium">Track my golf performance and progress</p>
         </div>
       </div>
     </div>
@@ -56,7 +56,6 @@ import GolfSummary from './golf/GolfSummary';
     try {
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/golf';
-      console.log('Fetching golf data from:', apiUrl);
       
       const response = await fetch(apiUrl);
       
@@ -65,9 +64,7 @@ import GolfSummary from './golf/GolfSummary';
       }
       
       const data = await response.json();
-      
-      console.log("Data from API:", data);
-      
+            
       // Create a custom event with all the data
       const golfDataEvent = new CustomEvent('golf-data-ready', {
         detail: {
@@ -75,13 +72,10 @@ import GolfSummary from './golf/GolfSummary';
         },
         bubbles: true
       });
-      
-      console.log("Dispatching event with data:", golfDataEvent.detail);
-      
+            
       // Dispatch the event to the document so all components can listen for it
       // Add a small delay to ensure components are mounted
       setTimeout(() => {
-        console.log("Dispatching event after delay");
         document.dispatchEvent(golfDataEvent);
       }, 500);
       

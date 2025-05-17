@@ -16,8 +16,8 @@ import CitiesStats from './travel/CitiesStats';
           <GlobeAltIcon className="h-6 w-6" />
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Travel Stats</h2>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">Explore my journy around the world</p>
+          <h2 class="text-2xl font-bold text-gray-900">Travel Stats</h2>
+          <p class="text-sm font-medium">Explore my journey around the world</p>
         </div>
       </div>
     </div>
@@ -237,8 +237,8 @@ import CitiesStats from './travel/CitiesStats';
 </style>
 
 <script is:inline>
-  // Initialize when the page loads
-  document.addEventListener('astro:page-load', async function() {
+  // Function to initialize travel data
+  async function initializeTravelData() {
     // Get DOM elements
     const loadingIndicator = document.getElementById('loading-indicator');
     const errorMessage = document.getElementById('error-message');
@@ -248,7 +248,6 @@ import CitiesStats from './travel/CitiesStats';
     try {
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/travel/data';
-      console.log('Fetching travel data from:', apiUrl);
       
       const response = await fetch(apiUrl);
       
@@ -323,12 +322,6 @@ import CitiesStats from './travel/CitiesStats';
         };
       });
       
-      console.log("Data from API:", data);
-      console.log("Processed locations:", travelLocations);
-      console.log("Processed countries data:", countriesData);
-      console.log("Processed cities data:", citiesData);
-      console.log("Processed recent visits:", processedRecentVisits);
-      
       // Create a custom event with all the data
       const travelDataEvent = new CustomEvent('travel-data-ready', {
         detail: {
@@ -342,12 +335,10 @@ import CitiesStats from './travel/CitiesStats';
         bubbles: true
       });
       
-      console.log("Dispatching event with data:", travelDataEvent.detail);
       
       // Dispatch the event to the document so all components can listen for it
       // Add a small delay to ensure components are mounted
       setTimeout(() => {
-        console.log("Dispatching event after delay");
         document.dispatchEvent(travelDataEvent);
       }, 500);
       
@@ -364,5 +355,11 @@ import CitiesStats from './travel/CitiesStats';
         errorMessage.classList.remove('hidden');
       }
     }
-  });
+  }
+
+  // Initialize when the page loads
+  document.addEventListener('astro:page-load', initializeTravelData);
+  
+  // Also initialize after view transitions
+  document.addEventListener('astro:after-swap', initializeTravelData);
 </script>

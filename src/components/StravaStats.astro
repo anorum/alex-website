@@ -129,7 +129,6 @@ import TimeSinceLastWorkout from './workout/TimeSinceLastWorkout';
     try {
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/strava/data';
-      console.log('Fetching workout data from:', apiUrl);
       
       const response = await fetch(apiUrl);
       
@@ -138,8 +137,6 @@ import TimeSinceLastWorkout from './workout/TimeSinceLastWorkout';
       }
       
       const data = await response.json();
-      
-      console.log("Data from API:", data);
       
       // Create a custom event with all the data
       const workoutDataEvent = new CustomEvent('workout-data-ready', {
@@ -152,12 +149,9 @@ import TimeSinceLastWorkout from './workout/TimeSinceLastWorkout';
         bubbles: true
       });
       
-      console.log("Dispatching event with data:", workoutDataEvent.detail);
-      
       // Dispatch the event to the document so all components can listen for it
       // Add a small delay to ensure components are mounted
       setTimeout(() => {
-        console.log("Dispatching event after delay");
         document.dispatchEvent(workoutDataEvent);
       }, 500);
       
@@ -165,8 +159,6 @@ import TimeSinceLastWorkout from './workout/TimeSinceLastWorkout';
       if (loadingIndicator) loadingIndicator.classList.add('hidden');
       if (statsContainer) statsContainer.classList.remove('hidden');
     } catch (error) {
-      console.error('Error loading workout stats:', error);
-      
       // Show error message and hide loading indicator
       if (loadingIndicator) loadingIndicator.classList.add('hidden');
       if (errorMessage) {

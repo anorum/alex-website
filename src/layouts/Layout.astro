@@ -2,11 +2,16 @@
 import { ClientRouter } from "astro:transitions";
 
 import ChainlitCopilot from '../components/ChainlitCopilot.jsx';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro'
+import NavigationWrapper from '../components/NavigationWrapper.astro';
+import Footer from '../components/Footer.astro';
+import ChocoboThemeToggle from '../components/ChocoboThemeToggle.astro';
 
 import "../styles/global.css";
 import "../styles/redesign.css";
+import "../styles/standard-theme.css";
+import "../styles/rpg-theme.css";
+import "../styles/ff7-cursor.css";
+import "../styles/ff7-menu.css";
 
 interface Props {
   title?: string;
@@ -19,24 +24,36 @@ const {
 } = Astro.props;
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" class="theme-standard">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<meta name="description" content={description} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<meta name="api-key" content={import.meta.env.ALEX_API_KEY} />
 		<title>{title}</title>
 		<ClientRouter />
 		
 		<!-- Font Awesome -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 		
-		<!-- Dark mode script -->
+		<!-- Theme initialization script -->
 		<script is:inline>
-			// On page load or when changing themes, best to add inline in `head` to avoid FOUC
-			function applyTheme() {
+			// Initialize theme system
+			function initThemeSystem() {
+				// Get stored theme or default to standard
+				const storedTheme = localStorage.getItem('site-theme') || 'standard';
+				
+				// Apply theme class to html element
+				document.documentElement.classList.forEach(className => {
+					if (className.startsWith('theme-')) {
+						document.documentElement.classList.remove(className);
+					}
+				});
+				
+				document.documentElement.classList.add(`theme-${storedTheme}`);
+				
+				// Apply dark/light mode
 				if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
 					document.documentElement.classList.add('dark');
 				} else {
@@ -45,11 +62,18 @@ const {
 			}
 			
 			// Apply theme on initial load
-			applyTheme();
+			initThemeSystem();
 			
 			// Apply theme on page navigation
-			document.addEventListener('astro:page-load', applyTheme);
-			document.addEventListener('astro:after-swap', applyTheme);
+			document.addEventListener('astro:page-load', initThemeSystem);
+			document.addEventListener('astro:after-swap', initThemeSystem);
+			
+			// Listen for theme changes
+			window.addEventListener('storage', (event) => {
+				if (event.key === 'site-theme' || event.key === 'color-theme') {
+					initThemeSystem();
+				}
+			});
 		</script>
 	</head>
 	<body>
@@ -62,7 +86,8 @@ const {
 		</div>
 		
 		<ChainlitCopilot client:load />
-		<Navigation />
+    <NavigationWrapper />
+    <ChocoboThemeToggle />
 		<div id="content-container" class="animate-fade-in relative z-10 w-full">
 			<main class="w-full py-4 sm:py-8">
 				<slot />

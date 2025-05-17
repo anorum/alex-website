@@ -271,11 +271,31 @@ html:not(.dark) #chainlit-copilot-button {
   height: 65px !important;
 }
 
+/* RPG Theme - Chat Button */
+.theme-rpg #chainlit-copilot-button {
+  background-color: #000080 !important; /* FF7 blue background */
+  border: 3px solid #c0c0c0 !important; /* Silver border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* RPG Theme - Change the chat icon to mara_rpg.png */
+.theme-rpg #chainlit-copilot-button::before {
+  background-image: url('/mara_rpg.png') !important;
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
 /* Medium screens */
 @media (min-width: 768px) {
   #chainlit-copilot-button {
     width: 65px !important;
     height: 65px !important;
+  }
+  
+  .theme-rpg #chainlit-copilot-button {
+    width: 70px !important;
+    height: 70px !important;
   }
 }
 
@@ -358,4 +378,102 @@ html:not(.dark) .message {
 /* Improve chat messages in dark mode */
 .dark .message {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* RPG Theme - Chat Window Styling */
+.theme-rpg #chainlit-copilot {
+  --primary: #000080 !important; /* FF7 blue */
+  --primary-foreground: #ffffff !important;
+  font-family: 'Press Start 2P', monospace !important;
+}
+
+/* RPG Theme - Chat Container */
+.theme-rpg .copilot-container-collapsed {
+  background-color: #000080 !important; /* FF7 blue background */
+  border: 3px solid #c0c0c0 !important; /* Silver border */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* RPG Theme - Chat Header */
+.theme-rpg .flex.align-center.justify-between.p-4.pb-0 {
+  background: #0000aa !important; /* Slightly lighter blue for header */
+  border-bottom: 2px solid #c0c0c0 !important;
+  padding: 10px !important;
+}
+
+/* RPG Theme - Message Bubbles */
+.theme-rpg .bg-accent {
+  background-color: rgba(0, 0, 150, 0.5) !important;
+  border: 2px solid #c0c0c0 !important;
+  border-radius: 0 !important; /* Square corners for FF7 style */
+  margin: 5px 0 !important;
+}
+
+/* RPG Theme - Message Text */
+.theme-rpg .message-content {
+  color: #ffffff !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+/* RPG Theme - Message Composer */
+.theme-rpg #message-composer {
+  background-color: #000060 !important;
+  border: 2px solid #c0c0c0 !important;
+  border-radius: 0 !important; /* Square corners */
+}
+
+/* RPG Theme - Input Area */
+.theme-rpg #chat-input {
+  color: #ffffff !important;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 12px !important;
+}
+
+/* RPG Theme - Send Button */
+.theme-rpg #chat-submit {
+  background-color: #0000aa !important;
+  color: #ffffff !important;
+  border: 2px solid #c0c0c0 !important;
+  border-radius: 0 !important; /* Square corners */
+}
+
+.theme-rpg #chat-submit:hover {
+  background-color: #0000cc !important;
+}
+
+/* RPG Theme - Starter Buttons */
+.theme-rpg #starters button {
+  background-color: #000060 !important;
+  border: 2px solid #c0c0c0 !important;
+  color: #ffffff !important;
+  border-radius: 0 !important; /* Square corners */
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 10px !important;
+  padding: 8px !important;
+}
+
+.theme-rpg #starters button:hover {
+  background-color: #0000aa !important;
+}
+
+/* RPG Theme - Scrollbar */
+.theme-rpg *::-webkit-scrollbar {
+  width: 12px !important;
+}
+
+.theme-rpg *::-webkit-scrollbar-track {
+  background: #000060 !important;
+}
+
+.theme-rpg *::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0 !important;
+  border: 2px solid #000060 !important;
+}
+
+/* RPG Theme - Welcome Screen */
+.theme-rpg .welcome-screen {
+  color: #ffffff !important;
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 12px !important;
 }

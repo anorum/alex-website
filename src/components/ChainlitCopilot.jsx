@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 
 export default function ChainlitCopilot() {
   useEffect(() => {
+    // Get the Chainlit server URL from environment variable or use default
+    const marabotUrl = process.env.MARABOT_URL || import.meta.env.MARABOT_URL || "http://alex-api.alex-api.svc.cluster.local:8000";
+    
     // Inject external script first
     const script = document.createElement('script');
-    script.src = "http://localhost:8000/copilot/index.js";
+    script.src = `${marabotUrl}/copilot/index.js`;
     script.async = true;
     document.body.appendChild(script);
 
@@ -17,24 +20,41 @@ export default function ChainlitCopilot() {
       
       // Function to determine current theme
       const getCurrentTheme = () => {
-        return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        const isRPG = document.documentElement.classList.contains('theme-rpg');
+        const isDark = document.documentElement.classList.contains('dark');
+        
+        if (isRPG) {
+          return 'rpg';
+        }
+        return isDark ? 'dark' : 'light';
       };
       
       // Function to mount Chainlit with current theme
       const mountChainlit = () => {
         const currentTheme = getCurrentTheme();
         
+        // Get appropriate image URL and styling based on theme
+        let imageUrl = "/mara_logo.png";
+        let buttonClassName = "border-2 rounded-full p-4 transition-all duration-300 shadow-md hover:shadow-lg";
+        
+        if (currentTheme === 'rpg') {
+          imageUrl = "/mara_rpg.png";
+          buttonClassName = "border-3 border-[#c0c0c0] bg-[#000080] p-4 shadow-lg";
+        } else {
+          buttonClassName += ` ${currentTheme === 'dark' ? 'border-[#8fb996]' : 'border-[#0c6b4e]'}`;
+        }
+        
         // Configure the Chainlit widget with custom CSS
         window.mountChainlitWidget({
-          chainlitServer: "http://localhost:8000",
+          chainlitServer: marabotUrl,
           theme: "dark", // Always use dark theme for Chainlit's internal styling
           customCssUrl: "/chainlit-custom.css",
           button: {
-            imageUrl: "/mara_logo.png",
+            imageUrl: imageUrl,
             position: "bottom-right",
             text: "Chat with Mara",
             tooltip: "Chat with Mara, Alex's AI Assistant",
-            className: `border-2 ${currentTheme === 'dark' ? 'border-[#8fb996]' : 'border-[#0c6b4e]'} rounded-full p-4 transition-all duration-300 shadow-md hover:shadow-lg`
+            className: buttonClassName
           }
         });
       };
@@ -50,11 +70,35 @@ export default function ChainlitCopilot() {
             // Instead of remounting, just update the theme class on the document
             const currentTheme = getCurrentTheme();
             
-            // Update button border color
+            // Update button styling
             const button = document.querySelector("#chainlit-copilot-button");
             if (button) {
-              button.classList.remove('border-[#8fb996]', 'border-[#0c6b4e]');
-              button.classList.add(currentTheme === 'dark' ? 'border-[#8fb996]' : 'border-[#0c6b4e]');
+              // Remove all theme-specific classes
+              button.classList.remove(
+                'border-[#8fb996]', 
+                'border-[#0c6b4e]', 
+                'border-[#c0c0c0]', 
+                'bg-[#000080]'
+              );
+              
+              // Add appropriate classes based on theme
+              if (currentTheme === 'rpg') {
+                button.classList.add('border-[#c0c0c0]', 'bg-[#000080]');
+                
+                // Update the image to RPG version
+                const buttonImage = button.querySelector('img');
+                if (buttonImage) {
+                  buttonImage.src = '/mara_rpg.png';
+                }
+              } else {
+                button.classList.add(currentTheme === 'dark' ? 'border-[#8fb996]' : 'border-[#0c6b4e]');
+                
+                // Update the image to standard version
+                const buttonImage = button.querySelector('img');
+                if (buttonImage) {
+                  buttonImage.src = '/mara_logo.png';
+                }
+              }
             }
             
             // Dispatch a custom event that our CSS can react to
@@ -90,6 +134,16 @@ export default function ChainlitCopilot() {
           const button = shadowRoot.querySelector("#chainlit-copilot-button");
           if (button) {
             button.setAttribute("title", "Chat with Mara, Alex's AI Assistant");
+            
+            // Update button image based on theme
+            const currentTheme = getCurrentTheme();
+            if (currentTheme === 'rpg') {
+              // Find the image inside the button and update its src
+              const buttonImage = button.querySelector('img');
+              if (buttonImage) {
+                buttonImage.src = '/mara_rpg.png';
+              }
+            }
           }
           
           // Add a class to the host element to help with CSS targeting
@@ -105,6 +159,16 @@ export default function ChainlitCopilot() {
             const styleElement = document.createElement('style');
             styleElement.id = 'chainlit-theme-styles';
             shadowRoot.appendChild(styleElement);
+          }
+          
+          // Apply RPG theme specific styles directly to the shadow DOM if needed
+          if (currentTheme === 'rpg') {
+            // Make sure the chat container has RPG styling
+            const chatContainer = shadowRoot.querySelector('.copilot-container-collapsed');
+            if (chatContainer) {
+              chatContainer.style.borderRadius = '0';
+              chatContainer.style.border = '3px solid #c0c0c0';
+            }
           }
         };
 

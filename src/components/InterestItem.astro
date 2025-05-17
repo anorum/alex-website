@@ -74,17 +74,26 @@ const defaultIcon = `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20
 </svg>`;
 ---
 
-<div class="relative flex flex-col sm:flex-row items-start gap-4 p-5 bg-white/40 dark:bg-white/5 rounded-xl ring-1 ring-inset ring-black/5 dark:ring-white/10 hover:shadow-md hover:-translate-y-[2px] transition-all group">
-  <div class={`relative flex-shrink-0 ${colors.bg} ${colors.darkBg} p-3 rounded-full shadow-sm transform group-hover:scale-105 transition-all`}>
-    <div class={`absolute -inset-1 blur-sm opacity-10 ${colors.bg} rounded-full`}></div>
+<div class="relative flex flex-col sm:flex-row items-start gap-4 p-5
+  rounded-xl 
+  transition-all duration-300 group"
+  style="background-color: var(--bubble-bg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow);"
+  onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--card-shadow), 0 4px 12px rgba(0,0,0,0.1)';"
+  onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--card-shadow)';">
+  <div class="relative flex-shrink-0 p-3 rounded-full shadow-sm transform transition-all"
+       style={`background-color: var(--${colorScheme}-bg, var(--tertiary-color));`}
+       onmouseover="this.style.transform='scale(1.05)';"
+       onmouseout="this.style.transform='scale(1)';">
+    <div class="absolute -inset-1 blur-sm rounded-full" 
+         style={`background-color: var(--${colorScheme}-bg, var(--tertiary-color)); opacity: 0.2;`}></div>
     {icon ? 
       <Fragment set:html={icon} /> : 
-      <span class={`${colors.text} ${colors.darkText}`} set:html={defaultIcon} />
+      <span style={`color: var(--${colorScheme}-text, var(--text-primary));`} set:html={defaultIcon} />
     }
   </div>
   <div class="ml-0 sm:ml-4">
     <h3 class="text-base sm:text-lg font-semibold tracking-tight text-[var(--text-primary)]">{title}</h3>
-    {description && <p class="text-sm text-[var(--text-tertiary)] mt-1 leading-snug">{description}</p>}
+    {description && <p class="text-sm mt-1 leading-relaxed" style="color: var(--text-tertiary);">{description}</p>}
     <slot />
   </div>
 </div>
