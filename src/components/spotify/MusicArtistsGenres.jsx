@@ -19,7 +19,7 @@ export default function MusicArtistsGenres({ summary = {} }) {
   }, []);
   
   return (
-    <div className="stats-card p-3 sm:p-4 rounded-xl border border-[var(--border-color)] bg-white/10 dark:bg-white/5">
+    <div className="stats-card p-3 sm:p-4 rounded-xl bg-white/10 dark:bg-white/5">
       {stats.top_artists_with_images && stats.top_artists_with_images.length > 0 && (
         <div className="mt-2">
           <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-1">

@@ -455,7 +455,7 @@ export default function TravelSummary({ summary = {} }) {
         {statItems.map((item, index) => (
           <div
             key={index}
-            className="p-4 rounded-lg bg-white/10 dark:bg-white/5 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
+            className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
