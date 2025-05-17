@@ -649,7 +649,7 @@ export default function GolfSummary({ summary = {} }) {
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         {statItems.map((item, index) => (
-          <div key={index} className="p-4 rounded-lg bg-white/10 dark:bg-white/5 border border-gray-200 shadow-sm">
+          <div key={index} className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3`}>
@@ -665,7 +665,7 @@ export default function GolfSummary({ summary = {} }) {
         ))}
       </div>
             {/* Scoring Stats */}
-      <div className="p-4 mt-4 pb-6 rounded-lg bg-white/10 dark:bg-white/5 border border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="p-4 mt-4 pb-6 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
         <h3 className="text-lg font-semibold mb-4">Scoring Stats</h3>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
@@ -698,7 +698,7 @@ export default function GolfSummary({ summary = {} }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {/* Green Accuracy Chart */}
         {/* Green Accuracy Dial */}
-        <div className="p-4 rounded-lg bg-white/10 dark:bg-white/5 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Green Accuracy</h3>
           <div className="relative w-64 h-64 mx-auto">
             {/* Cross lines */}
@@ -733,7 +733,7 @@ export default function GolfSummary({ summary = {} }) {
         </div>
 
         {/* Fairway Accuracy Chart */}
-        <div className="p-4 rounded-lg bg-white/10 dark:bg-white/5 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Fairway Accuracy</h3>
           <div className="relative w-full h-32 sm:h-40 md:h-48 border border-gray-400 dark:border-gray-600 rounded-sm overflow-hidden">
             {/* Left Miss */}
