@@ -211,17 +211,19 @@ const rpgLinks = [
     return false; // Prevent default link behavior
   }
   
-  // Global function to switch RPG sections
-  function switchRPGSection(sectionId) {
+  // Global function to switch RPG sections - explicitly added to window object
+  window.switchRPGSection = function(sectionId) {
+    console.log('NavigationRPG: Switching to section:', sectionId);
     
     // Check if we're on the index page
     const isIndexPage = window.location.pathname === '/' || 
                         window.location.pathname === '/index' || 
                         window.location.pathname === '/index.html';
     
+    // Only handle section navigation if we're on the index page
+    // This prevents interference with navigation to other pages
     if (!isIndexPage) {
-      // If not on index page, navigate to index with section parameter
-      window.location.href = `/?section=${sectionId}`;
+      console.log('Not on index page, section navigation skipped');
       return false;
     }
     
@@ -247,10 +249,12 @@ const rpgLinks = [
       if (menu) {
         menu.classList.add('hidden');
       }
+    } else {
+      console.error(`Section element not found: rpg-${sectionId}`);
     }
     
     return false; // Prevent default link behavior
-  }
+  };
   
   // Global function to open Mara chatbot
   function openMaraChatbot() {

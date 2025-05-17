@@ -125,56 +125,45 @@ import TimelineWrapper from '../TimelineWrapper.astro';
   // Store the current active section
   let currentActiveSection = 'status';
   
-  // Global function to switch between RPG sections
-  function switchRPGSection(sectionId) {
-    
-    // Store the current section
-    currentActiveSection = sectionId;
-    
-    // Save to session storage to persist across page refreshes
-    sessionStorage.setItem('rpg-active-section', sectionId);
-    
-    // Hide all sections
-    const sections = document.querySelectorAll('.rpg-section');
-    sections.forEach(section => {
-      section.classList.remove('active');
-    });
-    
-    // Show the selected section
-    const selectedSection = document.getElementById(`rpg-${sectionId}`);
-    if (selectedSection) {
-      selectedSection.classList.add('active');
-      
-      // Play section change sound
-      if (typeof playFF7MenuSound === 'function') {
-        playFF7MenuSound('select');
-      }
-      
-      // Close the menu
-      const menu = document.getElementById('ff7-nav');
-      if (menu) {
-        menu.classList.add('hidden');
-      }
-      
-      return false; // Prevent default link behavior
-    }
-    
-    return false; // Prevent default link behavior
-  }
-  
   // Initialize the RPG container
   function initRPGContainer() {
-    
     // Get the active section from session storage or use default
     const savedSection = sessionStorage.getItem('rpg-active-section') || 'status';
-    switchRPGSection(savedSection);
+    
+    // Use the global switchRPGSection function defined in NavigationRPG.astro
+    if (typeof window.switchRPGSection === 'function') {
+      window.switchRPGSection(savedSection);
+    } else {
+      console.error('switchRPGSection function not found in global scope');
+      
+      // Fallback: manually switch to the section
+      currentActiveSection = savedSection;
+      
+      // Hide all sections
+      const sections = document.querySelectorAll('.rpg-section');
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Show the selected section
+      const selectedSection = document.getElementById(`rpg-${savedSection}`);
+      if (selectedSection) {
+        selectedSection.classList.add('active');
+      }
+    }
     
     // Add event listeners to section links
     document.querySelectorAll('[data-section]').forEach(link => {
       link.addEventListener('click', function(e) {
         e.preventDefault();
         const section = this.getAttribute('data-section');
-        switchRPGSection(section);
+        
+        // Use the global switchRPGSection function
+        if (typeof window.switchRPGSection === 'function') {
+          window.switchRPGSection(section);
+        } else {
+          console.error('switchRPGSection function not found in global scope');
+        }
         return false;
       });
     });
