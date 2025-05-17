@@ -279,7 +279,9 @@ import RPGWrapper from '../components/RPGWrapper.astro';
 <script>
 // Declare the switchRPGSection function as a global type
 declare global {
-  function switchRPGSection(sectionId: string): boolean;
+  interface Window {
+    switchRPGSection(sectionId: string): boolean;
+  }
 }
 
 // Intersection Observer for scroll animations
@@ -319,12 +321,22 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.setItem('rpg-active-section', sectionParam);
     
     // If we have a switchRPGSection function, call it
-    if (typeof switchRPGSection === 'function') {
+    if (typeof window.switchRPGSection === 'function') {
       setTimeout(() => {
-        switchRPGSection(sectionParam);
-      }, 300); // Small delay to ensure DOM is fully loaded
+        window.switchRPGSection(sectionParam);
+      }, 500); // Increased delay to ensure DOM and scripts are fully loaded
     } else {
-      console.log('switchRPGSection function not found');
+      console.log('switchRPGSection function not found in global scope');
+      
+      // Fallback: Try again after a longer delay
+      setTimeout(() => {
+        if (typeof window.switchRPGSection === 'function') {
+          window.switchRPGSection(sectionParam);
+          console.log('Found switchRPGSection function after delay');
+        } else {
+          console.error('switchRPGSection function still not found after delay');
+        }
+      }, 1000);
     }
   }
 });

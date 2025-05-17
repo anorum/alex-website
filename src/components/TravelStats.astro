@@ -237,8 +237,8 @@ import CitiesStats from './travel/CitiesStats';
 </style>
 
 <script is:inline>
-  // Initialize when the page loads
-  document.addEventListener('astro:page-load', async function() {
+  // Function to initialize travel data
+  async function initializeTravelData() {
     // Get DOM elements
     const loadingIndicator = document.getElementById('loading-indicator');
     const errorMessage = document.getElementById('error-message');
@@ -355,5 +355,11 @@ import CitiesStats from './travel/CitiesStats';
         errorMessage.classList.remove('hidden');
       }
     }
-  });
+  }
+
+  // Initialize when the page loads
+  document.addEventListener('astro:page-load', initializeTravelData);
+  
+  // Also initialize after view transitions
+  document.addEventListener('astro:after-swap', initializeTravelData);
 </script>
