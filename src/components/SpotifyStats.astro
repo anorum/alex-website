@@ -129,7 +129,6 @@ import Playlists from './spotify/Playlists.jsx';
     try {
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/spotify/data';
-      console.log('Fetching music data from:', apiUrl);
       
       const response = await fetch(apiUrl);
       
@@ -139,7 +138,6 @@ import Playlists from './spotify/Playlists.jsx';
       
       const data = await response.json();
       
-      console.log("Data from API:", data);
       
       // Create a custom event with all the data
       const spotifyDataEvent = new CustomEvent('spotify-data-ready', {
@@ -153,12 +151,10 @@ import Playlists from './spotify/Playlists.jsx';
         bubbles: true
       });
       
-      console.log("Dispatching event with data:", spotifyDataEvent.detail);
       
       // Dispatch the event to the document so all components can listen for it
       // Add a small delay to ensure components are mounted
       setTimeout(() => {
-        console.log("Dispatching event after delay");
         document.dispatchEvent(spotifyDataEvent);
       }, 500);
       

@@ -21,16 +21,12 @@ import TimelineRPG from './rpg/TimelineRPG.astro';
     const standardTimeline = document.querySelector('.standard-timeline');
     const rpgTimeline = document.querySelector('.rpg-timeline');
     
-    console.log('TimelineWrapper - Current theme:', currentTheme);
-    
     if (currentTheme === 'rpg') {
       standardTimeline?.classList.add('hidden');
       rpgTimeline?.classList.remove('hidden');
-      console.log('TimelineWrapper - Showing RPG timeline');
     } else {
       standardTimeline?.classList.remove('hidden');
       rpgTimeline?.classList.add('hidden');
-      console.log('TimelineWrapper - Showing standard timeline');
     }
   }
   

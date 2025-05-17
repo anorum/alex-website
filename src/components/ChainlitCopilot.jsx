@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 
 export default function ChainlitCopilot() {
   useEffect(() => {
+    // Get the Chainlit server URL from environment variable or use default
+    const marabotUrl = process.env.MARABOT_URL || import.meta.env.MARABOT_URL;
+    
     // Inject external script first
     const script = document.createElement('script');
-    script.src = "http://localhost:8000/copilot/index.js";
+    script.src = `${marabotUrl}/copilot/index.js`;
     script.async = true;
     document.body.appendChild(script);
 
@@ -43,7 +46,7 @@ export default function ChainlitCopilot() {
         
         // Configure the Chainlit widget with custom CSS
         window.mountChainlitWidget({
-          chainlitServer: "http://localhost:8000",
+          chainlitServer: marabotUrl,
           theme: "dark", // Always use dark theme for Chainlit's internal styling
           customCssUrl: "/chainlit-custom.css",
           button: {

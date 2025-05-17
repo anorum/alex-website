@@ -161,7 +161,6 @@ const rpgLinks = [
 <script is:inline>
   // Global function to toggle the menu
   function toggleFF7Menu() {
-    console.log('Toggle FF7 Menu called');
     const menu = document.getElementById('ff7-nav');
     if (menu) {
       menu.classList.toggle('hidden');
@@ -171,7 +170,6 @@ const rpgLinks = [
   
   // Global function to exit RPG mode
   function exitRPGMode() {
-    console.log('Exit RPG Mode called');
     
     // Update localStorage
     localStorage.setItem('site-theme', 'standard');
@@ -215,7 +213,6 @@ const rpgLinks = [
   
   // Global function to switch RPG sections
   function switchRPGSection(sectionId) {
-    console.log('Switching to section:', sectionId);
     
     // Check if we're on the index page
     const isIndexPage = window.location.pathname === '/' || 
@@ -257,7 +254,6 @@ const rpgLinks = [
   
   // Global function to open Mara chatbot
   function openMaraChatbot() {
-    console.log('Opening Mara chatbot');
     playFF7MenuSound('select');
     
     // Close the menu
@@ -284,7 +280,6 @@ const rpgLinks = [
     for (const selector of selectors) {
       chatbotButton = document.querySelector(selector);
       if (chatbotButton) {
-        console.log('Found chatbot button with selector:', selector);
         break;
       }
     }
@@ -294,8 +289,6 @@ const rpgLinks = [
       chatbotButton.click();
     } else {
       // Fallback: Try to find any button that might be the chatbot
-      console.log('Could not find chatbot button with known selectors, trying fallback');
-      
       // Look for any button with "chat" in its class or id
       const possibleButtons = document.querySelectorAll('button');
       for (const btn of possibleButtons) {
@@ -306,7 +299,6 @@ const rpgLinks = [
             id.toLowerCase().includes('chat') ||
             classNames.toLowerCase().includes('mara') || 
             id.toLowerCase().includes('mara')) {
-          console.log('Found possible chatbot button:', btn);
           btn.click();
           break;
         }
@@ -318,7 +310,6 @@ const rpgLinks = [
   
   // Global function to play menu sounds
   function playFF7MenuSound(type) {
-    console.log('Playing menu sound:', type);
     // Create audio element for menu sounds
     const audio = new Audio();
     
@@ -339,7 +330,7 @@ const rpgLinks = [
     
     // Play the sound
     audio.volume = 0.3; // Lower volume
-    audio.play().catch(e => console.log('Audio play failed:', e));
+    audio.play().catch(e => {/* Silently handle audio play failures */});
   }
   
   // Setup click handlers for menu items

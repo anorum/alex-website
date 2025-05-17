@@ -162,23 +162,13 @@ export default function IndexTravelMap() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Debug log
-  useEffect(() => {
-    console.log('IndexTravelMap component mounted');
-    return () => {
-      console.log('IndexTravelMap component unmounted');
-    };
-  }, []);
 
   // Load travel data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('Fetching travel data...');
         setIsLoading(true);
         const apiUrl = '/api/alexapi/api/v1/travel/data';
-        console.log('API URL:', apiUrl);
         const response = await fetch(apiUrl);
         
         if (!response.ok) {

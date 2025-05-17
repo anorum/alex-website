@@ -22,8 +22,8 @@ export default function MusicArtistsGenres({ summary = {} }) {
     <div className="stats-card p-3 sm:p-4 rounded-xl border border-[var(--border-color)] bg-white/10 dark:bg-white/5">
       {stats.top_artists_with_images && stats.top_artists_with_images.length > 0 && (
         <div className="mt-2">
-          <h4 className="text-sm font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-1">
-            <MusicalNoteIcon className="h-4 w-4 text-[var(--text-secondary)]" />
+          <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-1">
+            <MusicalNoteIcon className="h-4 w-4" />
             Most Listened Artists
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -37,7 +37,7 @@ export default function MusicArtistsGenres({ summary = {} }) {
                   alt={artist.name} 
                   className="w-8 h-8 rounded-full object-cover"
                 />
-                <span className="text-sm text-[var(--text-primary)] font-medium truncate">{artist.name}</span>
+                <span className="text-sm font-semibold truncate">{artist.name}</span>
               </div>
             ))}
           </div>
@@ -46,8 +46,8 @@ export default function MusicArtistsGenres({ summary = {} }) {
       
       {stats.top_genres && stats.top_genres.length > 0 && (
         <div className="mt-6">
-          <h4 className="text-sm font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-1">
-            <MusicalNoteIcon className="h-4 w-4 text-[var(--text-secondary)]" />
+          <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-1">
+            <MusicalNoteIcon className="h-4 w-4" />
             Top Genres
           </h4>
           <div className="flex flex-wrap gap-2">

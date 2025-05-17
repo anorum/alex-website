@@ -76,8 +76,8 @@ export default function MusicSummary({ summary = {} }) {
             {item.icon}
           </div>
           <div className="flex-1">
-            <p className="text-lg font-semibold text-gray-800 dark:text-white">{item.value}</p>
-            <div className="text-xs text-[var(--text-tertiary)] leading-tight" title={item.tooltip}>
+            <p className="text-lg font-bold">{item.value}</p>
+            <div className="text-xs font-medium leading-tight" title={item.tooltip}>
               {item.label}
             </div>
           </div>
