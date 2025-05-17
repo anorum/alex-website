@@ -121,35 +121,15 @@ export default function GolfSummary({ summary = {} }) {
     data.total_missed_greens_short + data.total_missed_greens_long;
   const greensHitPercentage = totalGreens > 0 ? Math.round((data.total_gir / totalGreens) * 100) : 0;
 
-  console.log("Golf data loaded:", data);
-  console.log("Fairways data:", {
-    hit: data.total_fairways_hit,
-    missedLeft: data.total_fairways_missed_left,
-    missedRight: data.total_fairways_missed_right,
-    total: totalFairways,
-    percentage: fairwaysHitPercentage
-  });
-
-  console.log("Greens data:", {
-    hit: data.total_gir,
-    missedLeft: data.total_missed_greens_left,
-    missedRight: data.total_missed_greens_right,
-    missedShort: data.total_missed_greens_short,
-    missedLong: data.total_missed_greens_long,
-    total: totalGreens,
-    percentage: greensHitPercentage
-  });
 
   // Initialize charts when data changes
   useEffect(() => {
-    console.log("useEffect triggered for chart initialization");
 
     // Add a small delay to ensure DOM elements are ready
     const initializeCharts = () => {
       // Clean up any existing charts
       ['greens-chart', 'fairways-chart'].forEach(id => {
         const chartElement = document.getElementById(id);
-        console.log(`Looking for ${id} element:`, chartElement);
         if (chartElement && chartElement.chart) {
           chartElement.chart.destroy();
           chartElement.chart = null;
@@ -165,7 +145,6 @@ export default function GolfSummary({ summary = {} }) {
 
     // Add theme change listener
     const handleThemeChange = () => {
-      console.log("Theme changed, re-rendering charts");
       // Clean up existing charts before rendering new ones
       ['greens-chart', 'fairways-chart'].forEach(id => {
         const chartElement = document.getElementById(id);
@@ -203,7 +182,6 @@ export default function GolfSummary({ summary = {} }) {
 
   // Render greens chart
   const renderGreensChart = () => {
-    console.log("Rendering greens chart");
     const currentTheme = getThemeColors();
 
     // Calculate total shots for percentages
@@ -211,11 +189,8 @@ export default function GolfSummary({ summary = {} }) {
       data.total_missed_greens_right + data.total_missed_greens_short +
       data.total_missed_greens_long;
 
-    console.log("Total greens shots:", totalGreensShots);
-
     // Always render chart even if data appears to be zero
     // This ensures the chart container is initialized
-    console.log("Proceeding with greens chart rendering regardless of data");
 
     // Create a quadrant visualization
     const options = {
@@ -432,12 +407,10 @@ export default function GolfSummary({ summary = {} }) {
     };
 
     const chartElement = document.getElementById('greens-chart');
-    console.log("Greens chart element:", chartElement);
     if (chartElement) {
       const chart = new ApexCharts(chartElement, options);
       chartElement.chart = chart;
       chart.render();
-      console.log("Greens chart rendered");
     } else {
       console.error("Could not find greens-chart element");
     }
@@ -445,18 +418,14 @@ export default function GolfSummary({ summary = {} }) {
 
   // Render fairways chart
   const renderFairwaysChart = () => {
-    console.log("Rendering fairways chart");
     const currentTheme = getThemeColors();
 
     // Calculate total shots for percentages
     const totalFairwayShots = data.total_fairways_hit + data.total_fairways_missed_left +
       data.total_fairways_missed_right;
 
-    console.log("Total fairway shots:", totalFairwayShots);
-
     // Always render chart even if data appears to be zero
     // This ensures the chart container is initialized
-    console.log("Proceeding with fairways chart rendering regardless of data");
 
     // Create a quadrant visualization
     const options = {
@@ -638,12 +607,10 @@ export default function GolfSummary({ summary = {} }) {
     };
 
     const chartElement = document.getElementById('fairways-chart');
-    console.log("Fairways chart element:", chartElement);
     if (chartElement) {
       const chart = new ApexCharts(chartElement, options);
       chartElement.chart = chart;
       chart.render();
-      console.log("Fairways chart rendered");
     } else {
       console.error("Could not find fairways-chart element");
     }
@@ -682,15 +649,15 @@ export default function GolfSummary({ summary = {} }) {
       {/* Main Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         {statItems.map((item, index) => (
-          <div key={index} className="stats-card p-4">
+          <div key={index} className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.textColor} mr-3`}>
                 {item.icon}
               </div>
               <div>
-                <p className="text-xl font-semibold text-gray-800 dark:text-white">{item.value}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{item.label}</p>
+                <p className="text-xl font-bold">{item.value}</p>
+                <p className="text-sm font-medium">{item.label}</p>
               </div>
             </div>
           </div>
@@ -698,7 +665,7 @@ export default function GolfSummary({ summary = {} }) {
         ))}
       </div>
             {/* Scoring Stats */}
-      <div className="stats-card p-4 mt-4 pb-6">
+      <div className="p-4 mt-4 pb-6 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
         <h3 className="text-lg font-semibold mb-4">Scoring Stats</h3>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           <div className="bg-white/70 dark:bg-gray-800/30 rounded-lg p-3 text-center">
@@ -731,7 +698,7 @@ export default function GolfSummary({ summary = {} }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {/* Green Accuracy Chart */}
         {/* Green Accuracy Dial */}
-        <div className="stats-card p-4">
+        <div className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Green Accuracy</h3>
           <div className="relative w-64 h-64 mx-auto">
             {/* Cross lines */}
@@ -766,7 +733,7 @@ export default function GolfSummary({ summary = {} }) {
         </div>
 
         {/* Fairway Accuracy Chart */}
-        <div className="stats-card p-4">
+        <div className="p-4 rounded-lg bg-white/10 dark:bg-white/5 shadow-sm">
           <h3 className="text-lg font-semibold mb-4">Fairway Accuracy</h3>
           <div className="relative w-full h-32 sm:h-40 md:h-48 border border-gray-400 dark:border-gray-600 rounded-sm overflow-hidden">
             {/* Left Miss */}

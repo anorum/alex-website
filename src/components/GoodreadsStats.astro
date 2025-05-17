@@ -16,7 +16,7 @@ import Authors from './goodreads/Authors';
         </div>
         <div>
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Reading Stats</h2>
-          <p class="text-gray-500 dark:text-gray-400 text-sm">Track my reading journey</p>
+          <p class="text-sm">Track my reading journey</p>
         </div>
       </div>
     </div>
@@ -75,11 +75,7 @@ import Authors from './goodreads/Authors';
     try {
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/books/data';
-      console.log('Fetching books data from:', apiUrl);
-      
-      // For now, use the example data
-      const exampleDataUrl = '/exampe/example_books.json';
-      const response = await fetch(exampleDataUrl);
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
@@ -105,12 +101,10 @@ import Authors from './goodreads/Authors';
         bubbles: true
       });
       
-      console.log("Dispatching event with data:", booksDataEvent.detail);
       
       // Dispatch the event to the document so all components can listen for it
       // Add a small delay to ensure components are mounted
       setTimeout(() => {
-        console.log("Dispatching event after delay");
         document.dispatchEvent(booksDataEvent);
       }, 500);
       

@@ -18,7 +18,6 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
       // Listen for data updates
       const handleDataReady = (event) => {
         if (event.detail?.recentVisits) {
-          console.log("RecentTrips received data:", event.detail.recentVisits);
           setRecentVisits(event.detail.recentVisits);
         }
       };
@@ -40,8 +39,8 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
   if (!recentVisits || recentVisits.length === 0) {
     return (
       <div className="bg-white/10 dark:bg-white/5 rounded-lg p-4 shadow-md backdrop-blur-md">
-        <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Recent Trips</h3>
-        <p className="text-gray-500 dark:text-gray-400">No recent trips available</p>
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Trips</h3>
+        <p className="text-gray-500 font-medium">No recent trips available</p>
       </div>
     );
   }
@@ -54,18 +53,18 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
 
   return (
     <div className="bg-white/10 dark:bg-white/5 rounded-lg p-4 shadow-md backdrop-blur-md">
-      <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Recent Trips</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Trips</h3>
       
       {/* Desktop view - table */}
-      <div className="hidden sm:block">
+      <div className="md:block">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-gray-200 dark:border-white/10">
-              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Date</th>
-              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Location</th>
-              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Country</th>
-              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Photos</th>
-              <th className="py-3 px-4 text-gray-700 dark:text-gray-200">Notes</th>
+              <th className="py-3 px-4 text-sm font-semibold">Date</th>
+              <th className="py-3 px-4 text-sm font-semibold">Location</th>
+              <th className="py-3 px-4 text-sm font-semibold">Country</th>
+              <th className="py-3 px-4 text-sm font-semibold">Photos</th>
+              <th className="py-3 px-4 text-sm font-semibold">Notes</th>
             </tr>
           </thead>
           <tbody>
@@ -81,14 +80,14 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                   document.getElementById('travel-map-container')?.scrollIntoView({ behavior: 'smooth' });
                 }}
               >
-                <td className="py-3 px-4 text-gray-700 dark:text-gray-300">{formatDate(visit.date)}</td>
+                <td className="py-3 px-4 font-medium">{formatDate(visit.date)}</td>
                 <td className="py-3 px-4">
                   <div className="flex items-center">
                     <span className="text-xl mr-2">{visit.flag}</span>
-                    <span className="text-gray-800 dark:text-gray-200">{visit.city}</span>
+                    <span className="font-semibold">{visit.city}</span>
                   </div>
                 </td>
-                <td className="py-3 px-4 text-gray-700 dark:text-gray-300">{visit.country}</td>
+                <td className="py-3 px-4 font-medium">{visit.country}</td>
                 <td className="py-3 px-4">
                   {visit.imageUrls && (
                     <div className="flex -space-x-2">
@@ -115,9 +114,9 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
                 </td>
                 <td className="py-3 px-4">
                   {visit.notes ? (
-                    <p className="text-sm text-gray-600 dark:text-white/80 line-clamp-2">{visit.notes}</p>
+                    <p className="text-sm font-medium line-clamp-2">{visit.notes}</p>
                   ) : (
-                    <span className="text-gray-400 dark:text-white/40 text-sm">-</span>
+                    <span className="text-sm">-</span>
                   )}
                 </td>
               </tr>
@@ -144,11 +143,11 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
               <div className="flex items-center">
                 <span className="text-2xl mr-2">{visit.flag}</span>
                 <div>
-                  <h4 className="font-medium text-gray-800 dark:text-white">{visit.city}</h4>
-                  <p className="text-sm text-gray-600 dark:text-white/70">{visit.country}</p>
+                  <h4 className="font-semibold text-gray-900">{visit.city}</h4>
+                  <p className="text-sm font-medium text-gray-600">{visit.country}</p>
                 </div>
               </div>
-              <div className="text-sm text-gray-500 dark:text-white/70">
+              <div className="text-sm font-medium text-gray-500">
                 {formatDate(visit.date)}
               </div>
             </div>
@@ -177,13 +176,13 @@ export default function RecentTrips({ recentVisits: initialVisits = [] }) {
             )}
             
             {visit.notes && (
-              <p className="text-sm text-gray-600 dark:text-white/80 line-clamp-2">{visit.notes}</p>
+              <p className="text-sm font-medium line-clamp-2">{visit.notes}</p>
             )}
           </div>
         ))}
       </div>
       
-      <div className="mt-4 text-sm text-gray-500 dark:text-white/60 italic">
+      <div className="mt-4 text-sm font-medium text-[var(--text-secondary)] italic">
         Click on any {isMobile ? 'card' : 'row'} to view that location on the map
       </div>
     </div>

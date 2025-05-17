@@ -1,0 +1,77 @@
+---
+import Navigation from './Navigation.astro';
+import NavigationRPG from './rpg/NavigationRPG.astro';
+---
+
+<!-- Standard Navigation (visible by default) -->
+<div class="standard-navigation">
+  <Navigation />
+</div>
+
+<!-- RPG Navigation (hidden by default) -->
+<div class="rpg-navigation hidden">
+  <NavigationRPG />
+</div>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    updateNavigation();
+  });
+  
+  document.addEventListener('astro:page-load', function() {
+    updateNavigation();
+  });
+  
+  function updateNavigation() {
+    const currentTheme = localStorage.getItem('site-theme') || 'standard';
+    const standardNavigation = document.querySelector('.standard-navigation');
+    const rpgNavigation = document.querySelector('.rpg-navigation');
+    
+    
+    if (currentTheme === 'rpg') {
+      standardNavigation?.classList.add('hidden');
+      rpgNavigation?.classList.remove('hidden');
+    } else {
+      standardNavigation?.classList.remove('hidden');
+      rpgNavigation?.classList.add('hidden');
+    }
+    
+    // Update HTML classes to match theme
+    document.documentElement.classList.forEach(className => {
+      if (className.startsWith('theme-')) {
+        document.documentElement.classList.remove(className);
+      }
+    });
+    document.documentElement.classList.add(`theme-${currentTheme}`);
+  }
+  
+  // Listen for theme changes
+  window.addEventListener('storage', function(event) {
+    if (event.key === 'site-theme') {
+      updateNavigation();
+    }
+  });
+  
+  // Custom event for theme changes
+  document.addEventListener('themeChanged', function(event) {
+    // Force immediate update
+    updateNavigation();
+    
+    // Update chocobo button state if it exists
+    const chocoboBtn = document.getElementById('chocobo-toggle-btn');
+    if (chocoboBtn) {
+      const theme = event.detail?.theme || localStorage.getItem('site-theme') || 'standard';
+      if (theme === 'rpg') {
+        chocoboBtn.classList.add('active');
+      } else {
+        chocoboBtn.classList.remove('active');
+      }
+    }
+  });
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+</style>

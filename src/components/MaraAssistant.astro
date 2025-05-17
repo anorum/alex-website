@@ -10,7 +10,8 @@
   <div class="mara-assistant-content">
     <div class="mara-avatar-container">
       <div class="mara-avatar-glow"></div>
-      <img src="/mara_logo.png" alt="Mara" class="mara-avatar" />
+      <img src="/mara_logo.png" alt="Mara" class="mara-avatar standard-mara" />
+      <img src="/mara_rpg.png" alt="Mara RPG" class="mara-avatar rpg-mara" />
       <div class="mara-status-indicator"></div>
     </div>
     <div class="mara-info">
@@ -48,6 +49,24 @@
     margin: 3rem 0;
     transition: all 0.3s ease;
     padding: 1rem 0;
+  }
+  
+  /* Hide/show Mara images based on theme */
+  .standard-mara {
+    display: block;
+  }
+  
+  .rpg-mara {
+    display: none;
+  }
+  
+  /* Show RPG Mara when in RPG theme */
+  .theme-rpg .standard-mara {
+    display: none;
+  }
+  
+  .theme-rpg .rpg-mara {
+    display: block;
   }
   
   /* Decorative circles */
@@ -180,6 +199,37 @@
   
   .mara-assistant-content:hover .mara-avatar {
     transform: scale(1.05);
+  }
+  
+  /* RPG theme styling for Mara assistant */
+  .theme-rpg .mara-assistant-content {
+    background-color: #000080;
+    border: 3px solid #c0c0c0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+  }
+  
+  .theme-rpg .mara-assistant-content::before {
+    background: #0000aa;
+  }
+  
+  .theme-rpg .mara-info h3,
+  .theme-rpg .mara-info p {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.9rem;
+  }
+  
+  .theme-rpg .mara-chat-button {
+    background: #0000aa;
+    border: 2px solid #c0c0c0;
+    border-radius: 0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .theme-rpg .mara-chat-button:hover {
+    background: #0000cc;
+    transform: translateY(-3px);
   }
   
   .mara-status-indicator {

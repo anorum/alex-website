@@ -1,0 +1,439 @@
+/* FF7 Menu Styles - Based on the FF7 menu example */
+
+/* Import pixel fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* FF7 Menu Container */
+.ff7-game-menu {
+  background-color: #000080; /* Deep blue background */
+  border: 2px solid #c0c0c0;
+  color: #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  padding: 0;
+  position: fixed;
+  top: 3rem;
+  right: 1rem;
+  width: 320px;
+  min-height: 400px; /* Set minimum height */
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Menu Button */
+.ff7-menu-button-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+.ff7-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--ff7-blue, #0000aa);
+  color: var(--ff7-text, #ffffff);
+  border: var(--menu-border, 2px solid #c0c0c0);
+  padding: 0.25rem 0.75rem;
+  font-family: var(--font-body, 'Press Start 2P', monospace);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ff7-menu-button:hover {
+  background-color: var(--ff7-blue-light, #0000cc);
+  color: var(--ff7-text-highlight, #ffff00);
+}
+
+/* Character Panel */
+.ff7-character-panel {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid rgba(192, 192, 192, 0.5);
+  position: relative;
+}
+
+.ff7-character-portrait {
+  width: 64px;
+  height: 64px;
+  border: 1px solid #c0c0c0;
+  margin-right: 15px;
+  background-color: #000040;
+}
+
+.ff7-character-info {
+  flex: 1;
+}
+
+.ff7-character-name {
+  color: #00ffff; /* Cyan color for names */
+  margin-bottom: 5px;
+}
+
+.ff7-character-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ff7-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ff7-stat-label {
+  width: 30px;
+  color: #00ffff;
+}
+
+.ff7-stat-value {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.ff7-stat-value span {
+  margin: 0 5px;
+}
+
+.ff7-stat-bar-container {
+  flex: 1;
+  height: 10px;
+  background-color: #333;
+  border: 1px solid #666;
+  position: relative;
+}
+
+.ff7-stat-bar {
+  height: 100%;
+  background-color: #00ff00; /* Green for HP */
+}
+
+.ff7-stat-bar.mp {
+  background-color: #00ffff; /* Cyan for MP */
+}
+
+/* Level indicator */
+.ff7-level {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.ff7-level-label {
+  color: #00ffff;
+  margin-right: 5px;
+}
+
+.ff7-level-value {
+  color: #ffffff;
+}
+
+/* Next level progress */
+.ff7-next-level {
+  margin-top: 10px;
+}
+
+.ff7-next-level-label {
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.ff7-next-level-bar {
+  height: 8px;
+  background-color: #333;
+  border: 1px solid #666;
+  position: relative;
+}
+
+.ff7-next-level-progress {
+  height: 100%;
+  background-color: #ff6666; /* Light red for XP */
+  width: 70%; /* Example progress */
+}
+
+/* Limit level */
+.ff7-limit-level {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.ff7-limit-level-label {
+  color: #ffffff;
+  margin-right: 10px;
+}
+
+.ff7-limit-level-value {
+  color: #ffffff;
+}
+
+/* Menu Header */
+.ff7-menu-header {
+  background-color: #0000aa;
+  color: #ffffff;
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid #c0c0c0;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Status Bar at Top */
+.ff7-status-bar.ff7-status-top {
+  border-top: none;
+  border-bottom: 1px solid #c0c0c0;
+  background-color: #000080;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Menu Options */
+.ff7-menu-options {
+  padding: 8px 0;
+  min-height: 300px; /* Minimum height for menu options */
+  max-height: 70vh; /* Use viewport height percentage */
+  overflow-y: auto;
+  background-color: #000080;
+  flex-grow: 1; /* Take up available space */
+}
+
+.ff7-menu-option {
+  padding: 10px 15px 10px 35px; /* Reasonable padding */
+  color: #ffffff;
+  cursor: pointer;
+  position: relative;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  text-decoration: none;
+  box-sizing: border-box;
+  margin-bottom: 2px; /* Small space between menu items */
+}
+
+.ff7-menu-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ff7-menu-option:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffff00; /* Yellow highlight */
+}
+
+.ff7-menu-option.active {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #ffff00;
+}
+
+.ff7-menu-option.active::before {
+  content: "▶";
+  position: absolute;
+  left: 5px;
+  color: #ffff00;
+  animation: ff7-cursor-blink 1s infinite;
+}
+
+/* Submenu */
+.ff7-submenu {
+  position: absolute;
+  left: -170px;
+  top: 0;
+  background-color: #000080;
+  border: 2px solid #c0c0c0;
+  width: 160px;
+  padding: 5px 0;
+}
+
+.ff7-submenu-title {
+  background-color: #0000aa;
+  color: #ffffff;
+  padding: 5px 10px;
+  text-align: center;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+/* Status bar */
+.ff7-status-bar {
+  background-color: #0000aa;
+  border-top: 1px solid #c0c0c0;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.ff7-time {
+  color: #ffffff;
+}
+
+.ff7-gil {
+  color: #ffffff;
+}
+
+/* Materia slots */
+.ff7-materia-slots {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.ff7-materia-slot {
+  width: 15px;
+  height: 15px;
+  border: 1px solid #c0c0c0;
+  border-radius: 50%;
+  background-color: #333;
+}
+
+.ff7-materia-slot.magic {
+  background-color: #00ffff; /* Cyan for magic materia */
+}
+
+.ff7-materia-slot.summon {
+  background-color: #ff6666; /* Red for summon materia */
+}
+
+.ff7-materia-slot.command {
+  background-color: #ffff00; /* Yellow for command materia */
+}
+
+.ff7-materia-slot.support {
+  background-color: #00ff00; /* Green for support materia */
+}
+
+.ff7-materia-slot.independent {
+  background-color: #ff00ff; /* Purple for independent materia */
+}
+
+/* Materia submenu */
+.ff7-materia-submenu {
+  background-color: rgba(0, 0, 128, 0.95);
+  border: 2px solid #c0c0c0;
+  padding: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 600px;
+  z-index: 100;
+}
+
+.ff7-materia-header {
+  background-color: #0000aa;
+  color: #ffffff;
+  padding: 5px 10px;
+  text-align: center;
+  border-bottom: 1px solid #c0c0c0;
+  margin: -10px -10px 10px -10px;
+}
+
+.ff7-materia-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ff7-materia-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+}
+
+.ff7-materia-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.ff7-materia-name {
+  flex: 1;
+  color: #ffffff;
+}
+
+.ff7-materia-level {
+  color: #ffff00;
+}
+
+/* Animation for cursor */
+@keyframes ff7-cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Menu Icon */
+.ff7-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Exit Button */
+.ff7-action-exit {
+  margin-top: 5px;
+  border-top: 1px solid rgba(192, 192, 192, 0.3);
+  padding-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .ff7-game-menu {
+    width: calc(100vw - 20px);
+    right: 0.5rem;
+    left: 0.5rem;
+    max-width: none;
+    min-height: 350px; /* Slightly smaller min-height on mobile */
+  }
+  
+  .ff7-menu-options {
+    max-height: 60vh; /* Smaller max height on mobile */
+  }
+  
+  .ff7-action-exit {
+    margin-bottom: 40px; /* Add space below exit button on mobile */
+  }
+  
+  .ff7-character-panel {
+    flex-direction: column;
+  }
+  
+  .ff7-character-portrait {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .ff7-submenu {
+    left: 0;
+    top: 100%;
+    width: 100%;
+  }
+}
+
+/* Hide the menu by default */
+.hidden {
+  display: none;
+}
