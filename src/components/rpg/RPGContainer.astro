@@ -172,9 +172,6 @@ import TimelineWrapper from '../TimelineWrapper.astro';
   // Run on initial load
   document.addEventListener('DOMContentLoaded', initRPGContainer);
   
-  // Run on view transitions (page navigation)
-  document.addEventListener('astro:page-load', initRPGContainer);
-  
   // Run immediately if document is already loaded
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     setTimeout(initRPGContainer, 1);

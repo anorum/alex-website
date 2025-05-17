@@ -358,8 +358,5 @@ import CitiesStats from './travel/CitiesStats';
   }
 
   // Initialize when the page loads
-  document.addEventListener('astro:page-load', initializeTravelData);
-  
-  // Also initialize after view transitions
-  document.addEventListener('astro:after-swap', initializeTravelData);
+  document.addEventListener('DOMContentLoaded', initializeTravelData);
 </script>

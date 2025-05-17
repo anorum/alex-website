@@ -17,10 +17,6 @@ import RPGContainer from './rpg/RPGContainer.astro';
     updateRPGContent();
   });
   
-  document.addEventListener('astro:page-load', function() {
-    updateRPGContent();
-  });
-  
   function updateRPGContent() {
     const currentTheme = localStorage.getItem('site-theme') || 'standard';
     const standardContent = document.querySelector('.standard-content');
