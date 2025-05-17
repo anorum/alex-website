@@ -81,10 +81,27 @@ export default function TravelSummary({ summary = {} }) {
         }
       });
       
-      // Render all charts
-      renderCountriesChart(chartData);
-      renderCitiesChart(chartData);
-      renderVisitsChart(chartData);
+      // Render all charts with the consolidated function
+      renderChart(chartData, {
+        chartId: 'countries-chart',
+        dataKey: 'countries',
+        label: 'countries',
+        color: '#8fb996'
+      });
+      
+      renderChart(chartData, {
+        chartId: 'cities-chart',
+        dataKey: 'cities',
+        label: 'cities',
+        color: '#77647b'
+      });
+      
+      renderChart(chartData, {
+        chartId: 'visits-chart',
+        dataKey: 'visits',
+        label: 'visits',
+        color: '#d1e2c4'
+      });
     };
     
     // Use a small timeout to ensure DOM is ready
@@ -105,68 +122,53 @@ export default function TravelSummary({ summary = {} }) {
     };
   }, [yearData, isDarkMode]);
   
-  // Render countries chart
-  const renderCountriesChart = (chartData) => {
+  // Render chart with configurable options
+  const renderChart = (chartData, config) => {
+    const { chartId, dataKey, label, color } = config;
     const isDarkMode = document.documentElement.classList.contains('dark');
     
     const options = {
       chart: {
-        id: 'countries-chart',
+        id: chartId,
         height: 120,
         type: "area",
         fontFamily: "Inter, sans-serif",
-        dropShadow: {
-          enabled: false,
-        },
-        toolbar: {
-          show: false,
-        },
+        dropShadow: { enabled: false },
+        toolbar: { show: false },
         background: 'transparent',
       },
       tooltip: {
         enabled: true,
         theme: isDarkMode ? 'dark' : 'light',
-        x: {
-          show: true,
-        },
-        y: {
-          formatter: (value) => `${value} countries`
-        }
+        x: { show: true },
+        y: { formatter: (value) => `${value} ${label}` }
       },
       fill: {
         type: "gradient",
         gradient: {
           opacityFrom: 0.55,
           opacityTo: 0,
-          shade: '#8fb996',
-          gradientToColors: ['#8fb996'],
+          shade: color,
+          gradientToColors: [color],
         },
       },
-      dataLabels: {
-        enabled: false,
-      },
+      dataLabels: { enabled: false },
       stroke: {
         width: 3,
         curve: 'smooth',
-        colors: ['#8fb996']
+        colors: [color]
       },
       grid: {
         show: true,
         strokeDashArray: 4,
-        padding: {
-          left: 2,
-          right: 2,
-          top: 0
-        },
+        padding: { left: 2, right: 2, top: 0 },
         borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
       },
-      series: [
-        {
-          name: "Countries",
-          data: chartData.map(item => item.countries),
-          color: '#8fb996',
-        },
-      ],
+      series: [{
+        name: label,
+        data: chartData.map(item => item[dataKey]),
+        color: color,
+      }],
       xaxis: {
         categories: chartData.map(item => item.year),
         labels: {
@@ -179,186 +181,10 @@ export default function TravelSummary({ summary = {} }) {
         axisBorder: { show: false },
         axisTicks: { show: false },
       },
-      yaxis: {
-        show: false,
-      },
+      yaxis: { show: false },
     };
 
-    const chartElement = document.getElementById("countries-chart");
-    if (chartElement) {
-      const chart = new ApexCharts(chartElement, options);
-      chartElement.chart = chart;
-      chart.render();
-    }
-  };
-  
-  // Render cities chart
-  const renderCitiesChart = (chartData) => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    
-    const options = {
-      chart: {
-        id: 'cities-chart',
-        height: 120,
-        type: "area",
-        fontFamily: "Inter, sans-serif",
-        dropShadow: {
-          enabled: false,
-        },
-        toolbar: {
-          show: false,
-        },
-        background: 'transparent',
-      },
-      tooltip: {
-        enabled: true,
-        theme: isDarkMode ? 'dark' : 'light',
-        x: {
-          show: true,
-        },
-        y: {
-          formatter: (value) => `${value} cities`
-        }
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          opacityFrom: 0.55,
-          opacityTo: 0,
-          shade: '#77647b',
-          gradientToColors: ['#77647b'],
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        width: 3,
-        curve: 'smooth',
-        colors: ['#77647b']
-      },
-      grid: {
-        show: true,
-        strokeDashArray: 4,
-        padding: {
-          left: 2,
-          right: 2,
-          top: 0
-        },
-        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-      },
-      series: [
-        {
-          name: "Cities",
-          data: chartData.map(item => item.cities),
-          color: '#77647b',
-        },
-      ],
-      xaxis: {
-        categories: chartData.map(item => item.year),
-        labels: {
-          show: true,
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            colors: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(42, 69, 53, 0.7)'
-          }
-        },
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-      },
-      yaxis: {
-        show: false,
-      },
-    };
-
-    const chartElement = document.getElementById("cities-chart");
-    if (chartElement) {
-      const chart = new ApexCharts(chartElement, options);
-      chartElement.chart = chart;
-      chart.render();
-    }
-  };
-  
-  // Render visits chart
-  const renderVisitsChart = (chartData) => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    
-    const options = {
-      chart: {
-        id: 'visits-chart',
-        height: 120,
-        type: "area",
-        fontFamily: "Inter, sans-serif",
-        dropShadow: {
-          enabled: false,
-        },
-        toolbar: {
-          show: false,
-        },
-        background: 'transparent',
-      },
-      tooltip: {
-        enabled: true,
-        theme: isDarkMode ? 'dark' : 'light',
-        x: {
-          show: true,
-        },
-        y: {
-          formatter: (value) => `${value} visits`
-        }
-      },
-      fill: {
-        type: "gradient",
-        gradient: {
-          opacityFrom: 0.55,
-          opacityTo: 0,
-          shade: '#d1e2c4',
-          gradientToColors: ['#d1e2c4'],
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      stroke: {
-        width: 3,
-        curve: 'smooth',
-        colors: ['#d1e2c4']
-      },
-      grid: {
-        show: true,
-        strokeDashArray: 4,
-        padding: {
-          left: 2,
-          right: 2,
-          top: 0
-        },
-        borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
-      },
-      series: [
-        {
-          name: "Visits",
-          data: chartData.map(item => item.visits),
-          color: '#d1e2c4',
-        },
-      ],
-      xaxis: {
-        categories: chartData.map(item => item.year),
-        labels: {
-          show: true,
-          style: {
-            fontFamily: 'Inter, sans-serif',
-            colors: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(42, 69, 53, 0.7)'
-          }
-        },
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-      },
-      yaxis: {
-        show: false,
-      },
-    };
-
-    const chartElement = document.getElementById("visits-chart");
+    const chartElement = document.getElementById(chartId);
     if (chartElement) {
       const chart = new ApexCharts(chartElement, options);
       chartElement.chart = chart;
