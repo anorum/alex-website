@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^9.2.1",
     "@astrojs/react": "^4.2.5",
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/typography": "^0.5.16",
@@ -27,6 +28,7 @@
     "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.17"
+    "@types/leaflet": "^1.9.17",
+    "@types/node": "^22.15.18"
   }
 }

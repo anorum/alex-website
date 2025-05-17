@@ -60,19 +60,19 @@ const tooltipIds = timeline.map((_, index) => `timeline-tooltip-${index}`);
         </div>
         <div>
           <h3 class="text-base font-bold text-[var(--text-primary)] leading-tight">{item.role}</h3>
-          <p class="text-xs text-[var(--text-secondary)]">{item.company}</p>
+          <p class="text-s text-[var(--text-secondary)]">{item.company}</p>
         </div>
       </div>
-      <p class="text-xs text-[var(--text-secondary)] mb-2">
+      <p class="text-s text-[var(--text-secondary)] mb-2">
         <span class="font-semibold text-[var(--text-primary)]">Years Active:</span> {item.period}
       </p>
-      <p class="text-xs text-[var(--text-secondary)] mb-4">
+      <p class="text-s text-[var(--text-secondary)] mb-4">
         <span class="font-semibold text-[var(--text-primary)]">Summary:</span> {item.description}
       </p>
       {item.achievements?.length > 0 && (
         <div>
-          <p class="text-xs font-semibold text-[var(--text-primary)] mb-1">Notable Contributions:</p>
-          <ul class="list-disc list-inside space-y-1 text-xs text-[var(--text-tertiary)]">
+          <p class="text-s font-semibold text-[var(--text-primary)] mb-1">Notable Contributions:</p>
+          <ul class="list-disc list-inside space-y-1 text-s text-[var(--text-tertiary)]">
             {item.achievements.map((ach) => (
               <li>{ach}</li>
             ))}

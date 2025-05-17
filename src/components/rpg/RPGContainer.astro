@@ -127,7 +127,6 @@ import TimelineWrapper from '../TimelineWrapper.astro';
   
   // Global function to switch between RPG sections
   function switchRPGSection(sectionId) {
-    console.log('Switching to section:', sectionId);
     
     // Store the current section
     currentActiveSection = sectionId;
@@ -165,7 +164,6 @@ import TimelineWrapper from '../TimelineWrapper.astro';
   
   // Initialize the RPG container
   function initRPGContainer() {
-    console.log('RPG Container initialized');
     
     // Get the active section from session storage or use default
     const savedSection = sessionStorage.getItem('rpg-active-section') || 'status';

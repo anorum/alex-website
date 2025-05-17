@@ -455,7 +455,7 @@ export default function TravelSummary({ summary = {} }) {
         {statItems.map((item, index) => (
           <div
             key={index}
-            className="p-4 rounded-lg bg-[var(--bubble-bg)] border border-[var(--border-color)] shadow-sm hover:shadow-md transition-shadow"
+            className="p-4 rounded-lg bg-white/10 dark:bg-white/5 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
@@ -465,13 +465,12 @@ export default function TravelSummary({ summary = {} }) {
                   {item.icon}
                 </div>
                 <div>
-                  <p className="text-xl font-semibold text-gray-800 dark:text-white">{item.value}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{item.label}</p>
+                  <p className="text-xl font-semibold">{item.value}</p>
+                  <p className="text-sm">{item.label}</p>
                 </div>
               </div>
             </div>
             <div id={item.chartId} className="h-[120px] mt-2"></div>
-            <p className="text-xs text-[var(--text-tertiary)] mt-1 text-center">by year</p>
           </div>
         ))}
       </div>

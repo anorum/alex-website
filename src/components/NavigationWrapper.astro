@@ -27,16 +27,13 @@ import NavigationRPG from './rpg/NavigationRPG.astro';
     const standardNavigation = document.querySelector('.standard-navigation');
     const rpgNavigation = document.querySelector('.rpg-navigation');
     
-    console.log('NavigationWrapper - Current theme:', currentTheme);
     
     if (currentTheme === 'rpg') {
       standardNavigation?.classList.add('hidden');
       rpgNavigation?.classList.remove('hidden');
-      console.log('NavigationWrapper - Showing RPG navigation');
     } else {
       standardNavigation?.classList.remove('hidden');
       rpgNavigation?.classList.add('hidden');
-      console.log('NavigationWrapper - Showing standard navigation');
     }
     
     // Update HTML classes to match theme
@@ -51,14 +48,12 @@ import NavigationRPG from './rpg/NavigationRPG.astro';
   // Listen for theme changes
   window.addEventListener('storage', function(event) {
     if (event.key === 'site-theme') {
-      console.log('NavigationWrapper - storage event received');
       updateNavigation();
     }
   });
   
   // Custom event for theme changes
   document.addEventListener('themeChanged', function(event) {
-    console.log('NavigationWrapper - themeChanged event received', event.detail);
     // Force immediate update
     updateNavigation();
     

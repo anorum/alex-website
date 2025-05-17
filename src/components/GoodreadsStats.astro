@@ -75,7 +75,6 @@ import Authors from './goodreads/Authors';
     try {
       // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/books/data';
-      console.log('Fetching books data from:', apiUrl);
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
@@ -102,12 +101,10 @@ import Authors from './goodreads/Authors';
         bubbles: true
       });
       
-      console.log("Dispatching event with data:", booksDataEvent.detail);
       
       // Dispatch the event to the document so all components can listen for it
       // Add a small delay to ensure components are mounted
       setTimeout(() => {
-        console.log("Dispatching event after delay");
         document.dispatchEvent(booksDataEvent);
       }, 500);
       

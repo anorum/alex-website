@@ -23,7 +23,6 @@ import chocoboIcon from '../assets/cocoboicon.png';
 <script is:inline>
   // Main initialization function that can be called on both initial load and page transitions
   function initChocoboToggle() {
-    console.log('Initializing Chocobo Toggle');
     const chocoboBtn = document.getElementById('chocobo-toggle-btn');
     const chocoboToggle = document.querySelector('.chocobo-theme-toggle');
     
@@ -125,7 +124,6 @@ import chocoboIcon from '../assets/cocoboicon.png';
       }
     });
     
-    console.log('Chocobo Toggle initialized successfully');
   }
   
   function setTheme(theme) {
@@ -145,7 +143,6 @@ import chocoboIcon from '../assets/cocoboicon.png';
     // Dispatch a custom event for theme changes
     document.dispatchEvent(new CustomEvent('themeChanged'));
     
-    console.log('Theme changed to:', theme);
   }
   
   function updateButtonState(btnElement, theme) {

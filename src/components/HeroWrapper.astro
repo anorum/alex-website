@@ -85,16 +85,13 @@ import meImage from '../assets/me.jpeg';
     const standardHero = document.querySelector('.standard-hero');
     const rpgHero = document.querySelector('.rpg-hero');
     
-    console.log('HeroWrapper - Current theme:', currentTheme);
     
     if (currentTheme === 'rpg') {
       standardHero?.classList.add('hidden');
       rpgHero?.classList.remove('hidden');
-      console.log('HeroWrapper - Showing RPG hero');
     } else {
       standardHero?.classList.remove('hidden');
       rpgHero?.classList.add('hidden');
-      console.log('HeroWrapper - Showing standard hero');
     }
   }
   
@@ -107,7 +104,6 @@ import meImage from '../assets/me.jpeg';
   
   // Custom event for theme changes
   document.addEventListener('themeChanged', function() {
-    console.log('HeroWrapper - themeChanged event received');
     updateHero();
   });
 </script>

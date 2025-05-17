@@ -35,7 +35,6 @@ import RPGContainer from './rpg/RPGContainer.astro';
     } else {
       standardContent?.classList.remove('hidden');
       rpgContent?.classList.add('hidden');
-      console.log('RPGWrapper - Showing standard content');
     }
   }
   
@@ -48,7 +47,6 @@ import RPGContainer from './rpg/RPGContainer.astro';
   
   // Custom event for theme changes
   document.addEventListener('themeChanged', function() {
-    console.log('RPGWrapper - themeChanged event received');
     updateRPGContent();
   });
 </script>
