@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      actions: read
 
     steps:
       - name: Checkout code
@@ -25,6 +26,17 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Ensure package exists with correct visibility
+      - name: Create and configure package
+        run: |
+          # Create package if it doesn't exist and set visibility to match repository
+          echo "Creating/updating package visibility settings"
+          curl -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/user/packages/container/alex-website/visibility \
+            -d '{"visibility":"public"}'
           
       # Generate short SHA for image tag
       - name: Generate short SHA
