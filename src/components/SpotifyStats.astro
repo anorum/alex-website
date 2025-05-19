@@ -1,13 +1,8 @@
 ---
 import { MusicalNoteIcon } from '@heroicons/react/24/outline';
-import TopArtists from './spotify/TopArtists.jsx';
-import TopTracks from './spotify/TopTracks.jsx';
 import RecentlyPlayed from './spotify/RecentlyPlayed.jsx';
-import GenreStats from './spotify/GenreStats.jsx';
-import SpotifySummary from './spotify/SpotifySummary.jsx';
 import MusicSummary from './spotify/MusicSummary.jsx';
 import MusicArtistsGenres from './spotify/MusicArtistsGenres.jsx';
-import Playlists from './spotify/Playlists.jsx';
 ---
 
 <div class="relative">
@@ -58,26 +53,7 @@ import Playlists from './spotify/Playlists.jsx';
           <RecentlyPlayed client:only="react" recentlyPlayed={[]} />
       </div>
       
-      <!-- Hidden components (kept for future use) -->
-      <!-- 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div id="top-artists">
-          <TopArtists client:only="react" topArtists={[]} />
-        </div>
-        <div id="top-tracks">
-          <TopTracks client:only="react" topTracks={[]} />
-        </div>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div id="genre-stats">
-          <GenreStats client:load genreStats={[]} />
-        </div>
-        <div id="playlists">
-          <Playlists client:load playlists={[]} />
-        </div>
-      </div>
-      -->
+      <!-- Additional components can be added here in the future -->
     </div>
   </div>
 </div>
@@ -119,7 +95,7 @@ import Playlists from './spotify/Playlists.jsx';
 
 <script is:inline>
   // Initialize when the page loads
-  document.addEventListener('astro:page-load', async function() {
+  document.addEventListener('DOMContentLoaded', async function() {
     // Get DOM elements
     const loadingIndicator = document.getElementById('spotify-loading-indicator');
     const errorMessage = document.getElementById('spotify-error-message');

@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 export default function ChainlitCopilot() {
   useEffect(() => {
     // Get the Chainlit server URL from environment variable or use default
-    const marabotUrl = process.env.MARABOT_URL || import.meta.env.MARABOT_URL || "http://alex-api.alex-api.svc.cluster.local:8000";
+    const marabotUrl = process.env.MARABOT_URL || import.meta.env.MARABOT_URL || "https://mara.alexnorum.com";
     
     // Inject external script first
     const script = document.createElement('script');

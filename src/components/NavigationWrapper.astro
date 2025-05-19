@@ -18,10 +18,6 @@ import NavigationRPG from './rpg/NavigationRPG.astro';
     updateNavigation();
   });
   
-  document.addEventListener('astro:page-load', function() {
-    updateNavigation();
-  });
-  
   function updateNavigation() {
     const currentTheme = localStorage.getItem('site-theme') || 'standard';
     const standardNavigation = document.querySelector('.standard-navigation');

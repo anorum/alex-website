@@ -45,50 +45,39 @@ import GolfSummary from './golf/GolfSummary';
 </div>
 
 <script is:inline>
-  // Initialize when the page loads
-  document.addEventListener('astro:page-load', async function() {
-    // Get DOM elements
+  document.addEventListener('DOMContentLoaded', async function() {
     const loadingIndicator = document.getElementById('golf-loading-indicator');
     const errorMessage = document.getElementById('golf-error-message');
     const errorText = document.getElementById('golf-error-text');
     const statsContainer = document.getElementById('golf-stats-container');
     
     try {
-      // Fetch data from the API
-      const apiUrl = '/api/alexapi/api/v1/golf';
-      
-      const response = await fetch(apiUrl);
+      const response = await fetch('/api/alexapi/api/v1/golf');
       
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
       }
       
       const data = await response.json();
-            
-      // Create a custom event with all the data
-      const golfDataEvent = new CustomEvent('golf-data-ready', {
-        detail: {
-          stats: data.cumulative_stats || {}
-        },
-        bubbles: true
-      });
-            
-      // Dispatch the event to the document so all components can listen for it
-      // Add a small delay to ensure components are mounted
+      
+      // Dispatch event with data
       setTimeout(() => {
-        document.dispatchEvent(golfDataEvent);
+        document.dispatchEvent(new CustomEvent('golf-data-ready', {
+          detail: { stats: data.cumulative_stats || {} },
+          bubbles: true
+        }));
       }, 500);
       
-      // Show the content and hide the loading indicator
-      if (loadingIndicator) loadingIndicator.classList.add('hidden');
-      if (statsContainer) statsContainer.classList.remove('hidden');
+      // Update UI
+      loadingIndicator?.classList.add('hidden');
+      statsContainer?.classList.remove('hidden');
     } catch (error) {
       console.error('Error loading golf stats:', error);
+      loadingIndicator?.classList.add('hidden');
       
-      // Show error message and hide loading indicator
-      if (loadingIndicator) loadingIndicator.classList.add('hidden');
-      if (errorMessage) {
-        if (errorText) errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading golf stats';
+      if (errorMessage && errorText) {
+        errorText.textContent = error instanceof Error ? 
+          error.message : 'Unknown error loading golf stats';
         errorMessage.classList.remove('hidden');
       }
     }

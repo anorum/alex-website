@@ -3,9 +3,6 @@ import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import TravelMap from './travel/TravelMap';
 import TravelSummary from './travel/TravelSummary';
 import RecentTrips from './travel/RecentTrips';
-import YearlyStats from './travel/YearlyStats';
-import CountriesStats from './travel/CountriesStats';
-import CitiesStats from './travel/CitiesStats';
 ---
 
 <div class="relative">
@@ -58,12 +55,7 @@ import CitiesStats from './travel/CitiesStats';
           <RecentTrips client:only="react" recentVisits={[]} />
       </div>
       
-      <!-- Stats Grid -->
-      <!-- <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
-        <div id="countries-stats">
-          <CountriesStats client:only="react" countriesData={[]} />
-        </div>
-      </div> -->
+      <!-- Additional components can be added here in the future -->
     </div>
   </div>
 </div>
@@ -72,22 +64,12 @@ import CitiesStats from './travel/CitiesStats';
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-<!-- Custom CSS to fix Leaflet z-index issues -->
+<!-- Custom CSS for Leaflet map -->
 <style is:global>
-  /* Fix for Leaflet map z-index issues */
-  .leaflet-pane,
-  .leaflet-tile,
-  .leaflet-marker-icon,
-  .leaflet-marker-shadow,
-  .leaflet-tile-container,
-  .leaflet-pane > svg,
-  .leaflet-pane > canvas,
-  .leaflet-zoom-box,
-  .leaflet-image-layer,
-  .leaflet-layer {
-    z-index: 1 !important;
-  }
-  
+  /* Fix Leaflet z-index issues */
+  .leaflet-pane, .leaflet-tile, .leaflet-marker-icon, .leaflet-marker-shadow,
+  .leaflet-tile-container, .leaflet-pane > svg, .leaflet-pane > canvas,
+  .leaflet-zoom-box, .leaflet-image-layer, .leaflet-layer { z-index: 1 !important; }
   .leaflet-overlay-pane { z-index: 2 !important; }
   .leaflet-shadow-pane { z-index: 3 !important; }
   .leaflet-marker-pane { z-index: 4 !important; }
@@ -96,7 +78,7 @@ import CitiesStats from './travel/CitiesStats';
   .leaflet-control { z-index: 7 !important; }
   .leaflet-top, .leaflet-bottom { z-index: 8 !important; }
   
-  /* Custom styles for travel stats */
+  /* Card styling */
   .stats-card {
     background-color: var(--bubble-bg);
     border-radius: var(--radius-md);
@@ -109,26 +91,12 @@ import CitiesStats from './travel/CitiesStats';
     transform: translateY(-5px);
   }
   
-  /* Override Tremor styles to match website theme */
-  :root {
-    --tremor-background: var(--bubble-bg) !important;
-    --tremor-border: rgba(255, 255, 255, 0.1) !important;
-    --tremor-ring: var(--accent-color) !important;
-    --tremor-primary: var(--accent-color) !important;
-    --tremor-brand: var(--secondary-color) !important;
+  /* Popup styling */
+  .leaflet-popup {
+    z-index: 1000 !important;
+    margin-bottom: 60px !important;
   }
   
-  /* Style popup content */
-  .popup-content h3 {
-    color: var(--text-dark);
-    margin-bottom: 0.5rem;
-  }
-  
-  .popup-content p {
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Style map tooltips */
   .leaflet-popup-content-wrapper {
     border-radius: var(--radius-sm) !important;
     padding: 0.5rem !important;
@@ -140,68 +108,34 @@ import CitiesStats from './travel/CitiesStats';
   .leaflet-popup-content {
     margin: 0 !important;
     line-height: 1.4 !important;
-    overflow: visible !important;
   }
   
-  .leaflet-popup-tip {
-    box-shadow: var(--card-shadow) !important;
-  }
-  
-  /* Make sure popups are above other elements */
-  .leaflet-popup {
-    z-index: 1000 !important;
-  }
-  
-  /* Adjust popup positioning to prevent cutoff */
-  .leaflet-popup {
-    margin-bottom: 60px !important; /* Add more space at the bottom */
-  }
-  
-  /* Adjust popup anchor for better positioning */
-  .leaflet-container a.leaflet-popup-close-button {
-    top: 5px !important;
-    right: 5px !important;
-    padding: 6px 6px !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    border-radius: 50% !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 18px !important;
-    color: #333 !important;
-  }
-  
-  /* Improve popup appearance */
   .travel-popup .leaflet-popup-content-wrapper {
     background-color: rgba(255, 255, 255, 0.98) !important;
     backdrop-filter: blur(5px) !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
   }
   
   .dark .travel-popup .leaflet-popup-content-wrapper {
-    background-color: rgba(30, 41, 59, 0.98) !important; /* Darker blue-gray */
+    background-color: rgba(30, 41, 59, 0.98) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
   }
   
-  /* Improve popup content styling */
+  /* Popup content */
   .popup-content h3 {
+    color: var(--text-dark);
     font-weight: 600 !important;
     margin-bottom: 0.5rem !important;
   }
   
-  .dark .popup-content h3 {
-    color: #e2e8f0 !important; /* Light gray for dark mode */
+  .popup-content p {
+    margin-bottom: 0.5rem;
   }
   
-  .dark .popup-content p {
-    color: #cbd5e1 !important; /* Lighter gray for dark mode */
-  }
+  .dark .popup-content h3 { color: #e2e8f0 !important; }
+  .dark .popup-content p { color: #cbd5e1 !important; }
   
-  /* Mobile-friendly adjustments */
+  /* Mobile adjustments */
   @media (max-width: 640px) {
     .leaflet-popup-content-wrapper {
       max-width: 90vw !important;
@@ -211,44 +145,23 @@ import CitiesStats from './travel/CitiesStats';
     .leaflet-popup {
       margin-bottom: 40px !important;
     }
-    
-    /* Larger touch targets for mobile */
-    .leaflet-container a.leaflet-popup-close-button {
-      padding: 8px 8px !important;
-      width: 30px !important;
-      height: 30px !important;
-      font-size: 20px !important;
-    }
   }
   
   /* Ensure fullscreen image viewer is above everything */
   .fixed.inset-0.z-50 {
     z-index: 9999 !important;
   }
-  
-  .map-tooltip .leaflet-popup-content-wrapper {
-    background-color: rgba(255, 255, 255, 0.95);
-  }
-  
-  .dark .map-tooltip .leaflet-popup-content-wrapper {
-    background-color: rgba(42, 69, 53, 0.95);
-    color: var(--text-color);
-  }
 </style>
 
 <script is:inline>
-  // Function to initialize travel data
   async function initializeTravelData() {
-    // Get DOM elements
     const loadingIndicator = document.getElementById('loading-indicator');
     const errorMessage = document.getElementById('error-message');
     const errorText = document.getElementById('error-text');
     const statsContainer = document.getElementById('stats-container');
     
     try {
-      // Fetch data from the API
       const apiUrl = '/api/alexapi/api/v1/travel/data';
-      
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
@@ -256,110 +169,62 @@ import CitiesStats from './travel/CitiesStats';
       }
       
       const data = await response.json();
-      
-      // Process the data for the map
       const locations = data.locations || [];
       
-      // Process locations for the map - add /api/alexapi to image URLs
-      const travelLocations = locations.map(location => {
-        const processedVisits = location.visits.map(visit => {
-          const processedImageUrls = visit.image_urls?.map(url => `/api/alexapi${url}`);
-          
-          return {
-            id: visit.id,
-            date: visit.date,
-            notes: visit.notes,
-            imageUrls: processedImageUrls
-          };
-        });
-        
-        return {
-          id: location.id,
-          city: location.city,
-          country: location.country,
-          flag: location.flag,
-          coordinates: location.coordinates,
-          visits: processedVisits
-        };
-      });
-      
-      // Process country data for the chart
-      const countriesData = (data.stats?.country_summaries || []).map(country => ({
-        name: country.country,
-        value: country.visits_count,
-        flag: locations.find(loc => loc.country === country.country)?.flag || "🏳️"
-      }));
-      
-      // Process city data for the chart
-      const citiesData = [];
-      locations.forEach(location => {
-        const existingCity = citiesData.find(city => city.name === location.city);
-        if (existingCity) {
-          existingCity.value += location.visits.length;
-        } else {
-          citiesData.push({
-            name: location.city,
-            value: location.visits.length,
-            country: location.country,
-            flag: location.flag
-          });
-        }
-      });
-      
-      // Process recent visits
-      const recentVisits = data.recent_visits || [];
-      const processedRecentVisits = recentVisits.map(visit => {
-        return {
-          location_id: visit.location_id,
-          city: visit.city,
-          country: visit.country,
-          flag: visit.flag,
-          coordinates: visit.coordinates,
-          visit_id: visit.visit_id,
+      // Process locations and add API path to images
+      const travelLocations = locations.map(location => ({
+        id: location.id,
+        city: location.city,
+        country: location.country,
+        flag: location.flag,
+        coordinates: location.coordinates,
+        visits: location.visits.map(visit => ({
+          id: visit.id,
           date: visit.date,
           notes: visit.notes,
           imageUrls: visit.image_urls?.map(url => `/api/alexapi${url}`)
-        };
-      });
+        }))
+      }));
       
-      // Create a custom event with all the data
-      const travelDataEvent = new CustomEvent('travel-data-ready', {
-        detail: {
-          travelLocations: travelLocations,
-          summary: data.stats || {},
-          yearlyStats: data.stats?.yearly_summaries || [],
-          countriesData: countriesData,
-          citiesData: citiesData,
-          recentVisits: processedRecentVisits
-        },
-        bubbles: true
-      });
+      // Process recent visits
+      const processedRecentVisits = (data.recent_visits || []).map(visit => ({
+        location_id: visit.location_id,
+        city: visit.city,
+        country: visit.country,
+        flag: visit.flag,
+        coordinates: visit.coordinates,
+        visit_id: visit.visit_id,
+        date: visit.date,
+        notes: visit.notes,
+        imageUrls: visit.image_urls?.map(url => `/api/alexapi${url}`)
+      }));
       
-      
-      // Dispatch the event to the document so all components can listen for it
-      // Add a small delay to ensure components are mounted
+      // Create and dispatch event with data
       setTimeout(() => {
-        document.dispatchEvent(travelDataEvent);
+        document.dispatchEvent(new CustomEvent('travel-data-ready', {
+          detail: {
+            travelLocations,
+            summary: data.stats || {},
+            yearlyStats: data.stats?.yearly_summaries || [],
+            recentVisits: processedRecentVisits
+          },
+          bubbles: true
+        }));
       }, 500);
       
-      // Show the content and hide the loading indicator
-      if (loadingIndicator) loadingIndicator.classList.add('hidden');
-      if (statsContainer) statsContainer.classList.remove('hidden');
+      // Update UI
+      loadingIndicator?.classList.add('hidden');
+      statsContainer?.classList.remove('hidden');
     } catch (error) {
       console.error('Error loading travel stats:', error);
+      loadingIndicator?.classList.add('hidden');
       
-      // Show error message and hide loading indicator
-      if (loadingIndicator) loadingIndicator.classList.add('hidden');
-      if (errorMessage) {
-        if (errorText) errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading travel stats';
+      if (errorMessage && errorText) {
+        errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading travel stats';
         errorMessage.classList.remove('hidden');
       }
     }
   }
 
-  // Initialize when the page loads
-  document.addEventListener('astro:page-load', initializeTravelData);
-  
-  // Also initialize after view transitions
-  document.addEventListener('astro:after-swap', initializeTravelData);
+  document.addEventListener('DOMContentLoaded', initializeTravelData);
 </script>

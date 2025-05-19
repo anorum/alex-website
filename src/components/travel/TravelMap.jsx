@@ -3,6 +3,38 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
+// CSS for map markers with hover effect
+const markerStyles = `
+  .flag-marker {
+    font-size: 24px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+  
+  .flag-marker:hover {
+    transform: scale(1.15);
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-color, #4a8cff);
+    z-index: 1000 !important;
+  }
+`;
+
+// Add styles to document head
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = markerStyles;
+  document.head.appendChild(styleElement);
+}
+
 // Fix for default marker icons in react-leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -149,7 +181,7 @@ const ImageCarousel = ({ images, locationName, initialIndex = 0 }) => {
 // Custom marker icon with country flag
 const createFlagIcon = (flag) => {
   return L.divIcon({
-    html: `<div style="font-size: 24px; background-color: rgba(255, 255, 255, 0.7); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">${flag}</div>`,
+    html: `<div class="flag-marker">${flag}</div>`,
     className: 'flag-icon',
     iconSize: [36, 36],
     iconAnchor: [18, 18],

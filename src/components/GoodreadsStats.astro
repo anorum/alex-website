@@ -64,60 +64,49 @@ import Authors from './goodreads/Authors';
 </div>
 
 <script is:inline>
-  // Initialize when the page loads
-  document.addEventListener('astro:page-load', async function() {
-    // Get DOM elements
+  document.addEventListener('DOMContentLoaded', async function() {
     const loadingIndicator = document.getElementById('reading-loading-indicator');
     const errorMessage = document.getElementById('reading-error-message');
     const errorText = document.getElementById('reading-error-text');
     const statsContainer = document.getElementById('reading-stats-container');
     
     try {
-      // Fetch data from the API
-      const apiUrl = '/api/alexapi/api/v1/books/data';
-      const response = await fetch(apiUrl);
+      const response = await fetch('/api/alexapi/api/v1/books/data');
       
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
       }
       
       const data = await response.json();
-      
-      // Process the data
       const books = data.books || [];
       const stats = data.stats || {};
       
-      // Create a custom event with all the data
-      const booksDataEvent = new CustomEvent('books-data-ready', {
-        detail: {
-          books: books,
-          summary: stats,
-          booksPerYear: stats.books_per_year || {},
-          currentlyReading: stats.currently_reading || [],
-          recentlyRead: stats.recently_read || [],
-          topRatedBooks: stats.top_rated_books || [],
-          topAuthors: stats.top_authors || []
-        },
-        bubbles: true
-      });
-      
-      
-      // Dispatch the event to the document so all components can listen for it
-      // Add a small delay to ensure components are mounted
+      // Dispatch event with data
       setTimeout(() => {
-        document.dispatchEvent(booksDataEvent);
+        document.dispatchEvent(new CustomEvent('books-data-ready', {
+          detail: {
+            books: books,
+            summary: stats,
+            booksPerYear: stats.books_per_year || {},
+            currentlyReading: stats.currently_reading || [],
+            recentlyRead: stats.recently_read || [],
+            topRatedBooks: stats.top_rated_books || [],
+            topAuthors: stats.top_authors || []
+          },
+          bubbles: true
+        }));
       }, 500);
       
-      // Show the content and hide the loading indicator
-      if (loadingIndicator) loadingIndicator.classList.add('hidden');
-      if (statsContainer) statsContainer.classList.remove('hidden');
+      // Update UI
+      loadingIndicator?.classList.add('hidden');
+      statsContainer?.classList.remove('hidden');
     } catch (error) {
       console.error('Error loading reading stats:', error);
+      loadingIndicator?.classList.add('hidden');
       
-      // Show error message and hide loading indicator
-      if (loadingIndicator) loadingIndicator.classList.add('hidden');
-      if (errorMessage) {
-        if (errorText) errorText.textContent = error instanceof Error ? error.message : 'Unknown error loading reading stats';
+      if (errorMessage && errorText) {
+        errorText.textContent = error instanceof Error ? 
+          error.message : 'Unknown error loading reading stats';
         errorMessage.classList.remove('hidden');
       }
     }

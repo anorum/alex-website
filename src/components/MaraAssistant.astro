@@ -34,7 +34,7 @@
     if (chatButton) {
       chatButton.addEventListener('click', () => {
         // Find the chatbot button in the DOM and click it
-        const chatbotButton = document.querySelector('#chainlit-copilot')?.shadowRoot?.querySelector('button');
+        const chatbotButton = document.querySelector('#chainlit-copilot')?.shadowRoot?.querySelector('#chainlit-copilot-button') as HTMLButtonElement;
         if (chatbotButton) {
           chatbotButton.click();
         }

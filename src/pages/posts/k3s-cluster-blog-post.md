@@ -1,138 +1,82 @@
 ---
 layout: ../../layouts/BlogPost.astro
-title: "Building My Home Kubernetes Cluster with Raspberry Pi and k3s"
-description: "How I built a powerful, energy-efficient home server platform using Raspberry Pi hardware and k3s Kubernetes."
+title: "My Raspberry Pi Kubernetes Cluster with k3s"
+description: "How I run a small self-hosted Kubernetes cluster at home using Raspberry Pis and k3s."
 pubDate: 2023-05-14
 author: "Alex Norum"
-image: "/public/images/blog/k3s-cluster.JPG"
+image: "/images/blog/k3s-cluster.JPG"
 tags: ["kubernetes", "k3s", "raspberry pi", "homelab", "self-hosting"]
-category: "tutorial"
+category: "homelab"
 ---
 
-# Building My Home Kubernetes Cluster with Raspberry Pi and k3s
+# My Raspberry Pi Kubernetes Cluster with k3s
 
-As a tech enthusiast, I've always been fascinated by the idea of running my own home server. After experimenting with various solutions, I decided to build a proper Kubernetes cluster using Raspberry Pi hardware and k3s. In this post, I'll walk through my setup, how it works, and what I use it for.
+At some point, I got tired of juggling a bunch of $10-a-month services just to run side projects, a media server, or my personal site. I’ve worked with Kubernetes a lot on the software and ops side, but never really got hands-on with the hardware. So I figured, why not build a small cluster myself?
 
-## Hardware Setup
+This is what I ended up with: a lightweight, low-power Kubernetes cluster made from Raspberry Pis running [k3s](https://k3s.io). It handles everything from internal tools to hobby projects—and it’s fun to maintain.
 
-My cluster consists of:
+## Why I Built It
 
-- **Master Node**: Raspberry Pi 4 with:
-  - 512GB SSD (for application workloads)
-  - 12TB HDD (for media storage)
-- **Worker Nodes**: 2x Raspberry Pi 4
-- **Network**: Wired gigabit via switch
+The motivation was pretty simple:
 
-This hardware configuration gives me enough power to run all my home services while keeping power consumption and noise to a minimum. The master node handles the control plane and also serves as the primary storage node with the attached drives.
+- I wanted more control over the stuff I run.
+- I didn’t want to keep paying for cloud VMs for every small project.
+- I was curious about managing the hardware layer of Kubernetes.
 
-## Cluster Installation
+I wasn’t aiming to replicate a production setup—just something reliable, self-contained, and educational.
 
-Setting up the cluster was streamlined using Ansible for automation. The process involved:
+## The Hardware
 
-1. **Preparing the Raspberry Pis**:
-   - Configuring cgroups for Kubernetes
-   - Enabling PCIe for the external storage on the master node
-   - Setting up the necessary boot parameters
+The cluster is made up of three Raspberry Pi 4s:
 
-2. **Installing k3s**:
-   - On the master node: `k3s server` with Traefik and ServiceLB disabled (replaced with Nginx Ingress and MetalLB)
-   - On worker nodes: `k3s agent` connecting to the master
+- One acts as the control plane node.
+- Two serve as workers.
+- Everything’s wired through a gigabit switch.
 
-3. **Configuring External Storage**:
-   - Mounting the 512GB SSD at `/mnt/ssd` for application data
-   - Mounting the 12TB HDD at `/mnt/hd` for media storage
+The control node is connected to a 512GB SSD (for fast workloads) and a 12TB HDD (for media). This split lets me separate performance-sensitive stuff like databases from bulk storage.
 
-The entire setup is automated with Ansible playbooks, making it reproducible and easy to maintain:
+## Software Stack
 
-```bash
-# Initial k3s setup
-ansible-playbook -i inventory/hosts.yaml playbook/install-k3s.yaml
+Here’s what powers the cluster:
 
-# Cloudflared deployment for secure remote access
-ansible-playbook -i inventory/hosts.yaml playbook/deploy-cloudflared.yaml
-```
+- **k3s**: A slimmed-down Kubernetes distribution. It’s easy to install and works well on ARM.
+- **MetalLB**: Provides local IPs for services.
+- **Nginx Ingress**: Routes traffic internally.
+- **Cloudflare Tunnel**: Handles external traffic without opening up my home network.
+- **Argo CD**: Keeps everything in sync with a Git repo.
+- **Sealed Secrets**: Lets me store secrets safely in Git.
 
-## Core Infrastructure
+The whole setup is automated using Ansible, so if something goes sideways, I can rebuild the cluster without much hassle.
 
-The cluster is built on several key components:
+## Storage Setup
 
-### Kubernetes Base
-- **k3s**: A lightweight Kubernetes distribution perfect for Raspberry Pi
-- **Argo CD**: Implementing GitOps for declarative configuration management
-- **Sealed Secrets**: Securely storing sensitive information in Git
+Storage is split across two drives:
 
-### Networking
-- **MetalLB**: Providing load balancing on bare metal (IP range: 192.168.1.150-180)
-- **Nginx Ingress**: Handling HTTP routing and SSL termination
-- **Cloudflared**: Creating secure tunnels to access services remotely without opening ports
+- The SSD runs databases and apps that need faster I/O.
+- The HDD stores large media files and backups.
 
-### Storage
-- **Local Path Provisioner**: For standard application storage
-- **Custom StorageClasses**: For the SSD (2TB) and HDD (12TB) with local persistent volumes
+I use local persistent volumes and define custom StorageClasses in Kubernetes to make sure workloads end up on the right disk.
 
-## Applications and Use Cases
+## What It Hosts
 
-My cluster runs a variety of services that I use daily:
+I run a mix of self-hosted tools, including:
 
-### Media Management
-- **Jellyfin**: Open-source media server for movies, TV shows, and music
-- **Sonarr/Radarr/Readarr**: Automated media collection for TV, movies, and books
-- **Prowlarr**: Indexer management
-- **Qbittorrent**: Download management
-- **Kavita**: E-book and comic management
-- **Audiobookshelf**: Audiobook server
+- **Media**: Jellyfin, Sonarr, Kavita, Audiobookshelf
+- **Home Automation**: Home Assistant, AdGuard
+- **Utilities**: Mealie (recipes), Uptime Kuma (monitoring), Homepage (dashboard)
+- **Auth**: Authentik for SSO
+- **Projects**: My own APIs and bots (like Marabot), plus a lightweight AI model server (Ollama). Which to be honest works horribly on Pis :sweat_smile:, but was fun none the less.
 
-### Home Automation
-- **Home Assistant**: Controlling smart home devices and automation
-- **AdGuard**: Network-wide ad blocking and DNS filtering
+All services run in the cluster and are accessible either locally or through secure tunnels. The setup is stable and keeps everything I care about under my control.
 
-### Productivity
-- **Mealie**: Recipe management and meal planning
-- **Uptime Kuma**: Monitoring service availability
-- **Homepage**: Dashboard for all services
-- **Authentik**: Single sign-on and identity management
+## Networking
 
-### Custom Applications
-- **Alex-API**: My personal API service
-- **Marabot**: Custom bot application
-- **Ollama**: Self-hosted AI model server
+- **Internal access** uses MetalLB and local DNS.
+- **External access** goes through Cloudflare Tunnel, routing subdomains to the right service via Nginx Ingress.
+- **Authentication** is handled with Authentik for apps that support it.
 
-## Network Architecture
+## Final Thoughts
 
-The network is designed with security in mind:
+This project gave me a chance to explore Kubernetes from a different angle—beyond YAML and cloud consoles. It’s been useful, affordable, and fun to maintain.
 
-1. **Internal Access**: Services are available on my home network via MetalLB IPs or local DNS names
-2. **External Access**: Cloudflare Tunnel provides secure remote access without exposing ports to the internet
-3. **Authentication**: Authentik provides SSO across services that support it
-
-The Cloudflare Tunnel configuration routes all `*.alexnorum.com` subdomains to the Nginx Ingress controller, which then routes to the appropriate service based on the hostname.
-
-## Storage Strategy
-
-Storage is organized based on performance and capacity needs:
-
-- **SSD Storage (512GB)**: Used for databases, configuration files, and applications that benefit from faster I/O
-- **HDD Storage (12TB)**: Used primarily for media files, backups, and other large datasets
-
-This is implemented in Kubernetes using local persistent volumes with specific storage classes:
-
-- `local-ssd-storage`: For performance-sensitive workloads
-- `local-hdd-storage`: For capacity-oriented storage needs
-
-## Maintenance and Management
-
-The entire cluster configuration is stored in Git and deployed using Argo CD, following GitOps principles. This means:
-
-1. All changes are made to the Git repository
-2. Argo CD automatically synchronizes the cluster state with the repository
-3. Version control provides history and rollback capabilities
-
-Monitoring is handled through Prometheus for metrics and Uptime Kuma for service availability checks.
-
-## Conclusion
-
-Building this Raspberry Pi k3s cluster has been an incredibly rewarding project. It provides me with a powerful, energy-efficient home server platform that runs all the services I need while giving me the flexibility to experiment with new applications.
-
-The combination of Kubernetes, GitOps, and automation tools makes management surprisingly straightforward, even as the number of services grows. And with the Cloudflare Tunnel setup, I can securely access everything from anywhere without compromising on security.
-
-If you're considering building your own home lab, I highly recommend the Raspberry Pi + k3s approach. It's cost-effective, power-efficient, and provides a great platform for learning modern infrastructure practices while serving practical needs at home.
+If you’ve got a few Raspberry Pis lying around and a bit of curiosity, k3s is a great way to learn more about how modern infrastructure fits together.

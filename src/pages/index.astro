@@ -285,59 +285,59 @@ declare global {
 }
 
 // Intersection Observer for scroll animations
-document.addEventListener('DOMContentLoaded', () => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('animate-fade-in-up');
-        (entry.target as HTMLElement).style.opacity = '1';
-      }
-    });
-  }, {
-    threshold: 0.1
-  });
-  
-  // Observe all sections
-  document.querySelectorAll('section').forEach(section => {
-    observer.observe(section);
-  });
-  
-  // Specifically observe timeline items
-  setTimeout(() => {
-    document.querySelectorAll('.animate-fade-in-up.opacity-0').forEach(item => {
-      observer.observe(item);
-    });
-  }, 100); // Small delay to ensure DOM is fully loaded
-  
-  // Check for section parameter in URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const sectionParam = urlParams.get('section');
-  
-  if (sectionParam) {
-    // If we have a section parameter, switch to that section
-    console.log('Found section parameter:', sectionParam);
-    
-    // Store the section in session storage
-    sessionStorage.setItem('rpg-active-section', sectionParam);
-    
-    // If we have a switchRPGSection function, call it
-    if (typeof window.switchRPGSection === 'function') {
-      setTimeout(() => {
-        window.switchRPGSection(sectionParam);
-      }, 500); // Increased delay to ensure DOM and scripts are fully loaded
-    } else {
-      console.log('switchRPGSection function not found in global scope');
-      
-      // Fallback: Try again after a longer delay
-      setTimeout(() => {
-        if (typeof window.switchRPGSection === 'function') {
-          window.switchRPGSection(sectionParam);
-          console.log('Found switchRPGSection function after delay');
-        } else {
-          console.error('switchRPGSection function still not found after delay');
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in-up');
+          (entry.target as HTMLElement).style.opacity = '1';
         }
-      }, 1000);
+      });
+    }, {
+      threshold: 0.1
+    });
+    
+    // Observe all sections
+    document.querySelectorAll('section').forEach(section => {
+      observer.observe(section);
+    });
+    
+    // Specifically observe timeline items
+    setTimeout(() => {
+      document.querySelectorAll('.animate-fade-in-up.opacity-0').forEach(item => {
+        observer.observe(item);
+      });
+    }, 100); // Small delay to ensure DOM is fully loaded
+    
+    // Check for section parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sectionParam = urlParams.get('section');
+    
+    if (sectionParam) {
+      // If we have a section parameter, switch to that section
+      console.log('Found section parameter:', sectionParam);
+      
+      // Store the section in session storage
+      sessionStorage.setItem('rpg-active-section', sectionParam);
+      
+      // If we have a switchRPGSection function, call it
+      if (typeof window.switchRPGSection === 'function') {
+        setTimeout(() => {
+          window.switchRPGSection(sectionParam);
+        }, 500); // Increased delay to ensure DOM and scripts are fully loaded
+      } else {
+        console.log('switchRPGSection function not found in global scope');
+        
+        // Fallback: Try again after a longer delay
+        setTimeout(() => {
+          if (typeof window.switchRPGSection === 'function') {
+            window.switchRPGSection(sectionParam);
+            console.log('Found switchRPGSection function after delay');
+          } else {
+            console.error('switchRPGSection function still not found after delay');
+          }
+        }, 1000);
+      }
     }
-  }
-});
+  });
 </script>
