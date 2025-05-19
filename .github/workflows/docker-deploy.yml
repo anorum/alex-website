@@ -1,0 +1,65 @@
+name: Deploy to GitHub Container Registry
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      # Generate short SHA for image tag
+      - name: Generate short SHA
+        id: sha
+        run: echo "short_sha=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/alex-website:latest
+            ghcr.io/${{ github.repository_owner }}/alex-website:sha-${{ steps.sha.outputs.short_sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
+      # Update Kubernetes manifests in the homelab repository
+      - name: Checkout K8s repo
+        uses: actions/checkout@v4
+        with:
+          repository: anorum/homelab
+          token: ${{ secrets.K8S_REPO_PAT }}
+          
+      - name: Update image tag in Kustomization
+        run: |
+          cd alex-website
+          # Install kustomize
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          # Update the image tag using kustomize's native command
+          ./kustomize edit set image ghcr.io/anorum/alex-website:latest=ghcr.io/anorum/alex-website:sha-${{ steps.sha.outputs.short_sha }}
+          
+          # Commit and push changes
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add kustomization.yaml
+          git commit -m "Update alex-website image to sha-${{ steps.sha.outputs.short_sha }}"
+          git push
