@@ -13,9 +13,9 @@ dist
 .astro
 
 # Environment variables
-# We're keeping .env.* out of the Docker image for security
-# But we need .env for the build process
+# We're keeping all .env files out of the Docker image for security
 # Production environment variables should be provided through Kubernetes ConfigMap
+.env
 .env.*
 
 # Editor directories and files

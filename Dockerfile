@@ -30,8 +30,7 @@ COPY --from=build /app/package.json /app/package.json
 # Set environment variables
 ENV HOST=0.0.0.0
 ENV PORT=4321
-# Copy .env file for build-time environment variables
-COPY .env /app/.env
+# Environment variables will be provided by Kubernetes at runtime
 
 # Expose port
 EXPOSE 4321
