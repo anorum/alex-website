@@ -52,7 +52,7 @@ jobs:
           
       - name: Update image tag in Kustomization
         run: |
-          cd alex-website
+          cd website
           # Install kustomize
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
           # Update the image tag using kustomize's native command
