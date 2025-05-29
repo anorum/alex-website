@@ -31,13 +31,73 @@
 <script>
   document.addEventListener('astro:page-load', () => {
     const chatButton = document.getElementById('chat-with-mara');
+    let chainlitReady = false;
+    
+    // Listen for chainlit ready event
+    document.addEventListener('chainlit-ready', () => {
+      chainlitReady = true;
+    });
+    
     if (chatButton) {
       chatButton.addEventListener('click', () => {
-        // Find the chatbot button in the DOM and click it
-        const chatbotButton = document.querySelector('#chainlit-copilot')?.shadowRoot?.querySelector('#chainlit-copilot-button') as HTMLButtonElement;
-        if (chatbotButton) {
-          chatbotButton.click();
+        // Add loading state to button
+        const buttonText = chatButton.querySelector('span');
+        const originalText = buttonText?.textContent;
+        if (buttonText) {
+          buttonText.textContent = 'Opening chat...';
+          chatButton.style.opacity = '0.7';
+          chatButton.style.pointerEvents = 'none';
         }
+
+        // Function to attempt clicking the Chainlit button with retry logic
+        const attemptChatOpen = (retries = 0, maxRetries = 10) => {
+          const host = document.getElementById('chainlit-copilot');
+          const shadowRoot = host?.shadowRoot;
+          const chatbotButton = shadowRoot?.querySelector('#chainlit-copilot-button') as HTMLButtonElement;
+          
+          if (chatbotButton && typeof chatbotButton.click === 'function') {
+            // Success - click the button
+            chatbotButton.click();
+            
+            // Reset button state after a short delay
+            setTimeout(() => {
+              if (buttonText && originalText) {
+                buttonText.textContent = originalText;
+                chatButton.style.opacity = '1';
+                chatButton.style.pointerEvents = 'auto';
+              }
+            }, 500);
+            return;
+          }
+          
+          // If we haven't found the button and have retries left, try again
+          if (retries < maxRetries) {
+            setTimeout(() => {
+              attemptChatOpen(retries + 1, maxRetries);
+            }, 200 + (retries * 100)); // Exponential backoff
+          } else {
+            // Failed to find button after all retries
+            console.warn('Could not find Chainlit chat button after', maxRetries, 'attempts');
+            
+            // Reset button state
+            if (buttonText && originalText) {
+              buttonText.textContent = originalText;
+              chatButton.style.opacity = '1';
+              chatButton.style.pointerEvents = 'auto';
+            }
+            
+            // Show user feedback
+            if (buttonText) {
+              buttonText.textContent = 'Chat unavailable';
+              setTimeout(() => {
+                if (originalText) buttonText.textContent = originalText;
+              }, 2000);
+            }
+          }
+        };
+        
+        // Start the attempt process
+        attemptChatOpen();
       });
     }
   });

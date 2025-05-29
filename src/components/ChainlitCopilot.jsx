@@ -62,6 +62,12 @@ export default function ChainlitCopilot() {
       // Initial mount
       mountChainlit();
       
+      // Dispatch event when Chainlit is ready
+      const chainlitReadyEvent = new CustomEvent('chainlit-ready', {
+        detail: { mounted: true }
+      });
+      document.dispatchEvent(chainlitReadyEvent);
+      
       // Listen for theme changes
       const themeToggleObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -184,13 +190,20 @@ export default function ChainlitCopilot() {
         observer.observe(shadowRoot, { childList: true, subtree: true });
       };
 
+      // Optimized waiting with faster polling and timeout
+      let attempts = 0;
+      const maxAttempts = 50; // 10 seconds max wait time
       const waitForHost = setInterval(() => {
+        attempts++;
         const host = document.getElementById("chainlit-copilot");
         if (host && host.shadowRoot) {
           clearInterval(waitForHost);
           setupCustomizations();
+        } else if (attempts >= maxAttempts) {
+          clearInterval(waitForHost);
+          console.warn('Chainlit host not found after maximum attempts');
         }
-      }, 300);
+      }, 200);
     };
   }, []);
 
