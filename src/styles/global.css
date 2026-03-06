@@ -1,372 +1,106 @@
 @import "tailwindcss";
-@import "flowbite/src/themes/default";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ============================================
+   GLOBAL DESIGN TOKENS
+   ============================================ */
 
-/* Custom styles */
-
-
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Base colors */
-  --color-white: hsla(0, 0%, 100%, 1);
-  --color-white50: hsla(0, 0%, 100%, .5);
-  --color-white20: hsla(0, 0%, 100%, .2);
-  --color-white30: hsla(0, 0%, 100%, .3);
-  --color-backdrop: hsla(45, 17%, 95%, .8);
-  --color-black: hsla(0, 0%, 0%, 1);
-  --color-beige: hsla(36, 31%, 90%, 1);
-  --color-green300: hsla(159, 42%, 88%, 1);
-  --color-green400: hsla(160, 52%, 71%, 1);
-  --color-green500: hsla(172, 95%, 18%, 1);
-  --color-green600: hsla(171, 15%, 35%, 1);
-  --color-green700: hsla(171, 11%, 24%, 1);
-  --color-green800: hsla(158, 23%, 18%, 1);
-  
   /* Typography */
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  
-  /* Spacing */
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 2rem;
-  --spacing-lg: 4rem;
-  --spacing-xl: 8rem;
-  
-  /* Border radius */
+
+  /* Base palette */
+  --color-cream: hsl(38, 30%, 92%);
+  --color-cream-dark: hsl(38, 20%, 88%);
+  --color-green-900: hsl(160, 40%, 16%);
+  --color-green-800: hsl(160, 35%, 22%);
+  --color-green-700: hsl(160, 25%, 30%);
+  --color-green-600: hsl(160, 20%, 38%);
+  --color-green-500: hsl(160, 45%, 28%);
+  --color-green-400: hsl(158, 35%, 50%);
+  --color-green-300: hsl(158, 40%, 70%);
+  --color-green-200: hsl(158, 35%, 82%);
+  --color-green-100: hsl(158, 30%, 90%);
+
+  /* Spacing rhythm */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
+  --space-xl: 5rem;
+  --space-2xl: 8rem;
+
+  /* Radii */
   --radius-sm: 0.5rem;
-  --radius-md: 1rem;
-  --radius-lg: 2rem;
-  --radius-full: 9999px;
-  
-  /* Light mode colors */
-  --bg-color-light: var(--color-beige);
-  --text-color-light: var(--color-green500);
-  --text-secondary-light: var(--color-green600);
-  --text-tertiary-light: var(--color-green700);
-  --accent-color-light: var(--color-green500);
-  --secondary-color-light: var(--color-green400);
-  --tertiary-color-light: var(--color-green300);
-  --bubble-bg-light: rgba(255, 255, 255, 0.7);
-  --card-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --border-color-light: rgba(0, 0, 0, 0.1);
-  
-  /* Dark mode colors */
-  --bg-color-dark: #1a2e24;
-  --text-color-dark: #ffffff;
-  --text-secondary-dark: #e0e0e0;
-  --text-tertiary-dark: #c0c0c0;
-  --accent-color-dark: #77647b;
-  --secondary-color-dark: #8fb996;
-  --tertiary-color-dark: #d1e2c4;
-  --bubble-bg-dark: rgba(255, 255, 255, 0.05);
-  --card-shadow-dark: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --border-color-dark: rgba(255, 255, 255, 0.1);
-  
-  /* Default to light mode */
-  --bg-color: var(--bg-color-light);
-  --text-color: var(--text-color-light);
-  --text-secondary: var(--text-secondary-light);
-  --text-tertiary: var(--text-tertiary-light);
-  --accent-color: var(--accent-color-light);
-  --secondary-color: var(--secondary-color-light);
-  --tertiary-color: var(--tertiary-color-light);
-  --bubble-bg: var(--bubble-bg-light);
-  --card-shadow: var(--card-shadow-light);
-  --border-color: var(--border-color-light);
-  --text-dark: #333333;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  transition: background-color var(--duration-slow) var(--ease-out),
+              color var(--duration-slow) var(--ease-out);
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-body);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Container */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-/* Section */
-.section {
-  padding: 4rem 0;
-}
-
-/* Hero */
-.hero {
-  padding: 4rem 0;
-  text-align: center;
-}
-
-.hero h1 {
-  font-size: 4rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-}
-
-.hero p {
-  font-size: 1.5rem;
-  max-width: 800px;
-  margin: 0 auto;
-  opacity: 0.9;
-}
-
-/* Profile */
-.profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3rem;
-  margin: 4rem 0;
-}
-
-@media (min-width: 768px) {
-  .profile {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-}
-
-.profile-image {
-  border-radius: 50%;
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  border: 5px solid rgba(255, 255, 255, 0.1);
-}
-
-.profile-content {
-  text-align: left;
-}
-
-.profile-content h2 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.profile-content p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.9;
-}
-
-/* Experience */
-.experience-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 3rem 0;
-}
-
-.experience-bubble {
-  background-color: var(--bubble-bg);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: blur(10px);
-  transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.experience-bubble:hover {
-  transform: translateY(-5px);
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-.experience-date {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--accent-color);
-}
-
-.experience-bubble h4 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Skills */
-.skills-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 2rem 0;
-}
-
-.skill-tag {
-  background-color: var(--bubble-bg);
-  border-radius: 2rem;
-  padding: 0.5rem 1.5rem;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.skill-tag:hover {
-  background-color: var(--accent-color);
-  transform: translateY(-3px);
-}
-
-/* Navigation */
-.nav-container {
-  padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  transition: padding 0.3s ease, background-color 0.3s ease;
-}
-
-.nav-container.scrolled {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-}
-
-.standard-links, .rpg-links {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-
-@media (max-width: 640px) {
-  .nav-container {
-    padding: 1.2rem 1rem;
-  }
-  
-  .nav-links {
-    gap: 1rem;
-  }
-  
-  .standard-links, .rpg-links {
-    gap: 0.75rem;
-  }
-}
-
-.nav-link {
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  background-color: var(--bubble-bg);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  white-space: nowrap;
-}
-
-@media (max-width: 640px) {
-  .nav-link {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-  }
-}
-
-.nav-link:hover {
-  background-color: var(--accent-color);
-  color: var(--color-white)
-}
-
-/* Active state moved to theme-specific CSS files for better control */
-
-.theme-controls {
-  margin-left: 1rem;
-}
-
-@media (max-width: 640px) {
-  .theme-controls {
-    margin-left: 0.5rem;
-  }
-}
-
-/* Footer */
-.footer {
-  padding: 3rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Typography - Base heading styles with theme variables */
+/* Headings use Space Grotesk */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-family: var(--font-heading);
   font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 1rem;
+  line-height: 1.15;
   color: var(--text-color);
-  transition: color 0.3s ease, font-family 0.3s ease;
+  letter-spacing: -0.02em;
 }
 
-h1 {
-  font-size: 3.5rem;
-  color: var(--text-color);
+/* ============================================
+   THEME SWITCHING (layout-level)
+   ============================================ */
+
+.theme-standard .when-rpg { display: none !important; }
+.theme-rpg .when-standard { display: none !important; }
+
+/* ============================================
+   SCROLL REVEAL ANIMATIONS
+   ============================================ */
+
+.reveal-item {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
-h2 {
-  font-size: 2.5rem;
-  color: var(--text-color);
+.reveal-item.animate-reveal {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-h3 {
-  font-size: 2rem;
-  color: var(--text-color);
-}
-
-h4 {
-  font-size: 1.5rem;
-  color: var(--text-color);
-}
-
-h5 {
-  font-size: 1.25rem;
-  color: var(--text-color);
-}
-
-h6 {
-  font-size: 1rem;
-  color: var(--text-color);
-}
-
-/* Heading variants */
-.section-title {
-  color: var(--accent-color);
-  margin-bottom: 1.5rem;
-}
-
-.card-title {
-  color: var(--text-color);
-  margin-bottom: 0.75rem;
-}
-
-.subtitle {
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-/* Animations */
-.animate-fade-in {
-  animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
+/* Page entrance */
+@keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -374,123 +108,74 @@ h6 {
   }
 }
 
-/* Dark mode */
-.dark {
-  --bg-color: var(--bg-color-dark);
-  --text-color: var(--text-color-dark);
-  --text-secondary: var(--text-secondary-dark);
-  --text-tertiary: var(--text-tertiary-dark);
-  --accent-color: var(--accent-color-dark);
-  --secondary-color: var(--secondary-color-dark);
-  --tertiary-color: var(--tertiary-color-dark);
-  --bubble-bg: var(--bubble-bg-dark);
-  --card-shadow: var(--card-shadow-dark);
-  --border-color: var(--border-color-dark);
+.animate-page-enter {
+  animation: pageEnter 0.6s var(--ease-out) both;
 }
 
-/* Content container */
-#content-container {
-  flex: 1;
-  width: 100%;
-  margin: 0 auto;
-  padding: 5rem 1rem 2rem; /* Added top padding to account for fixed navigation */
+/* Stagger children utility */
+.stagger-children > :nth-child(1) { --reveal-delay: 0ms; }
+.stagger-children > :nth-child(2) { --reveal-delay: 80ms; }
+.stagger-children > :nth-child(3) { --reveal-delay: 160ms; }
+.stagger-children > :nth-child(4) { --reveal-delay: 240ms; }
+.stagger-children > :nth-child(5) { --reveal-delay: 320ms; }
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-muted {
+  color: var(--text-secondary);
 }
 
-/* Chart responsiveness */
-[id$="-chart"] {
-  width: 100%;
-  height: 100%;
-  overflow: hidden !important;
-  position: relative;
+.text-accent-color {
+  color: var(--accent-color);
 }
 
-/* ApexCharts responsive fixes */
-.apexcharts-canvas {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important; /* Ensure it doesn't exceed container */
-  position: relative !important;
-  left: 0 !important;
+.bg-accent-color\/10 {
+  background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
-/* Chart container fixes */
-.chart-container {
-  overflow-x: hidden !important;
-  max-width: 100%;
-  width: 100%;
-  position: relative;
+.bg-secondary-color\/10 {
+  background-color: color-mix(in srgb, var(--secondary-color) 10%, transparent);
 }
 
-/* Stats page specific fixes */
-.stats-card, 
-.spotify-card,
-.principle-card {
-  overflow: hidden !important;
-  max-width: 100%;
-  position: relative;
+.bg-tertiary-color\/10 {
+  background-color: color-mix(in srgb, var(--tertiary-color) 10%, transparent);
 }
 
-/* Fix for chart containers */
-.chart-container {
-  overflow: hidden !important;
-  max-width: 100%;
-  width: 100%;
+.bg-bubble-bg {
+  background-color: var(--bubble-bg);
 }
 
-/* Summary chart specific fixes */
-#books-per-year-chart,
-#pages-per-year-chart,
-#countries-chart,
-#cities-chart,
-#visits-chart {
-  overflow: hidden !important;
-  max-width: 100% !important;
+.border-border-color {
+  border-color: var(--border-color);
 }
 
-/* Additional chart fixes */
-.stats-card [id$="-chart"] {
-  overflow: hidden !important;
+.text-secondary-color {
+  color: var(--secondary-color);
 }
 
-/* Fix for chart containers in summary components */
-#books-per-year-chart,
-#pages-per-year-chart,
-#countries-chart,
-#cities-chart,
-#visits-chart {
-  overflow: hidden !important;
+.text-tertiary-color {
+  color: var(--tertiary-color);
 }
 
-/* Fix for ApexCharts elements */
-.apexcharts-canvas {
-  overflow: hidden !important;
+/* ============================================
+   INTERACTIVE STATES
+   ============================================ */
+
+/* Card hover elevation */
+[style*="card-shadow"]:hover {
+  box-shadow: var(--card-shadow-hover);
 }
 
-/* Fix for ApexCharts tooltip */
-.apexcharts-tooltip {
-  max-width: 200px;
-  overflow-wrap: break-word;
+/* Smooth focus outlines */
+:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
 }
 
-/* Fix for mobile tables */
-@media (max-width: 640px) {
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-    width: 100%;
-    max-width: 100%;
-  }
-  
-  .max-w-[150px] {
-    max-width: 100px !important;
-  }
+/* Selection color */
+::selection {
+  background-color: color-mix(in srgb, var(--accent-color) 25%, transparent);
+  color: var(--text-color);
 }
-
-/* Ensure all containers respect viewport width */
-.container {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* End of global styles */

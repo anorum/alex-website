@@ -81,39 +81,11 @@
 }
 
 /* RPG Theme Container Width */
-.theme-rpg .container,
-.theme-rpg #content-container,
-.theme-rpg main,
-.theme-rpg .ff7-menu,
-.theme-rpg .rpg-hero,
-.theme-rpg .rpg-what-i-do,
 .theme-rpg .rpg-container {
-  max-width: 1400px !important; /* Wider than standard theme */
-  margin-left: auto !important;
-  margin-right: auto !important;
-  width: 100% !important;
-}
-
-/* Ensure RPG containers have proper padding */
-.theme-rpg .container,
-.theme-rpg #content-container {
-  padding-left: 1rem !important;
-  padding-right: 1rem !important;
-}
-
-@media (min-width: 768px) {
-  .theme-rpg .container,
-  .theme-rpg #content-container {
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
-  }
-}
-
-/* Override any max-width constraints in child components */
-.theme-rpg .rpg-container .ff7-menu,
-.theme-rpg .rpg-container .rpg-section,
-.theme-rpg .rpg-container .ff7-menu-content {
-  max-width: 100% !important;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 /* Force all text elements to use RPG theme colors */
@@ -584,49 +556,51 @@
   font-size: 0.8rem;
 }
 
-/* Mara Assistant */
-.theme-rpg .mara-container {
-  background-color: var(--ff7-menu-bg);
-  border: var(--menu-border);
-  padding: 1rem;
+/* ============================================
+   RPG-THEMED TRAVEL MAP (FF7 World Map Style)
+   ============================================ */
+
+/* Pixelation effect for map tiles */
+.theme-rpg .leaflet-container {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: saturate(1.15) contrast(1.1);
 }
 
-.theme-rpg .mara-header {
-  background-color: var(--ff7-blue);
+.theme-rpg .leaflet-tile {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* FF7 styled popups */
+.theme-rpg .leaflet-popup-content-wrapper {
+  background: var(--ff7-menu-bg);
+  border: 2px solid var(--ff7-border);
+  border-radius: 0;
   color: var(--ff7-text);
-  padding: 0.5rem;
-  border-bottom: var(--menu-border);
-  margin: -1rem -1rem 1rem -1rem;
-  text-align: center;
-  font-size: 1rem;
-  text-transform: uppercase;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
 }
 
-.theme-rpg .mara-message {
-  background-color: rgba(0, 0, 0, 0.3);
+.theme-rpg .leaflet-popup-tip {
+  background: var(--ff7-blue-dark);
   border: 1px solid var(--ff7-border);
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  color: var(--ff7-text);
-  font-size: 0.8rem;
 }
 
-/* Theme Selector */
-.theme-rpg .theme-selector {
-  display: flex;
-  gap: 0.25rem;
+.theme-rpg .leaflet-popup-close-button {
+  color: var(--ff7-text-highlight);
 }
 
-.theme-rpg .theme-btn {
-  background-color: var(--ff7-blue);
-  color: var(--ff7-text);
+/* Map controls styling */
+.theme-rpg .leaflet-control-zoom a {
+  background: var(--ff7-menu-bg);
   border: 1px solid var(--ff7-border);
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
+  color: var(--ff7-text);
 }
 
-.theme-rpg .theme-btn.active {
-  background-color: var(--ff7-blue-light);
+.theme-rpg .leaflet-control-zoom a:hover {
+  background: var(--ff7-blue);
   color: var(--ff7-text-highlight);
 }

@@ -1,0 +1,14 @@
+[
+  { "country": "Australia", "flag": "🇦🇺", "visits": 2 },
+  { "country": "Canada", "flag": "🇨🇦", "visits": 2 },
+  { "country": "United States", "flag": "🇺🇸", "visits": 1 },
+  { "country": "China", "flag": "🇭🇰", "visits": 1 },
+  { "country": "Indonesia", "flag": "🇮🇩", "visits": 1 },
+  { "country": "Japan", "flag": "🇯🇵", "visits": 10 },
+  { "country": "Mexico", "flag": "🇲🇽", "visits": 2 },
+  { "country": "United Kingdom", "flag": "🇬🇧", "visits": 1 },
+  { "country": "Singapore", "flag": "🇸🇬", "visits": 6 },
+  { "country": "Malaysia", "flag": "🇲🇾", "visits": 1 },
+  { "country": "Thailand", "flag": "🇹🇭", "visits": 2 },
+  { "country": "Vietnam", "flag": "🇻🇳", "visits": 1 }
+]

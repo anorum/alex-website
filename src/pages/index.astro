@@ -1,234 +1,63 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import MaraAssistant from '../components/MaraAssistant.astro';
-import HeroWrapper from '../components/HeroWrapper.astro';
-import WhatIDoWrapper from '../components/WhatIDoWrapper.astro';
-import TimelineWrapper from '../components/TimelineWrapper.astro';
-import SkillsWrapper from '../components/SkillsWrapper.astro';
-import SectionTitleWrapper from '../components/SectionTitleWrapper.astro';
-import InterestItemWrapper from '../components/InterestItemWrapper.astro';
-import TravelMap from '../components/travel/TravelMap';
+import Hero from '../components/Hero.astro';
+import WhatIDo from '../components/WhatIDo.astro';
+import Timeline from '../components/Timeline.astro';
 import IndexTravelMap from '../components/travel/IndexTravelMap';
-import RPGWrapper from '../components/RPGWrapper.astro';
+import { travelLocations, travelStats } from '../data/travel';
 ---
 
-<Layout title="Alex Norum - Data Platform Engineer" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and system simplifier. Based in Portland, OR.">
-<RPGWrapper>
-  <!-- Hero Section with About Me -->
-  <section class="relative overflow-hidden py-16 md:py-24">
-    <HeroWrapper />
-    
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
-      <span class="text-xs text-muted mb-2">Scroll to explore</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-accent-color" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-      </svg>
-    </div>
-  </section>
+<Layout title="Alex Norum - Data Platform Engineering Leader" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and occasional golf enthusiast. Based in Portland, OR.">
+
+  <!-- Hero Section -->
+  <Hero />
 
   <!-- What I Do Section -->
-  <section class="py-16 relative">
-    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
-    <div class="relative z-10">
-      <WhatIDoWrapper />
-    </div>
-  </section>
+  <WhatIDo />
 
   <!-- Work Experience Timeline -->
-  <section class="py-16 relative" id="experience">
-    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
-    <div class="relative z-10">
-      <div class="max-w-4xl mx-auto px-4">
-        <SectionTitleWrapper standardTitle="Work Experience" rpgTitle="Quest Log" />
-        
-        <!-- Custom timeline wrapper with horizontal scroll indicator -->
-        <div class="relative">
-          <!-- Timeline progress bar -->
-          <div class="absolute left-0 top-6 w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="h-full bg-accent-color w-0 timeline-progress"></div>
-          </div>
-          
-          <!-- Timeline component -->
-          <div class="pt-10">
-            <TimelineWrapper />
-          </div>
-        </div>
-      </div>
+  <section class="py-16" id="experience">
+    <div class="max-w-5xl mx-auto px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2 reveal-item" style="font-family: var(--font-heading); color: var(--text-color);">Work Experience</h2>
+      <p class="text-sm mb-6 reveal-item" style="color: var(--text-tertiary);">From analyst to engineering leader</p>
+      <Timeline />
     </div>
   </section>
 
-  <!-- Skills Section -->
-  <section class="py-16 relative" id="skills">
-    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
-    <div class="relative z-10">
-      <SkillsWrapper />
+  <!-- Travel Map Section -->
+  <section class="py-12 reveal-item" id="travel">
+    <div class="max-w-5xl mx-auto px-6 mb-5">
+      <h2 class="text-2xl sm:text-3xl font-bold" style="font-family: var(--font-heading); color: var(--text-color);">Places I've Been</h2>
+      <p class="text-sm mt-1" style="color: var(--text-tertiary);">When I'm not building platforms, I'm usually somewhere on this map. {travelStats.totalCountries} countries &middot; {travelStats.totalVisits} trips.</p>
+    </div>
+    <div class="w-full overflow-hidden">
+      <IndexTravelMap client:only="react" travelData={travelLocations} />
     </div>
   </section>
 
-  <!-- Beyond Work Section -->
-  <section class="py-16 relative" id="beyond-work">
-    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-y border-white/10"></div>
-    <div class="relative z-10">
-      <div class="max-w-4xl mx-auto px-4">
-        <SectionTitleWrapper standardTitle="Beyond Work" rpgTitle="Side Quests" />
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InterestItemWrapper
-            title="Running & Fitness"
-            description="Running mostly to clear my head. Sometimes to train. Always tracking something."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>'
-            colorScheme="green"
-          >
-            <div class="mt-3 text-sm">
-              <a href="/stats" class="text-green-700 dark:text-green-400 hover:underline inline-flex items-center gap-1">
-                <span>View my running stats</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
-            </div>
-          </InterestItemWrapper>
-          
-          <InterestItemWrapper
-            title="Golf"
-            description="Trying to get better, tracking my misses, and regretting most 3-woods."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>'
-            colorScheme="blue"
-          >
-            <div class="mt-3 text-sm">
-              <a href="/stats" class="text-blue-700 dark:text-blue-400 hover:underline inline-flex items-center gap-1">
-                <span>View my golf stats</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
-            </div>
-          </InterestItemWrapper>
-          
-          <InterestItemWrapper
-            title="Reading"
-            description="I read a mix of sci-fi, philosophy, and whatever's on my nightstand too long."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>'
-            colorScheme="purple"
-          >
-            <div class="mt-3 text-sm">
-              <a href="/stats" class="text-purple-700 dark:text-purple-400 hover:underline inline-flex items-center gap-1">
-                <span>See what I'm reading</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
-            </div>
-          </InterestItemWrapper>
-          
-          <InterestItemWrapper
-            title="Traveling"
-            description="One of my favorite quotes 'Travel is not a reward for working it's education for living.'"
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>'
-            colorScheme="yellow"
-          />
-        </div>
-        
-        <!-- Travel visualization teaser -->
-        <div class="mt-10 p-6 rounded-xl bg-bubble-bg border border-border-color overflow-hidden">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-            <h3 class="text-xl font-semibold">Places I've Been</h3>
-            <a href="/stats" class="text-sm text-accent-color hover:underline inline-flex items-center gap-1">
-              <span>View detailed travel stats</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
-          </div>
-          
-          <div id="travel-map-container" class="h-[400px] w-full relative">
-            <IndexTravelMap client:only="react" />
-          </div>
-        </div>
-      </div>
+  <!-- Contact CTA -->
+  <section class="py-16 reveal-item" id="contact">
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-3" style="font-family: var(--font-heading); color: var(--text-color);">Let's Connect</h2>
+      <p class="text-base sm:text-lg mb-6" style="color: var(--text-secondary);">Always happy to talk data platforms, team building, or whatever you're working on.</p>
+      <a
+        href="https://www.linkedin.com/in/alex-norum/"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:-translate-y-0.5"
+        style="background-color: var(--accent-color); color: var(--bg-color);"
+      >
+        Say hello on LinkedIn
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
     </div>
   </section>
 
-  <!-- Mara AI Assistant Section -->
-  <section class="py-16 relative" id="chat">
-    <div class="absolute inset-0 bg-white/5 dark:bg-white/5 border-t border-white/10"></div>
-    <div class="relative z-10">
-      <div class="max-w-4xl mx-auto px-4">
-        <SectionTitleWrapper standardTitle="Chat with Mara" rpgTitle="Consult the Oracle" />
-        
-        <div class="relative">
-          <!-- Decorative elements -->
-          <div class="absolute -top-10 -right-10 w-20 h-20 border-2 border-secondary-color rounded-full opacity-20"></div>
-          <div class="absolute -bottom-5 -left-5 w-16 h-16 border-2 border-accent-color rounded-full opacity-20"></div>
-          
-          <!-- Enhanced Mara Assistant -->
-          <MaraAssistant />
-        </div>
-      </div>
-    </div>
-  </section>
-</RPGWrapper>
 </Layout>
 
-<!-- Load Leaflet CSS and JS for the travel map -->
+<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-<!-- Ensure Leaflet is loaded -->
-<script is:inline>
-  console.log('Leaflet loaded:', typeof L !== 'undefined');
-</script>
 
 <style>
-/* Animation delay classes */
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Timeline progress animation */
-.timeline-progress {
-  animation: timeline-progress 2s ease-out forwards;
-}
-
-@keyframes timeline-progress {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-/* Fade in up animation for sections */
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-  opacity: 0;
-}
-
-.animate-delay-\[150ms\] {
-  animation-delay: 150ms;
-}
-
-.animate-fill-forwards {
-  animation-fill-mode: forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Leaflet map styles */
+/* Leaflet z-index fixes */
 .leaflet-pane,
 .leaflet-tile,
 .leaflet-marker-icon,
@@ -241,7 +70,6 @@ import RPGWrapper from '../components/RPGWrapper.astro';
 .leaflet-layer {
   z-index: 1 !important;
 }
-
 .leaflet-overlay-pane { z-index: 2 !important; }
 .leaflet-shadow-pane { z-index: 3 !important; }
 .leaflet-marker-pane { z-index: 4 !important; }
@@ -250,94 +78,16 @@ import RPGWrapper from '../components/RPGWrapper.astro';
 .leaflet-control { z-index: 7 !important; }
 .leaflet-top, .leaflet-bottom { z-index: 8 !important; }
 
-/* Fix popup styling */
 .leaflet-popup-content-wrapper {
   border-radius: 0.5rem !important;
   padding: 0.5rem !important;
   box-shadow: var(--card-shadow) !important;
-  max-height: 70vh !important;
-  overflow-y: auto !important;
 }
-
 .leaflet-popup-content {
   margin: 0 !important;
   line-height: 1.4 !important;
-  overflow: visible !important;
 }
-
-.leaflet-popup-tip {
-  box-shadow: var(--card-shadow) !important;
-}
-
-/* Make sure popups are above other elements */
 .leaflet-popup {
   z-index: 1000 !important;
-  margin-bottom: 60px !important; /* Add more space at the bottom */
 }
 </style>
-
-<script>
-// Declare the switchRPGSection function as a global type
-declare global {
-  interface Window {
-    switchRPGSection(sectionId: string): boolean;
-  }
-}
-
-// Intersection Observer for scroll animations
-  document.addEventListener('DOMContentLoaded', () => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in-up');
-          (entry.target as HTMLElement).style.opacity = '1';
-        }
-      });
-    }, {
-      threshold: 0.1
-    });
-    
-    // Observe all sections
-    document.querySelectorAll('section').forEach(section => {
-      observer.observe(section);
-    });
-    
-    // Specifically observe timeline items
-    setTimeout(() => {
-      document.querySelectorAll('.animate-fade-in-up.opacity-0').forEach(item => {
-        observer.observe(item);
-      });
-    }, 100); // Small delay to ensure DOM is fully loaded
-    
-    // Check for section parameter in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const sectionParam = urlParams.get('section');
-    
-    if (sectionParam) {
-      // If we have a section parameter, switch to that section
-      console.log('Found section parameter:', sectionParam);
-      
-      // Store the section in session storage
-      sessionStorage.setItem('rpg-active-section', sectionParam);
-      
-      // If we have a switchRPGSection function, call it
-      if (typeof window.switchRPGSection === 'function') {
-        setTimeout(() => {
-          window.switchRPGSection(sectionParam);
-        }, 500); // Increased delay to ensure DOM and scripts are fully loaded
-      } else {
-        console.log('switchRPGSection function not found in global scope');
-        
-        // Fallback: Try again after a longer delay
-        setTimeout(() => {
-          if (typeof window.switchRPGSection === 'function') {
-            window.switchRPGSection(sectionParam);
-            console.log('Found switchRPGSection function after delay');
-          } else {
-            console.error('switchRPGSection function still not found after delay');
-          }
-        }, 1000);
-      }
-    }
-  });
-</script>

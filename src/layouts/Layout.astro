@@ -1,128 +1,33 @@
 ---
-import ChainlitCopilot from '../components/ChainlitCopilot.jsx';
-import NavigationWrapper from '../components/NavigationWrapper.astro';
+import BaseLayout from './BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import ChocoboThemeToggle from '../components/ChocoboThemeToggle.astro';
-
-import "../styles/global.css";
-import "../styles/redesign.css";
-import "../styles/standard-theme.css";
-import "../styles/rpg-theme.css";
-import "../styles/ff7-cursor.css";
-import "../styles/ff7-menu.css";
+import NavigationRPG from '../components/rpg/NavigationRPG.astro';
+import RPGContainer from '../components/rpg/RPGContainer.astro';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const { 
-  title = "Alex Norum - Web Developer", 
-  description = "Personal website and blog of Alex Norum, web developer and tech enthusiast."
-} = Astro.props;
+const { title, description } = Astro.props;
 ---
-<!doctype html>
-<html lang="en" class="theme-standard">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<meta name="description" content={description} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		
-		<!-- Font Awesome -->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		
-		<!-- Preload Chainlit script for better performance -->
-		<link rel="preload" href="https://mara.alexnorum.com/copilot/index.js" as="script" crossorigin="anonymous" />
-		<link rel="dns-prefetch" href="https://mara.alexnorum.com" />
-		
-		<!-- Theme initialization script -->
-		<script is:inline>
-			// Initialize theme system
-			function initThemeSystem() {
-				// Get stored theme or default to standard
-				const storedTheme = localStorage.getItem('site-theme') || 'standard';
-				
-				// Apply theme class to html element
-				document.documentElement.classList.forEach(className => {
-					if (className.startsWith('theme-')) {
-						document.documentElement.classList.remove(className);
-					}
-				});
-				
-				document.documentElement.classList.add(`theme-${storedTheme}`);
-				
-				// Apply dark/light mode
-				if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-					document.documentElement.classList.add('dark');
-				} else {
-					document.documentElement.classList.remove('dark');
-				}
-			}
-			
-			// Apply theme on initial load
-			initThemeSystem();
-			
-			// Apply theme on page navigation
-			document.addEventListener('DOMContentLoaded', initThemeSystem);
-			
-			// Listen for theme changes
-			window.addEventListener('storage', (event) => {
-				if (event.key === 'site-theme' || event.key === 'color-theme') {
-					initThemeSystem();
-				}
-			});
-		</script>
-	</head>
-	<body>
-		<script is:inline src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-		<!-- Subtle background gradient -->
-		<div class="fixed top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
-			<div class="absolute inset-0 bg-gradient-to-br from-transparent via-gray-50/5 to-blue-50/5 dark:from-transparent dark:via-gray-900/5 dark:to-blue-900/5"></div>
-			<!-- Subtle noise texture overlay -->
-			<div class="absolute inset-0 opacity-[0.015] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]"></div>
-		</div>
-		
-		<ChainlitCopilot client:load />
-    <NavigationWrapper />
-    <ChocoboThemeToggle />
-		<div id="content-container" class="animate-fade-in relative z-10 w-full">
-			<main class="w-full py-4 sm:py-8">
+
+<BaseLayout title={title} description={description}>
+	<!-- Standard theme content -->
+	<div class="when-standard">
+		<div class="animate-page-enter relative z-10 w-full">
+			<main class="w-full">
 				<slot />
 			</main>
 		</div>
 		<Footer />
-		
-		<script is:inline>
-			// Add scroll effect to navigation
-			document.addEventListener('scroll', () => {
-				const nav = document.querySelector('.nav-container');
-				if (nav) {
-					if (window.scrollY > 50) {
-						nav.classList.add('scrolled');
-					} else {
-						nav.classList.remove('scrolled');
-					}
-				}
-			});
-		</script>
-	</body>
-</html>
+	</div>
 
-<style is:global>
-	/* Base styles moved to redesign.css */
-	#content-container {
-		flex: 1;
-		width: 100%;
-		margin: 0 auto;
-		padding: 5rem 0.5rem 2rem; /* Reduced side padding for mobile */
-	}
-	
-	@media (min-width: 640px) {
-		#content-container {
-			padding: 5rem 1rem 2rem;
-		}
-	}
-</style>
+	<!-- RPG theme content -->
+	<div class="when-rpg">
+		<NavigationRPG />
+		<div class="relative z-10 w-full pt-4 sm:pt-8 pb-8">
+			<RPGContainer />
+		</div>
+	</div>
+</BaseLayout>

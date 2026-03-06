@@ -1,0 +1,69 @@
+---
+import Footer from '../components/Footer.astro';
+import ChocoboThemeToggle from '../components/ChocoboThemeToggle.astro';
+
+import "../styles/global.css";
+import "../styles/standard-theme.css";
+import "../styles/rpg-theme.css";
+import "../styles/ff7-cursor.css";
+import "../styles/ff7-menu.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Alex Norum - Data Platform Engineer",
+  description = "Personal website of Alex Norum – engineering leader, infrastructure builder, and system simplifier. Based in Portland, OR."
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en" class="theme-standard">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+		<!-- Theme initialization (runs before paint to prevent flash) -->
+		<script is:inline>
+			(function() {
+				var theme = localStorage.getItem('site-theme') || 'standard';
+				document.documentElement.className = 'theme-' + theme;
+				if (localStorage.getItem('color-theme') === 'dark' || (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+					document.documentElement.classList.add('dark');
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<!-- Subtle background texture -->
+		<div class="fixed inset-0 z-0 pointer-events-none">
+			<div class="absolute inset-0 opacity-[0.012]" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=');"></div>
+		</div>
+
+		<!-- Chocobo easter egg toggle -->
+		<ChocoboThemeToggle />
+
+		<slot />
+
+		<!-- Initialize scroll animations -->
+		<script>
+			import { initScrollAnimations } from '../utils/scroll-animations';
+
+			function init() {
+				initScrollAnimations({
+					selector: '.reveal-item',
+					animationClass: 'animate-reveal',
+					threshold: 0.08,
+					once: true,
+				});
+			}
+
+			document.addEventListener('DOMContentLoaded', init);
+		</script>
+	</body>
+</html>

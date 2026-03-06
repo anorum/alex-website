@@ -23,6 +23,10 @@
   flex-direction: column;
 }
 
+.ff7-game-menu.hidden {
+  display: none;
+}
+
 /* Menu Button */
 .ff7-menu-button-container {
   position: fixed;
@@ -321,58 +325,6 @@
   background-color: #ff00ff; /* Purple for independent materia */
 }
 
-/* Materia submenu */
-.ff7-materia-submenu {
-  background-color: rgba(0, 0, 128, 0.95);
-  border: 2px solid #c0c0c0;
-  padding: 10px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 600px;
-  z-index: 100;
-}
-
-.ff7-materia-header {
-  background-color: #0000aa;
-  color: #ffffff;
-  padding: 5px 10px;
-  text-align: center;
-  border-bottom: 1px solid #c0c0c0;
-  margin: -10px -10px 10px -10px;
-}
-
-.ff7-materia-list {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.ff7-materia-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-  border-bottom: 1px solid rgba(192, 192, 192, 0.3);
-}
-
-.ff7-materia-icon {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-}
-
-.ff7-materia-name {
-  flex: 1;
-  color: #ffffff;
-}
-
-.ff7-materia-level {
-  color: #ffff00;
-}
-
 /* Animation for cursor */
 @keyframes ff7-cursor-blink {
   0%, 50% { opacity: 1; }
@@ -433,7 +385,3 @@
   }
 }
 
-/* Hide the menu by default */
-.hidden {
-  display: none;
-}
