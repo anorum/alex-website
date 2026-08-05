@@ -4,25 +4,19 @@
    GLOBAL DESIGN TOKENS
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
 :root {
-  /* Typography */
-  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography (fonts loaded via <link> in BaseLayout) */
+  --font-heading: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
 
-  /* Base palette */
-  --color-cream: hsl(38, 30%, 92%);
-  --color-cream-dark: hsl(38, 20%, 88%);
-  --color-green-900: hsl(160, 40%, 16%);
-  --color-green-800: hsl(160, 35%, 22%);
-  --color-green-700: hsl(160, 25%, 30%);
-  --color-green-600: hsl(160, 20%, 38%);
-  --color-green-500: hsl(160, 45%, 28%);
-  --color-green-400: hsl(158, 35%, 50%);
-  --color-green-300: hsl(158, 40%, 70%);
-  --color-green-200: hsl(158, 35%, 82%);
-  --color-green-100: hsl(158, 30%, 90%);
+  /* Bold Editorial palette */
+  --color-paper: #f4f1ea;
+  --color-ink: #14241c;
+  --color-accent: #0d8a5f;
+  --color-accent-bright: #1fc784;
+  --color-accent-deep: #0a6e4c;
+  --color-muted: #56685f;
 
   /* Spacing rhythm */
   --space-xs: 0.5rem;
@@ -43,6 +37,9 @@
   --duration-fast: 150ms;
   --duration-normal: 250ms;
   --duration-slow: 400ms;
+
+  /* Editorial rule (line color set per theme) */
+  --rule: 2px solid var(--line-color, currentColor);
 }
 
 /* ============================================
@@ -123,6 +120,34 @@ h1, h2, h3, h4, h5, h6 {
    UTILITY CLASSES
    ============================================ */
 
+/* Editorial type helpers (opt-in classes only — bare element rules leak into RPG) */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.display-type {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(2.75rem, 9.5vw, 7rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.display-type-md {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(1.75rem, 5vw, 3.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
 .text-muted {
   color: var(--text-secondary);
 }
@@ -131,32 +156,8 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-color);
 }
 
-.bg-accent-color\/10 {
-  background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
-}
-
-.bg-secondary-color\/10 {
-  background-color: color-mix(in srgb, var(--secondary-color) 10%, transparent);
-}
-
-.bg-tertiary-color\/10 {
-  background-color: color-mix(in srgb, var(--tertiary-color) 10%, transparent);
-}
-
 .bg-bubble-bg {
   background-color: var(--bubble-bg);
-}
-
-.border-border-color {
-  border-color: var(--border-color);
-}
-
-.text-secondary-color {
-  color: var(--secondary-color);
-}
-
-.text-tertiary-color {
-  color: var(--tertiary-color);
 }
 
 /* ============================================
@@ -178,4 +179,24 @@ h1, h2, h3, h4, h5, h6 {
 ::selection {
   background-color: color-mix(in srgb, var(--accent-color) 25%, transparent);
   color: var(--text-color);
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-page-enter {
+    animation: none;
+  }
 }

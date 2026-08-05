@@ -1,0 +1,78 @@
+---
+import { stackHeadline, skillCategories } from '../data/skills';
+---
+
+<section class="stack-band py-12 sm:py-16" id="stack">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <p class="eyebrow reveal-item" style="color: var(--band-muted);">03 — Stack</p>
+
+    <p class="stack-headline display-type-md reveal-item mt-6 sm:mt-8">
+      {stackHeadline.map((item, i) => (
+        <>
+          {i > 0 && <span class="slash" aria-hidden="true"> / </span>}
+          <span class={i === stackHeadline.length - 1 ? 'stack-hot' : undefined}>{item}</span>
+        </>
+      ))}
+    </p>
+
+    <div class="stack-cats reveal-item mt-8 sm:mt-10">
+      {skillCategories.map((cat) => (
+        <p class="stack-cat">
+          <span class="stack-cat-label">{cat.label}:</span>
+          {cat.items.join(' · ')}
+        </p>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .stack-band {
+    background-color: var(--band-bg);
+    color: var(--band-text);
+    border-top: var(--rule);
+  }
+
+  .stack-headline {
+    color: var(--band-text);
+    max-width: 60rem;
+  }
+
+  .slash {
+    color: var(--band-accent);
+    font-weight: 700;
+  }
+
+  .stack-hot {
+    color: var(--band-accent);
+  }
+
+  .stack-cats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: 900px) {
+    .stack-cats {
+      flex-direction: row;
+      gap: 2.5rem;
+    }
+  }
+
+  .stack-cat {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
+    color: var(--band-muted);
+    line-height: 1.7;
+  }
+
+  .stack-cat-label {
+    color: var(--band-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-right: 0.5rem;
+  }
+</style>

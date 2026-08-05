@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import Footer from '../components/Footer.astro';
+import Nav from '../components/Nav.astro';
+import ContactFooter from '../components/ContactFooter.astro';
 import NavigationRPG from '../components/rpg/NavigationRPG.astro';
 import RPGContainer from '../components/rpg/RPGContainer.astro';
 
@@ -15,12 +16,13 @@ const { title, description } = Astro.props;
 <BaseLayout title={title} description={description}>
 	<!-- Standard theme content -->
 	<div class="when-standard">
+		<Nav />
 		<div class="animate-page-enter relative z-10 w-full">
 			<main class="w-full">
 				<slot />
 			</main>
 		</div>
-		<Footer />
+		<ContactFooter />
 	</div>
 
 	<!-- RPG theme content -->

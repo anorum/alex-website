@@ -2,92 +2,158 @@
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import WhatIDo from '../components/WhatIDo.astro';
-import Timeline from '../components/Timeline.astro';
+import Experience from '../components/Experience.astro';
+import Stack from '../components/Stack.astro';
+import SectionHeader from '../components/SectionHeader.astro';
 import IndexTravelMap from '../components/travel/IndexTravelMap';
 import { travelLocations, travelStats } from '../data/travel';
+
+const japanVisits = travelLocations.find((loc) => loc.country === 'Japan')?.visits ?? 0;
 ---
 
-<Layout title="Alex Norum - Data Platform Engineering Leader" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and occasional golf enthusiast. Based in Portland, OR.">
+<Layout title="Alex Norum - Data Platform Engineering Leader" description="Personal website of Alex Norum – engineering leader, infrastructure builder, and system simplifier. Based in Portland, OR.">
 
   <!-- Hero Section -->
   <Hero />
 
-  <!-- What I Do Section -->
+  <!-- 01 What I Do -->
   <WhatIDo />
 
-  <!-- Work Experience Timeline -->
-  <section class="py-16" id="experience">
-    <div class="max-w-5xl mx-auto px-6">
-      <h2 class="text-2xl sm:text-3xl font-bold mb-2 reveal-item" style="font-family: var(--font-heading); color: var(--text-color);">Work Experience</h2>
-      <p class="text-sm mb-6 reveal-item" style="color: var(--text-tertiary);">From analyst to engineering leader</p>
-      <Timeline />
-    </div>
-  </section>
+  <!-- 02 Experience -->
+  <Experience />
 
-  <!-- Travel Map Section -->
-  <section class="py-12 reveal-item" id="travel">
-    <div class="max-w-5xl mx-auto px-6 mb-5">
-      <h2 class="text-2xl sm:text-3xl font-bold" style="font-family: var(--font-heading); color: var(--text-color);">Places I've Been</h2>
-      <p class="text-sm mt-1" style="color: var(--text-tertiary);">When I'm not building platforms, I'm usually somewhere on this map. {travelStats.totalCountries} countries &middot; {travelStats.totalVisits} trips.</p>
-    </div>
-    <div class="w-full overflow-hidden">
-      <IndexTravelMap client:only="react" travelData={travelLocations} />
-    </div>
-  </section>
+  <!-- 03 Stack -->
+  <Stack />
 
-  <!-- Contact CTA -->
-  <section class="py-16 reveal-item" id="contact">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-2xl sm:text-3xl font-bold mb-3" style="font-family: var(--font-heading); color: var(--text-color);">Let's Connect</h2>
-      <p class="text-base sm:text-lg mb-6" style="color: var(--text-secondary);">Always happy to talk data platforms, team building, or whatever you're working on.</p>
-      <a
-        href="https://www.linkedin.com/in/alex-norum/"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:-translate-y-0.5"
-        style="background-color: var(--accent-color); color: var(--bg-color);"
-      >
-        Say hello on LinkedIn
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-      </a>
+  <!-- 04 Travel -->
+  <section class="py-12 sm:py-16" id="travel" style="border-top: var(--rule);">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <SectionHeader number="04" title="Off the Clock" />
+
+      <div class="travel-layout mt-6 sm:mt-8 reveal-item">
+        <div class="travel-stats">
+          <div class="travel-stat">
+            <span class="travel-stat-num">{travelStats.totalCountries}</span>
+            <span class="travel-stat-label eyebrow">Countries</span>
+          </div>
+          <div class="travel-stat">
+            <span class="travel-stat-num">{travelStats.totalVisits}</span>
+            <span class="travel-stat-label eyebrow">Trips</span>
+          </div>
+          <div class="travel-stat">
+            <span class="travel-stat-num">{japanVisits}×</span>
+            <span class="travel-stat-label eyebrow">Japan</span>
+          </div>
+        </div>
+
+        <div class="travel-map">
+          <IndexTravelMap client:only="react" travelData={travelLocations} />
+        </div>
+      </div>
+
+      <p class="mt-4 text-sm reveal-item" style="color: var(--text-tertiary); font-family: var(--font-body);">
+        When I'm not building platforms, I'm usually somewhere on this map.
+      </p>
     </div>
   </section>
 
 </Layout>
 
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
 <style>
-/* Leaflet z-index fixes */
-.leaflet-pane,
-.leaflet-tile,
-.leaflet-marker-icon,
-.leaflet-marker-shadow,
-.leaflet-tile-container,
-.leaflet-pane > svg,
-.leaflet-pane > canvas,
-.leaflet-zoom-box,
-.leaflet-image-layer,
-.leaflet-layer {
-  z-index: 1 !important;
-}
-.leaflet-overlay-pane { z-index: 2 !important; }
-.leaflet-shadow-pane { z-index: 3 !important; }
-.leaflet-marker-pane { z-index: 4 !important; }
-.leaflet-tooltip-pane { z-index: 5 !important; }
-.leaflet-popup-pane { z-index: 6 !important; }
-.leaflet-control { z-index: 7 !important; }
-.leaflet-top, .leaflet-bottom { z-index: 8 !important; }
+  .travel-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
 
-.leaflet-popup-content-wrapper {
-  border-radius: 0.5rem !important;
-  padding: 0.5rem !important;
-  box-shadow: var(--card-shadow) !important;
-}
-.leaflet-popup-content {
-  margin: 0 !important;
-  line-height: 1.4 !important;
-}
-.leaflet-popup {
-  z-index: 1000 !important;
-}
+  @media (min-width: 900px) {
+    .travel-layout {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 3rem;
+    }
+  }
+
+  .travel-stats {
+    display: flex;
+    gap: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  @media (min-width: 900px) {
+    .travel-stats {
+      flex-direction: column;
+      gap: 1.75rem;
+      justify-content: center;
+    }
+  }
+
+  .travel-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .travel-stat-num {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--accent-color);
+  }
+
+  .travel-stat-label {
+    color: var(--text-secondary);
+  }
+
+  .travel-map {
+    flex: 1;
+    border: var(--rule);
+    overflow: hidden;
+    min-width: 0;
+  }
+</style>
+
+<style is:global>
+  /* Leaflet z-index fixes */
+  .leaflet-pane,
+  .leaflet-tile,
+  .leaflet-marker-icon,
+  .leaflet-marker-shadow,
+  .leaflet-tile-container,
+  .leaflet-pane > svg,
+  .leaflet-pane > canvas,
+  .leaflet-zoom-box,
+  .leaflet-image-layer,
+  .leaflet-layer {
+    z-index: 1 !important;
+  }
+  .leaflet-overlay-pane { z-index: 2 !important; }
+  .leaflet-shadow-pane { z-index: 3 !important; }
+  .leaflet-marker-pane { z-index: 4 !important; }
+  .leaflet-tooltip-pane { z-index: 5 !important; }
+  .leaflet-popup-pane { z-index: 6 !important; }
+  .leaflet-control { z-index: 7 !important; }
+  .leaflet-top, .leaflet-bottom { z-index: 8 !important; }
+
+  .theme-standard .leaflet-popup-content-wrapper {
+    border-radius: 0 !important;
+    border: 2px solid var(--line-color) !important;
+    background-color: var(--bg-color) !important;
+    color: var(--text-color) !important;
+    padding: 0.5rem !important;
+    box-shadow: none !important;
+    font-family: var(--font-mono) !important;
+  }
+  .theme-standard .leaflet-popup-tip {
+    background-color: var(--bg-color) !important;
+    border: 1px solid var(--line-color) !important;
+  }
+  .leaflet-popup-content {
+    margin: 0 !important;
+    line-height: 1.4 !important;
+  }
+  .leaflet-popup {
+    z-index: 1000 !important;
+  }
 </style>

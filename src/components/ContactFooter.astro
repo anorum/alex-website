@@ -1,0 +1,112 @@
+---
+---
+
+<footer class="contact-band" id="contact">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-14 sm:py-20">
+    <h2 class="contact-headline display-type-md reveal-item">
+      Let's build something<br />that runs itself.
+    </h2>
+
+    <div class="reveal-item mt-8 sm:mt-10 flex flex-wrap items-center gap-3">
+      <a href="/resume.pdf" download class="btn btn-solid">↓ Resume.pdf</a>
+      <a href="https://www.linkedin.com/in/alex-norum/" class="btn btn-outline">LinkedIn</a>
+      <a href="https://github.com/anorum" class="btn btn-outline">GitHub</a>
+    </div>
+
+    <div class="small-print mt-12 sm:mt-16 flex flex-col sm:flex-row justify-between gap-2">
+      <span>© {new Date().getFullYear()} Alex Norum — Portland, OR</span>
+      <span>
+        Built with Astro ·
+        <button id="footer-rpg-toggle" class="rpg-link">▶ Enter RPG mode</button>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script is:inline>
+  (function() {
+    var btn = document.getElementById('footer-rpg-toggle');
+    btn && btn.addEventListener('click', function() {
+      document.documentElement.classList.forEach(function(c) {
+        if (c.startsWith('theme-')) document.documentElement.classList.remove(c);
+      });
+      document.documentElement.classList.add('theme-rpg');
+      localStorage.setItem('site-theme', 'rpg');
+      document.dispatchEvent(new CustomEvent('theme:change', { detail: { theme: 'rpg' } }));
+      window.scrollTo(0, 0);
+    });
+  })();
+</script>
+
+<style>
+  .contact-band {
+    position: relative;
+    z-index: 10;
+    background-color: var(--accent-color);
+    color: var(--on-accent);
+    border-top: var(--rule);
+    /* accent is bright in dark mode — focus rings need to stay visible here */
+    --focus-ring: var(--on-accent);
+  }
+
+  .contact-band :focus-visible {
+    outline: 2px solid var(--on-accent);
+    outline-offset: 2px;
+  }
+
+  .contact-headline {
+    color: var(--on-accent);
+  }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 0.75rem 1.375rem;
+    transition: transform var(--duration-fast) var(--ease-out),
+      opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-solid {
+    background-color: var(--on-accent);
+    color: var(--accent-color);
+    font-weight: 700;
+  }
+
+  .btn-outline {
+    border: 2px solid var(--on-accent);
+    color: var(--on-accent);
+  }
+
+  .small-print {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--on-accent) 80%, var(--accent-color));
+  }
+
+  .rpg-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .rpg-link:hover {
+    color: var(--on-accent);
+  }
+</style>

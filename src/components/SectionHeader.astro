@@ -1,0 +1,13 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  muted?: boolean;
+}
+
+const { number, title, muted = true } = Astro.props;
+---
+
+<p class="eyebrow reveal-item" style={muted ? 'color: var(--text-secondary);' : undefined}>
+  {number} — {title}
+</p>

@@ -1,35 +1,56 @@
 /* ============================================
-   STANDARD THEME
-   Light mode: warm cream + forest green
-   Dark mode: deep green + bright accents
+   STANDARD THEME — "Bold Editorial"
+   Light mode: paper + ink + electric green
+   Dark mode: deep forest-black inversion
    ============================================ */
 
 .theme-standard {
-  --bg-color: var(--color-cream);
-  --text-color: var(--color-green-900);
-  --text-secondary: var(--color-green-700);
-  --text-tertiary: var(--color-green-600);
-  --accent-color: var(--color-green-500);
-  --secondary-color: var(--color-green-400);
-  --tertiary-color: var(--color-green-300);
+  --bg-color: var(--color-paper);
+  --text-color: var(--color-ink);
+  --text-secondary: var(--color-muted);
+  --text-tertiary: color-mix(in srgb, var(--color-muted) 75%, var(--color-paper));
+  --accent-color: var(--color-accent);
+  /* Darker accent for small text — base green fails AA below ~18px on paper */
+  --accent-text: var(--color-accent-deep);
+  /* Text color on accent-filled surfaces (white on deep green / ink on bright green) */
+  --on-accent: #ffffff;
+  --secondary-color: var(--color-accent);
+  --tertiary-color: color-mix(in srgb, var(--color-accent) 50%, var(--color-paper));
   --quaternary-color: hsl(35, 70%, 50%);
-  --bubble-bg: rgba(255, 255, 255, 0.7);
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
-  --border-color: rgba(0, 0, 0, 0.08);
+  --bubble-bg: transparent;
+  --card-shadow: none;
+  --card-shadow-hover: none;
+  --border-color: var(--color-ink);
+  --line-color: var(--color-ink);
+  --hairline-color: color-mix(in srgb, var(--color-ink) 18%, transparent);
+
+  /* Inverted band surfaces (Stack section, footer) */
+  --band-bg: var(--color-ink);
+  --band-text: var(--color-paper);
+  --band-accent: var(--color-accent-bright);
+  --band-muted: color-mix(in srgb, var(--color-paper) 55%, var(--color-ink));
 }
 
 .theme-standard.dark {
-  --bg-color: hsl(160, 30%, 10%);
-  --text-color: hsl(0, 0%, 96%);
-  --text-secondary: hsl(0, 0%, 78%);
-  --text-tertiary: hsl(0, 0%, 62%);
-  --accent-color: hsl(158, 60%, 52%);
-  --secondary-color: hsl(158, 50%, 65%);
-  --tertiary-color: hsl(158, 40%, 75%);
+  --bg-color: hsl(160, 28%, 7%);
+  --text-color: var(--color-paper);
+  --text-secondary: hsl(150, 12%, 68%);
+  --text-tertiary: hsl(150, 10%, 52%);
+  --accent-color: var(--color-accent-bright);
+  --accent-text: var(--color-accent-bright);
+  --on-accent: var(--color-ink);
+  --secondary-color: var(--color-accent-bright);
+  --tertiary-color: color-mix(in srgb, var(--color-accent-bright) 40%, hsl(160, 28%, 7%));
   --quaternary-color: hsl(35, 75%, 60%);
-  --bubble-bg: rgba(255, 255, 255, 0.06);
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.12);
-  --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.16);
-  --border-color: rgba(255, 255, 255, 0.1);
+  --bubble-bg: transparent;
+  --card-shadow: none;
+  --card-shadow-hover: none;
+  --border-color: var(--color-paper);
+  --line-color: var(--color-paper);
+  --hairline-color: color-mix(in srgb, var(--color-paper) 22%, transparent);
+
+  --band-bg: hsl(160, 26%, 11%);
+  --band-text: var(--color-paper);
+  --band-accent: var(--color-accent-bright);
+  --band-muted: hsl(150, 12%, 58%);
 }

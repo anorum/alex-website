@@ -17,6 +17,8 @@ const rpgLinks = [
     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>` },
   { name: "MAP", section: "map", href: isIndexPage ? undefined : "/?section=map",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>` },
+  { name: "BATTLE", section: "battle", href: isIndexPage ? undefined : "/?section=battle",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l7 7m0 0v4m0-4h4M21 3l-7 7m0 0v4m0-4h4M3 21l6-6m12 6l-6-6" /></svg>` },
   { name: "EXIT", href: "#", action: "exit",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>` },
 ];
@@ -83,5 +85,29 @@ const rpgLinks = [
     if (menu && btn && !menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
       menu.classList.add('hidden');
     }
+  });
+
+  // Keyboard navigation for the FF7 menu (only while the menu is open)
+  document.addEventListener('keydown', function(e) {
+    var menu = document.getElementById('ff7-nav');
+    if (!menu || menu.classList.contains('hidden')) return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].indexOf(e.key) === -1) return;
+
+    var options = Array.prototype.slice.call(menu.querySelectorAll('.ff7-menu-option'));
+    if (options.length === 0) return;
+    var current = options.findIndex(function(o) { return o.classList.contains('active'); });
+
+    if (e.key === 'Escape') {
+      menu.classList.add('hidden');
+      options.forEach(function(o) { o.classList.remove('active'); });
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      var delta = e.key === 'ArrowUp' ? -1 : 1;
+      var next = current === -1 ? (delta === 1 ? 0 : options.length - 1) : (current + delta + options.length) % options.length;
+      options.forEach(function(o, i) { o.classList.toggle('active', i === next); });
+    } else if (e.key === 'Enter' && current !== -1) {
+      options[current].click();
+    }
+    e.preventDefault();
   });
 </script>

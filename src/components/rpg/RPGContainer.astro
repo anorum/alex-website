@@ -5,6 +5,7 @@ import WhatIDoRPG from './WhatIDoRPG.astro';
 import TimelineRPG from './TimelineRPG.astro';
 import InterestItemRPG from './InterestItemRPG.astro';
 import IndexTravelMap from '../travel/IndexTravelMap';
+import BattleIsland from './battle/BattleIsland';
 import { travelLocations } from '../../data/travel';
 
 // Import experience data for quests section
@@ -38,7 +39,7 @@ import oracleLogo from '../../assets/logos/oraclelogo.png';
             {experience.map((item) => (
               <div class="p-3 border border-[rgba(192,192,192,0.3)] bg-[rgba(0,0,0,0.2)]">
                 <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 bg-[#000040] border border-[#c0c0c0] p-1 flex items-center justify-center">
+                  <div class="w-8 h-8 p-1 flex items-center justify-center" style="background-color: var(--ff7-blue-dark); border: 1px solid var(--ff7-border);">
                     <img src={item.logo.src} alt={item.company} class="object-contain max-w-full max-h-full" />
                   </div>
                   <div>
@@ -98,6 +99,15 @@ import oracleLogo from '../../assets/logos/oraclelogo.png';
     </div>
   </div>
 
+  <div id="rpg-battle" class="rpg-section">
+    <div class="ff7-menu">
+      <div class="ff7-menu-header">BATTLE</div>
+      <div class="ff7-menu-content">
+        <BattleIsland client:visible />
+      </div>
+    </div>
+  </div>
+
   <div id="rpg-map" class="rpg-section">
     <div class="ff7-menu">
       <div class="ff7-menu-header">MAP</div>
@@ -123,6 +133,8 @@ import oracleLogo from '../../assets/logos/oraclelogo.png';
 
     var target = document.getElementById('rpg-' + sectionId);
     if (target) target.classList.add('active');
+
+    document.dispatchEvent(new CustomEvent('rpg:section-change', { detail: { section: sectionId } }));
 
     var menu = document.getElementById('ff7-nav');
     if (menu) menu.classList.add('hidden');

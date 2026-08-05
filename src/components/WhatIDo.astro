@@ -1,33 +1,111 @@
 ---
+import SectionHeader from './SectionHeader.astro';
 import { whatIDo } from '../data/whatido';
 ---
 
-<section class="py-16" style="background-color: var(--bubble-bg); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
-  <div class="max-w-5xl mx-auto px-6">
-    <h2 class="text-2xl sm:text-3xl font-bold mb-4 reveal-item" style="font-family: var(--font-heading); color: var(--text-color);">What I Do</h2>
+<section class="py-12 sm:py-16" style="border-top: var(--rule);">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <SectionHeader number="01" title="What I Do" />
 
-    <p class="reveal-item text-base sm:text-lg leading-relaxed mb-10" style="color: var(--text-secondary);">
-      I lead <span class="font-semibold" style="color: var(--accent-color);">Data Platform Engineering</span> at LegalZoom — building reliable, self-service infrastructure with Snowflake, Airflow, and Terraform.
-    </p>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      {whatIDo.map((item, i) => (
-        <div
-          class="reveal-item group p-6 rounded-xl border transition-all duration-200 hover:-translate-y-1"
-          style={`background-color: var(--bubble-bg); border-color: var(--border-color); box-shadow: var(--card-shadow); --reveal-delay: ${i * 100}ms;`}
-        >
-          <div
-            class="w-11 h-11 rounded-lg flex items-center justify-center mb-4 transition-colors duration-200"
-            style={`background-color: color-mix(in srgb, var(${item.accentVar}) 12%, transparent);`}
+    <div class="card-grid mt-6 sm:mt-8 stagger-children">
+      {whatIDo.map((item) => (
+        <div class={`card reveal-item${item.inverted ? ' card-inverted' : ''}`}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="card-icon"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            aria-hidden="true"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={`color: var(${item.accentVar});`}>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={item.iconPath} />
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold mb-2" style="font-family: var(--font-heading); color: var(--text-color);">{item.title}</h3>
-          <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">{item.description}</p>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={item.iconPath} />
+          </svg>
+          <h3 class="card-title">{item.title}</h3>
+          <p class="card-desc">{item.description}</p>
         </div>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  /* Collapsed 2px borders: outer border on the grid, each card draws only
+     its right/bottom edge; last column/row edges suppressed per breakpoint. */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    border: var(--rule);
+  }
+
+  .card {
+    padding: 1.5rem 1.5rem 1.75rem;
+    border-bottom: var(--rule);
+    color: var(--text-color);
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .card:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 640px) {
+    .card-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .card {
+      padding: 1.75rem 1.75rem 2rem;
+    }
+    .card:nth-child(odd) {
+      border-right: var(--rule);
+    }
+    .card:nth-last-child(-n + 2):nth-child(odd),
+    .card:last-child {
+      border-bottom: none;
+    }
+    /* re-apply bottom border to first row */
+    .card:nth-child(-n + 2) {
+      border-bottom: var(--rule);
+    }
+  }
+
+  .card:not(.card-inverted):hover {
+    background-color: color-mix(in srgb, var(--accent-color) 6%, transparent);
+  }
+
+  .card-inverted {
+    background-color: var(--accent-color);
+    color: var(--on-accent);
+  }
+
+  .card-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent-text);
+  }
+
+  .card-inverted .card-icon {
+    color: var(--on-accent);
+  }
+
+  .card-title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 1.0625rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    margin-top: 0.5rem;
+    color: var(--text-secondary);
+  }
+
+  .card-inverted .card-desc {
+    color: color-mix(in srgb, var(--on-accent) 88%, var(--accent-color));
+  }
+</style>
