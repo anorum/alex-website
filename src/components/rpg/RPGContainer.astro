@@ -11,6 +11,7 @@ import { travelLocations } from '../../data/travel';
 
 // Import experience data for quests section
 import { experience } from '../../data/experience';
+import { interests } from '../../data/interests';
 ---
 
 <div class="rpg-container">
@@ -82,30 +83,14 @@ import { experience } from '../../data/experience';
       <div class="ff7-menu-header">CRAFTS</div>
       <div class="ff7-menu-content">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InterestItemRPG
-            title="Running & Fitness"
-            description="Running mostly to clear my head. Sometimes to train. Always tracking something."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>'
-            colorScheme="green"
-          />
-          <InterestItemRPG
-            title="Golf"
-            description="Trying to get better, tracking my misses, and regretting most 3-woods."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>'
-            colorScheme="blue"
-          />
-          <InterestItemRPG
-            title="Reading"
-            description="I read a mix of sci-fi, philosophy, and whatever's on my nightstand too long."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>'
-            colorScheme="purple"
-          />
-          <InterestItemRPG
-            title="Traveling"
-            description="Travel is not a reward for working, it's education for living."
-            icon='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>'
-            colorScheme="yellow"
-          />
+          {interests.map((item) => (
+            <InterestItemRPG
+              title={item.title}
+              description={item.description}
+              icon={`<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.iconPath}" /></svg>`}
+              colorScheme={item.colorScheme}
+            />
+          ))}
         </div>
       </div>
     </div>

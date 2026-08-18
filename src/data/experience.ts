@@ -11,6 +11,7 @@ export interface ExperienceItem {
   description: string;
   achievements: string[];
   isPromotion: boolean;
+  /** expanded by default in the accordion */
   isCurrent?: boolean;
 }
 
@@ -19,13 +20,13 @@ export const experience: ExperienceItem[] = [
     company: "LegalZoom",
     logo: legalZoomLogo,
     role: "Head of Data Platform",
-    period: "2023 - Present",
+    period: "2023 - 2026",
     year: "2023",
-    description: "Leading a small team that owns LegalZoom's data platform - Snowflake, Airflow on Kubernetes, dbt, Terraform, and the self-service tooling around all of it.",
+    description: "Led the small team that owned LegalZoom's data platform - Snowflake, Airflow on Kubernetes, dbt, Terraform, and the self-service tooling around all of it.",
     achievements: [
-      "Designed domain-based Snowflake access model that automates role assignments",
-      "Built AI-powered support bot and MCP server for the data platform",
-      "Led DSR automation and dynamic PII column masking for governance",
+      "Designed the domain-based Snowflake access model with automated role assignment",
+      "Built Data Hero, the platform's AI support agent, plus an MCP server for the platform",
+      "Led DSR automation and dynamic PII masking, including AI_REDACT for LLM pipelines",
     ],
     isPromotion: true,
     isCurrent: true,
@@ -36,25 +37,25 @@ export const experience: ExperienceItem[] = [
     role: "Principal Data Engineer",
     period: "2021 - 2023",
     year: "2021",
-    description: "Rebuilt LegalZoom's data platform from legacy to modern - Airflow on Kubernetes, Terraform-managed Snowflake, and GitOps workflows for everything.",
+    description: "Rebuilt LegalZoom's platform from a legacy Matillion stack to Kubernetes-native - Airflow on K8s, Terraform-managed Snowflake, and GitOps for everything.",
     achievements: [
       "Migrated the platform to Airflow on K8s with Terraform IaC",
       "Wrote the platform standards and documentation the team still uses",
-      "Established self-service patterns that let domain teams own their own data",
+      "Established self-service patterns so domain teams own their own data",
     ],
     isPromotion: false,
   },
   {
     company: "New Relic",
     logo: newRelicLogo,
-    role: "Senior Data Engineer → Lead Data Analyst",
+    role: "Senior Software Engineer, Data Platform",
     period: "2018 - 2021",
     year: "2018",
-    description: "Owned the data engineering platform roadmap. Built blue/green deployments, testing frameworks, and brought dbt to the org.",
+    description: "Joined as a data analyst, left owning the data platform roadmap. Built blue/green deployments, testing frameworks, and brought dbt to the org.",
     achievements: [
       "Introduced dbt - first adoption across the data org",
-      "Built Spark pipelines ingesting from 10+ data sources",
-      "Created self-service tooling for analyst teams",
+      "Built Spark pipelines ingesting 10+ sources into Delta Lake",
+      "Clickstream sessionization and self-service tooling for analyst teams",
     ],
     isPromotion: false,
   },

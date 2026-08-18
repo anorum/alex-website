@@ -1,0 +1,50 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import { creed, creedCoda } from '../data/creed';
+---
+
+<section class="section-pad" id="how-i-think" style="border-top: var(--rule);">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <SectionHeader number="05" title="How I Think" />
+
+    <ul class="creed mt-6 sm:mt-8 stagger-children" role="list">
+      {creed.map((line) => (
+        <li class="creed-line reveal-item">{line}</li>
+      ))}
+    </ul>
+
+    <p class="creed-coda reveal-item">{creedCoda}</p>
+  </div>
+</section>
+
+<style>
+  .creed {
+    padding: 0;
+    max-width: 44rem;
+  }
+
+  .creed-line {
+    list-style: none;
+    border-top: 1px solid var(--hairline-color);
+    padding: 1.125rem 0;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1rem, 2.2vw, 1.25rem);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    color: var(--text-color);
+  }
+
+  .creed-line:last-child {
+    border-bottom: 1px solid var(--hairline-color);
+  }
+
+  .creed-coda {
+    margin-top: 1.5rem;
+    max-width: 40rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+</style>

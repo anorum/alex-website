@@ -2,9 +2,9 @@ export const stackHeadline: string[] = [
   "Snowflake",
   "Airflow",
   "dbt",
+  "Kafka",
   "Terraform",
   "Kubernetes",
-  "Python",
   "AI Agents & MCP",
 ];
 
@@ -15,15 +15,19 @@ export interface SkillCategory {
 
 export const skillCategories: SkillCategory[] = [
   {
-    label: "Platform",
-    items: ["Snowflake", "Airflow on K8s", "dbt", "Terraform", "GitOps", "Spark"],
+    label: "Core",
+    items: ["Python", "SQL", "Airflow", "Snowflake", "dbt", "Spark", "Kafka", "Flink", "Kubernetes", "Terraform", "AWS"],
+  },
+  {
+    label: "Also",
+    items: ["Delta Lake", "Iceberg", "Postgres", "Docker", "GitHub Actions", "GitOps"],
   },
   {
     label: "AI",
-    items: ["MCP servers", "LLM tooling", "AI agents", "Self-service bots"],
+    items: ["LLM tooling", "MCP servers", "Agents", "Slack bots", "Claude Code and Cursor, daily"],
   },
   {
-    label: "Leadership",
-    items: ["Hiring & mentoring", "Platform roadmaps", "Docs & standards", "Data governance"],
+    label: "Honest levels",
+    items: ["TypeScript and React: can build things, not expert"],
   },
 ];

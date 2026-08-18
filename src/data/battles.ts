@@ -105,7 +105,7 @@ export const bosses: Boss[] = [
     spriteId: 'agent',
     intro: 'ROGUE AGENT materializes from the context window!',
     defeatLine: 'ROGUE AGENT is aligned. The MCP server hums.',
-    experienceMatch: { company: 'LegalZoom', period: '2023 - Present' },
+    experienceMatch: { company: 'LegalZoom', period: '2023 - 2026' },
   },
 ];
 

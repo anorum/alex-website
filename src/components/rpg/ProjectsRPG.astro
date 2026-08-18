@@ -5,6 +5,7 @@ const statusTag: Record<string, string> = {
   live: 'IN SERVICE',
   active: 'IN SERVICE',
   stable: 'FIELD TESTED',
+  internal: 'GUILD PROPERTY',
   deprecated: 'BROKEN',
 };
 ---
@@ -59,12 +60,16 @@ const statusTag: Record<string, string> = {
               <span class="shop-tech-tag">{t}</span>
             ))}
           </div>
-          <div class="shop-links">
-            {p.links.live && (
-              <a href={p.links.live} target="_blank" rel="noopener noreferrer">USE ITEM (LIVE)</a>
-            )}
-            <a href={p.links.repo} target="_blank" rel="noopener noreferrer">INSPECT (GITHUB)</a>
-          </div>
+          {(p.links.live || p.links.repo) && (
+            <div class="shop-links">
+              {p.links.live && (
+                <a href={p.links.live} target="_blank" rel="noopener noreferrer">USE ITEM (LIVE)</a>
+              )}
+              {p.links.repo && (
+                <a href={p.links.repo} target="_blank" rel="noopener noreferrer">INSPECT (GITHUB)</a>
+              )}
+            </div>
+          )}
         </div>
       ))}
     </div>

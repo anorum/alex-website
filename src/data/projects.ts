@@ -1,7 +1,7 @@
 // Side projects shown in the Projects section (standard theme) and the
 // RPG item shop. Pure data - no React, no DOM.
 
-export type ProjectStatus = 'live' | 'active' | 'stable' | 'deprecated';
+export type ProjectStatus = 'live' | 'active' | 'stable' | 'internal' | 'deprecated';
 
 export interface Project {
   id: string;
@@ -10,7 +10,7 @@ export interface Project {
   description: string;
   highlights: string[];
   tech: string[];
-  links: { live?: string; repo: string };
+  links: { live?: string; repo?: string };
   status: ProjectStatus;
   /** How this project appears in the RPG item shop */
   rpg: { itemName: string; itemDescription: string };
@@ -22,13 +22,13 @@ export const projects: Project[] = [
     name: 'PDX Train',
     tagline: 'Is the train blocking the intersection?',
     description:
-      'Detects freight trains blocking street crossings in SE Portland using public traffic cameras, and alerts before you leave the house. The state never archives its camera images, so the history this project builds exists nowhere else.',
+      'Portland freight trains park across SE crossings, so this tells me before I leave the house. ODOT camera frames run through a Kafka, Flink, and Iceberg pipeline on my k3s cluster, with Postgres and Cloudflare serving the live board. A real streaming stack pointed at a tiny problem, on purpose.',
     highlights: [
       'Watching 6 cameras every 30 seconds since Aug 2026',
       'Per-camera trained image classifier in production',
-      'Full history of every blockage stored in Postgres',
+      'ODOT never archives its footage, so this history exists nowhere else',
     ],
-    tech: ['Python', 'Kafka', 'Postgres', 'k3s'],
+    tech: ['Kafka', 'Flink', 'Iceberg', 'Postgres', 'k3s'],
     links: {
       live: 'https://pdxtrain.alexnorum.com',
       repo: 'https://github.com/anorum/trainspotter',
@@ -38,6 +38,26 @@ export const projects: Project[] = [
       itemName: 'PDX TRAIN SCOPE',
       itemDescription:
         'Sees through steel. Reveals whether a freight train blocks the path ahead before you set out.',
+    },
+  },
+  {
+    id: 'data-hero',
+    name: 'Data Hero',
+    tagline: 'A Slack agent that answers the platform questions.',
+    description:
+      'Internal Slack agent for data platform support at LegalZoom. Persistent memory, connectors to GitHub, Snowflake, and Jira, and a knowledge base written for AI consumption. The architecture went webhook, then heartbeat, then hybrid: a message wakes the agent, and the agent manages its own task context.',
+    highlights: [
+      'Answered the questions that used to interrupt the team',
+      'Persistent memory plus GitHub, Snowflake, and Jira connectors',
+      'Stupid simple beat the hype-cycle architecture',
+    ],
+    tech: ['Python', 'Slack', 'MCP', 'Snowflake'],
+    links: {},
+    status: 'internal',
+    rpg: {
+      itemName: 'DATA HERO SUMMON',
+      itemDescription:
+        'Summons a tireless helper to the guild hall. Answers every question so the platform keepers can sleep.',
     },
   },
   {
@@ -86,15 +106,15 @@ export const projects: Project[] = [
   {
     id: 'homelab',
     name: 'Homelab',
-    tagline: 'The cluster in the closet that runs it all.',
+    tagline: 'Not a showpiece. A place I break things.',
     description:
-      'A Kubernetes cluster running at home that hosts PDX Train, app deploys, and whatever gets built next. Everything is declared in git and deploys itself.',
+      'A k3s cluster (nodes swagman-1 and swagman-2) plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka, MinIO, and Iceberg for the data side. It runs PDX Train around the clock and whatever gets built next.',
     highlights: [
-      'k3s cluster with GitOps deploys via ArgoCD',
+      'GitOps deploys via ArgoCD, everything in version control',
+      'Home Assistant with Zigbee and Lutron Caseta',
       'Runs the PDX Train pipeline around the clock',
-      'Every app and config lives in version control',
     ],
-    tech: ['k3s', 'ArgoCD', 'Terraform'],
+    tech: ['k3s', 'ArgoCD', 'Strimzi', 'MinIO', 'Tailscale'],
     links: { repo: 'https://github.com/anorum/homelab' },
     status: 'active',
     rpg: {
@@ -108,7 +128,7 @@ export const projects: Project[] = [
     name: 'mara-bot',
     tagline: 'A chatbot of my dog. She had opinions.',
     description:
-      'A chatbot version of my dog Mara that lived on an earlier version of this website. Retired, but preserved for the record.',
+      'A chatbot version of my labradoodle Mara that lived on an earlier version of this website. Retired, but preserved for the record.',
     highlights: [],
     tech: ['Python'],
     links: { repo: 'https://github.com/anorum/mara-ai' },

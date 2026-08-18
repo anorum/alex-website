@@ -1,4 +1,7 @@
 ---
+import { creed } from '../../data/creed';
+
+const creedIcons = ['🧰', '🚦', '🔐', '📦', '📚'];
 ---
 
 <div class="ff7-menu">
@@ -12,7 +15,7 @@
       </p>
       
       <p class="ff7-text">
-        My expertise lies at the intersection of <span class="ff7-highlight">CLOUD INFRASTRUCTURE</span> and <span class="ff7-highlight">DATA ENGINEERING</span> - creating scalable platforms and automated pipelines that enable teams to transform raw data into valuable insights.
+        Works at the intersection of <span class="ff7-highlight">CLOUD INFRASTRUCTURE</span> and <span class="ff7-highlight">DATA ENGINEERING</span> - platforms and pipelines that teams run themselves.
       </p>
     </div>
     
@@ -135,26 +138,12 @@
       <div class="ff7-section-title">ENGINEERING PRINCIPLES</div>
       
       <ul class="ff7-creed-list">
-        <li class="ff7-creed-item">
-          <span class="ff7-creed-icon">🧰</span>
-          <span class="ff7-creed-text">A well-designed platform isn't just technically sound - it's intuitive to use, clear in purpose, and enables self-service for all data consumers.</span>
-        </li>
-        <li class="ff7-creed-item">
-          <span class="ff7-creed-icon">🚦</span>
-          <span class="ff7-creed-text">Robust data platforms enable team autonomy. They guide users toward best practices without requiring constant oversight from platform engineers.</span>
-        </li>
-        <li class="ff7-creed-item">
-          <span class="ff7-creed-icon">🔐</span>
-          <span class="ff7-creed-text">Make the secure path easy, the risky path difficult - while preserving the flexibility needed for innovation and experimentation.</span>
-        </li>
-        <li class="ff7-creed-item">
-          <span class="ff7-creed-icon">📦</span>
-          <span class="ff7-creed-text">Elegant simplicity beats unnecessary complexity. Solve the actual business problem, not the one that showcases technical prowess.</span>
-        </li>
-        <li class="ff7-creed-item">
-          <span class="ff7-creed-icon">📚</span>
-          <span class="ff7-creed-text">Clear documentation, practical runbooks, and reusable infrastructure patterns have more lasting impact than heroic individual efforts.</span>
-        </li>
+        {creed.map((line, i) => (
+          <li class="ff7-creed-item">
+            <span class="ff7-creed-icon">{creedIcons[i % creedIcons.length]}</span>
+            <span class="ff7-creed-text">{line}</span>
+          </li>
+        ))}
       </ul>
     </div>
   </div>
