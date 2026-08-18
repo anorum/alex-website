@@ -2,6 +2,7 @@
 // Same string-grid pixel-art technique as the battle sprites - no image assets.
 
 import { memo } from 'react';
+import { gridCols, pixelRects } from './pixels';
 import {
   worldRows,
   worldCols,
@@ -18,7 +19,7 @@ const TERRAIN_FILL: Record<string, [string, string]> = {
   m: ['#7d7a72', '#736f68'],
 };
 
-/** Renders an 8x8 string grid into a w x h tile box at tile (x, y) */
+/** Renders a string grid into a w x h tile box at tile (x, y) */
 function Glyph({
   pixels,
   palette,
@@ -34,20 +35,9 @@ function Glyph({
   w: number;
   h: number;
 }) {
-  const rows = pixels.length;
-  const cols = Math.max(...pixels.map((r) => r.length));
-  const rects = [];
-  for (let py = 0; py < rows; py++) {
-    for (let px = 0; px < pixels[py].length; px++) {
-      const color = palette[pixels[py][px]];
-      if (color) {
-        rects.push(<rect key={`${px}-${py}`} x={px} y={py} width="1.05" height="1.05" fill={color} />);
-      }
-    }
-  }
   return (
-    <svg x={x} y={y} width={w} height={h} viewBox={`0 0 ${cols} ${rows}`}>
-      {rects}
+    <svg x={x} y={y} width={w} height={h} viewBox={`0 0 ${gridCols(pixels)} ${pixels.length}`}>
+      {pixelRects(pixels, palette)}
     </svg>
   );
 }

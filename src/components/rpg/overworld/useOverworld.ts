@@ -9,7 +9,6 @@ import {
 import { playConfirm, playCursor } from '../../../utils/rpg-audio';
 
 interface UseOverworldOptions {
-  seed: number;
   speed: number;
   /** overworld section is currently visible */
   active: boolean;
@@ -43,10 +42,8 @@ function menuIsOpen(): boolean {
   return !!nav && !nav.classList.contains('hidden');
 }
 
-export function useOverworld({ seed, speed, active }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
-  const [state, dispatch] = useReducer(overworldReducer, undefined, () =>
-    createOverworldState(seed)
-  );
+export function useOverworld({ speed, active }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
+  const [state, dispatch] = useReducer(overworldReducer, undefined, createOverworldState);
 
   // Single rAF loop driving movement
   useEffect(() => {

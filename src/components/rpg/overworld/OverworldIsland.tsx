@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { worldCols, worldRows } from '../../../data/overworld';
 import { useOverworld } from './useOverworld';
 import { WorldTerrain } from './WorldMap';
@@ -19,11 +19,9 @@ export default function OverworldIsland() {
   const [active, setActive] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const seedRef = useRef(1);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    seedRef.current = readParam('rpg-seed') ?? (Date.now() >>> 0);
     setSpeed(Math.min(readParam('rpg-speed') ?? 1, 16));
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     setReady(true);
@@ -42,28 +40,19 @@ export default function OverworldIsland() {
 
   if (!ready) return <div className="ow-loading">LOADING WORLD...</div>;
 
-  return (
-    <OverworldGame
-      seed={seedRef.current}
-      speed={speed}
-      active={active}
-      reducedMotion={reducedMotion}
-    />
-  );
+  return <OverworldGame speed={speed} active={active} reducedMotion={reducedMotion} />;
 }
 
 function OverworldGame({
-  seed,
   speed,
   active,
   reducedMotion,
 }: {
-  seed: number;
   speed: number;
   active: boolean;
   reducedMotion: boolean;
 }) {
-  const [state, dispatch] = useOverworld({ seed, speed, active });
+  const [state, dispatch] = useOverworld({ speed, active });
 
   // Interpolated render position in tile units.
   // Reduced motion: steps keep their normal timing but snap tile to tile.

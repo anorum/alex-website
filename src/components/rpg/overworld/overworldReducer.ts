@@ -11,8 +11,6 @@ import {
 
 export interface OverworldState {
   clock: number;
-  /** mulberry32 rng state (reserved for ambient effects) */
-  rng: number;
   /** settled tile, or step destination while stepping */
   x: number;
   y: number;
@@ -31,8 +29,6 @@ export interface OverworldState {
   entered: string | null;
   /** increments when arriving on a door tile (cursor sfx) */
   doorSeq: number;
-  /** increments on a confirmed entry (confirm sfx) */
-  enterSeq: number;
 }
 
 export type OverworldAction =
@@ -50,10 +46,9 @@ const DELTA: Record<Direction, { dx: number; dy: number }> = {
   right: { dx: 1, dy: 0 },
 };
 
-export function createOverworldState(seed: number): OverworldState {
+export function createOverworldState(): OverworldState {
   return {
     clock: 0,
-    rng: seed >>> 0 || 1,
     x: spawn.x,
     y: spawn.y,
     fromX: spawn.x,
@@ -66,7 +61,6 @@ export function createOverworldState(seed: number): OverworldState {
     atDoor: doorAt(spawn.x, spawn.y)?.id ?? null,
     entered: null,
     doorSeq: 0,
-    enterSeq: 0,
   };
 }
 
@@ -137,7 +131,7 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
       if (state.stepping || !state.atDoor) return state;
       const door = doorAt(state.x, state.y);
       if (!door) return state;
-      return { ...state, entered: door.sectionId, enterSeq: state.enterSeq + 1 };
+      return { ...state, entered: door.sectionId };
     }
 
     case 'ACK_ENTER':
