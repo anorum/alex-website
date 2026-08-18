@@ -18,9 +18,31 @@
   border: 2px solid var(--ff7-border, #c0c0c0);
   background-color: #0a1a33;
   line-height: 0;
-  /* keep the whole map (and its overlaid prompt) on screen */
-  width: min(100%, calc(72vh * 22 / 15));
+  /* width + aspect-ratio set inline per scene so the frame stays on screen */
   margin: 0 auto;
+}
+
+/* Scene transition fade */
+.ow-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background-color: #02021e;
+  pointer-events: none;
+}
+
+.ow-scene-name {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10;
+  background-color: var(--ff7-blue-dark, #04044a);
+  border: 1px solid var(--ff7-border, #c0c0c0);
+  color: var(--ff7-text-highlight, #ffe73d);
+  font-size: 0.55em;
+  line-height: 1.4;
+  padding: 0.25rem 0.5rem;
+  letter-spacing: 0.08em;
 }
 
 .ow-svg {
@@ -141,12 +163,37 @@
   background-color: var(--ff7-blue-light, #2929ff);
 }
 
+.ow-ab {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
 .ow-a-btn {
   width: 4rem;
   height: 4rem;
   border-radius: 9999px;
   color: var(--ff7-text-highlight, #ffe73d);
   font-size: 1.25rem;
+}
+
+.ow-b-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  border: 2px solid var(--ff7-border, #c0c0c0);
+  background-color: var(--ff7-blue, #0e0edb);
+  color: var(--ff7-text, #e8e8e8);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ow-b-btn:active {
+  background-color: var(--ff7-blue-light, #2929ff);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -4,6 +4,9 @@ interface TouchControlsProps {
   onDown: (dir: Direction) => void;
   onUp: (dir: Direction) => void;
   onInteract: () => void;
+  onCancel: () => void;
+  /** show the B button (a dialog or window is open) */
+  showCancel: boolean;
 }
 
 const PADS: { dir: Direction; label: string; area: string }[] = [
@@ -13,7 +16,7 @@ const PADS: { dir: Direction; label: string; area: string }[] = [
   { dir: 'down', label: '▼', area: 'down' },
 ];
 
-export default function TouchControls({ onDown, onUp, onInteract }: TouchControlsProps) {
+export default function TouchControls({ onDown, onUp, onInteract, onCancel, showCancel }: TouchControlsProps) {
   return (
     <div className="ow-touch">
       <div className="ow-dpad">
@@ -36,9 +39,16 @@ export default function TouchControls({ onDown, onUp, onInteract }: TouchControl
           </button>
         ))}
       </div>
-      <button type="button" className="ow-a-btn" aria-label="Interact" onClick={onInteract}>
-        A
-      </button>
+      <div className="ow-ab">
+        {showCancel && (
+          <button type="button" className="ow-b-btn" aria-label="Cancel" onClick={onCancel}>
+            B
+          </button>
+        )}
+        <button type="button" className="ow-a-btn" aria-label="Interact" onClick={onInteract}>
+          A
+        </button>
+      </div>
     </div>
   );
 }

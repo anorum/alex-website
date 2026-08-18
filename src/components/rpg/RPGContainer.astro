@@ -1,5 +1,4 @@
 ---
-import HeroRPG from './HeroRPG.astro';
 import SkillsRPG from './SkillsRPG.astro';
 import WhatIDoRPG from './WhatIDoRPG.astro';
 import InterestItemRPG from './InterestItemRPG.astro';
@@ -27,10 +26,6 @@ import { interests } from '../../data/interests';
         <OverworldIsland client:visible />
       </div>
     </div>
-  </div>
-
-  <div id="rpg-status" class="rpg-section">
-    <HeroRPG />
   </div>
 
   <div id="rpg-abilities" class="rpg-section">
@@ -169,10 +164,25 @@ import { interests } from '../../data/interests';
     }
   };
 
-  // Restore last active section on load
+  // Quick travel into a scene: back to the overworld section, then teleport
+  window.gotoRPGScene = function(scene) {
+    window.switchRPGSection('overworld');
+    document.dispatchEvent(new CustomEvent('rpg:goto', { detail: { scene: scene } }));
+  };
+
+  // Restore last active section on load. Sections replaced by interiors
+  // migrate to their scene so old sessions land inside the right room.
   document.addEventListener('DOMContentLoaded', function() {
+    var sceneMap = { status: 'house' };
     var saved = sessionStorage.getItem('rpg-active-section');
-    if (saved) window.switchRPGSection(saved);
+    if (saved && sceneMap[saved]) {
+      try {
+        sessionStorage.setItem('rpg-ow', JSON.stringify({ scene: sceneMap[saved] }));
+      } catch (e) { /* ignore */ }
+      sessionStorage.setItem('rpg-active-section', 'overworld');
+      saved = 'overworld';
+    }
+    if (saved && document.getElementById('rpg-' + saved)) window.switchRPGSection(saved);
   });
 
   // Escape from any location back to the overworld.

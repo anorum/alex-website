@@ -1,21 +1,19 @@
-import { worldLocations } from '../../../data/overworld';
+import type { Prompt } from './overworldReducer';
 
 interface LocationPromptProps {
-  /** location id the player is standing on, or null */
-  doorId: string | null;
+  prompt: Prompt | null;
   onEnter: () => void;
 }
 
-export default function LocationPrompt({ doorId, onEnter }: LocationPromptProps) {
-  const loc = worldLocations.find((l) => l.id === doorId);
-  if (!loc) return null;
+export default function LocationPrompt({ prompt, onEnter }: LocationPromptProps) {
+  if (!prompt) return null;
   return (
     <div className="ow-prompt" role="status">
       <button type="button" className="ow-prompt-btn" onClick={onEnter}>
         <span className="ow-prompt-cursor" aria-hidden="true">▶</span>
-        ENTER {loc.name}
+        {prompt.label}
       </button>
-      <span className="ow-prompt-hint">{loc.hint} · press Enter</span>
+      {prompt.hint && <span className="ow-prompt-hint">{prompt.hint} · press Enter</span>}
     </div>
   );
 }

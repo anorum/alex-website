@@ -5,8 +5,11 @@ import {
   overworldReducer,
   type OverworldAction,
   type OverworldState,
+  type ScenePos,
 } from './overworldReducer';
 import { playConfirm, playCursor } from '../../../utils/rpg-audio';
+
+const POS_KEY = 'rpg-ow';
 
 interface UseOverworldOptions {
   speed: number;
@@ -42,10 +45,24 @@ function menuIsOpen(): boolean {
   return !!nav && !nav.classList.contains('hidden');
 }
 
-export function useOverworld({ speed, active }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
-  const [state, dispatch] = useReducer(overworldReducer, undefined, createOverworldState);
+function readSavedPos(): Partial<ScenePos> | null {
+  try {
+    const raw = sessionStorage.getItem(POS_KEY);
+    return raw ? (JSON.parse(raw) as Partial<ScenePos>) : null;
+  } catch {
+    return null;
+  }
+}
 
-  // Single rAF loop driving movement
+export function useOverworld({ speed, active }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
+  const [state, dispatch] = useReducer(overworldReducer, undefined, () =>
+    createOverworldState(readSavedPos())
+  );
+
+  const modeRef = useRef(state.mode);
+  modeRef.current = state.mode;
+
+  // Single rAF loop driving movement, fades, and the dialog typewriter
   useEffect(() => {
     if (!active) return;
     let raf = 0;
@@ -71,6 +88,29 @@ export function useOverworld({ speed, active }: UseOverworldOptions): [Overworld
       if (e.metaKey || e.ctrlKey || e.altKey || isFormTarget(e.target)) return;
       // FF7 nav menu overlays the screen - let its own handler own the keys
       if (menuIsOpen()) return;
+
+      const mode = modeRef.current;
+      if (mode === 'window') return; // window components own their keys
+      if (mode === 'fade') {
+        e.preventDefault();
+        return;
+      }
+
+      if (mode === 'dialog') {
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+          dispatch({ type: 'DIALOG_NAV', delta: -1 });
+        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+          dispatch({ type: 'DIALOG_NAV', delta: 1 });
+        } else if (e.key === 'Enter' || e.key === ' ' || e.key === 'e') {
+          dispatch({ type: 'INTERACT' });
+        } else if (e.key === 'Escape' || e.key === 'x') {
+          dispatch({ type: 'DIALOG_CANCEL' });
+        } else {
+          return;
+        }
+        e.preventDefault();
+        return;
+      }
 
       const dir = KEY_DIRS[e.key];
       if (dir) {
@@ -99,19 +139,49 @@ export function useOverworld({ speed, active }: UseOverworldOptions): [Overworld
     };
   }, [active]);
 
-  // Arriving at a door plays the cursor blip
-  const lastDoorSeq = useRef(0);
+  // Menu quick-travel: RPGContainer dispatches 'rpg:goto' with a scene id
   useEffect(() => {
-    if (state.doorSeq !== lastDoorSeq.current) {
-      lastDoorSeq.current = state.doorSeq;
+    const onGoto = (e: Event) => {
+      const detail = (e as CustomEvent<{ scene?: string }>).detail;
+      if (detail?.scene) dispatch({ type: 'TELEPORT', scene: detail.scene });
+    };
+    document.addEventListener('rpg:goto', onGoto);
+    return () => document.removeEventListener('rpg:goto', onGoto);
+  }, []);
+
+  // Persist scene + settled position so reloads and theme flips resume in place
+  useEffect(() => {
+    if (state.stepping || state.mode === 'fade') return;
+    try {
+      sessionStorage.setItem(
+        POS_KEY,
+        JSON.stringify({ scene: state.scene, x: state.x, y: state.y, facing: state.facing })
+      );
+    } catch {
+      // private mode etc. - position just does not persist
+    }
+  }, [state.scene, state.x, state.y, state.facing, state.stepping, state.mode]);
+
+  // Sounds: new prompt or cursor move blips, confirms confirm, cancel on dialog close
+  const lastPromptSeq = useRef(0);
+  useEffect(() => {
+    if (state.promptSeq !== lastPromptSeq.current) {
+      lastPromptSeq.current = state.promptSeq;
       playCursor();
     }
-  }, [state.doorSeq]);
+  }, [state.promptSeq]);
 
-  // Confirmed entry: play confirm and switch to the target section
+  const lastConfirmSeq = useRef(0);
+  useEffect(() => {
+    if (state.confirmSeq !== lastConfirmSeq.current) {
+      lastConfirmSeq.current = state.confirmSeq;
+      playConfirm();
+    }
+  }, [state.confirmSeq]);
+
+  // Section handoff (battle, plus legacy doors until all interiors exist)
   useEffect(() => {
     if (state.entered) {
-      playConfirm();
       const fn = (window as unknown as { switchRPGSection?: (id: string) => void }).switchRPGSection;
       if (fn) fn(state.entered);
       dispatch({ type: 'ACK_ENTER' });

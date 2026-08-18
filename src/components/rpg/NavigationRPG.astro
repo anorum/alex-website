@@ -5,9 +5,9 @@ const currentPath = Astro.url.pathname;
 const isIndexPage = currentPath === '/' || currentPath === '/index' || currentPath === '/index.html';
 
 const rpgLinks = [
-  { name: "WORLD", section: "overworld", href: isIndexPage ? undefined : "/?section=overworld",
+  { name: "WORLD", scene: "world",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>` },
-  { name: "STATUS", section: "status", href: isIndexPage ? undefined : "/?section=status",
+  { name: "STATUS", scene: "house",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>` },
   { name: "ABILITIES", section: "abilities", href: isIndexPage ? undefined : "/?section=abilities",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>` },
@@ -47,6 +47,11 @@ const rpgLinks = [
     {rpgLinks.map((link) => (
       link.action === "exit" ? (
         <div class="ff7-menu-option ff7-action-exit" onclick="exitRPGMode()">
+          <span class="ff7-menu-icon" set:html={link.icon} />
+          <span class="ff7-menu-text">{link.name}</span>
+        </div>
+      ) : link.scene ? (
+        <div class="ff7-menu-option" data-scene={link.scene} onclick={`gotoRPGScene('${link.scene}')`}>
           <span class="ff7-menu-icon" set:html={link.icon} />
           <span class="ff7-menu-text">{link.name}</span>
         </div>
