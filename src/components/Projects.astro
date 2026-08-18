@@ -1,0 +1,252 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import { projects } from '../data/projects';
+
+const statusLabel: Record<string, string> = {
+  live: 'Live',
+  active: 'Active',
+  stable: 'Stable',
+  deprecated: 'Deprecated',
+};
+---
+
+<section class="py-12 sm:py-16" id="projects" style="border-top: var(--rule);">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <SectionHeader number="03" title="Projects" />
+    <p class="proj-lede reveal-item">
+      Things I build on nights and weekends. All real, most running right now.
+    </p>
+
+    <div class="mt-6 sm:mt-8 stagger-children">
+      {projects.map((p) => (
+        <article class={`proj reveal-item ${p.status === 'deprecated' ? 'proj-deprecated' : ''}`}>
+          <div class="proj-head">
+            <h3 class="proj-name">{p.name}</h3>
+            <span class={`proj-status proj-status-${p.status}`}>{statusLabel[p.status]}</span>
+          </div>
+          <div class="proj-body">
+            <div class="proj-left">
+              <p class="proj-tagline">{p.tagline}</p>
+              <ul class="proj-tech" role="list">
+                {p.tech.map((t) => (
+                  <li class="proj-tech-tag">{t}</li>
+                ))}
+              </ul>
+            </div>
+            <div class="proj-right">
+              <p class="proj-desc">{p.description}</p>
+              {p.highlights.length > 0 && (
+                <ul class="proj-highlights" role="list">
+                  {p.highlights.map((h) => (
+                    <li>{h}</li>
+                  ))}
+                </ul>
+              )}
+              <div class="proj-links">
+                {p.links.live && (
+                  <a class="proj-link" href={p.links.live} target="_blank" rel="noopener noreferrer">
+                    Live site<span class="proj-arrow" aria-hidden="true">↗</span>
+                  </a>
+                )}
+                <a class="proj-link" href={p.links.repo} target="_blank" rel="noopener noreferrer">
+                  GitHub<span class="proj-arrow" aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .proj-lede {
+    margin-top: 1rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 34rem;
+  }
+
+  .proj {
+    border-top: var(--rule);
+    padding: 1.5rem 0 2rem;
+    position: relative;
+  }
+
+  .proj-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .proj-name {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(1.375rem, 3.5vw, 2rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+    letter-spacing: -0.015em;
+    color: var(--text-color);
+  }
+
+  .proj-status {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3125rem 0.625rem;
+    border: 1px solid currentColor;
+  }
+
+  .proj-status-live,
+  .proj-status-active {
+    color: var(--accent-text);
+  }
+
+  .proj-status-live::before {
+    content: '●';
+    margin-right: 0.4em;
+    font-size: 0.75em;
+  }
+
+  .proj-status-stable {
+    color: var(--text-secondary);
+  }
+
+  .proj-status-deprecated {
+    color: var(--text-tertiary);
+    border-style: dashed;
+  }
+
+  .proj-deprecated .proj-name,
+  .proj-deprecated .proj-tagline,
+  .proj-deprecated .proj-desc {
+    color: var(--text-secondary);
+  }
+
+  .proj-body {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 1rem 3rem;
+    margin-top: 0.75rem;
+  }
+
+  @media (max-width: 720px) {
+    .proj-body {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .proj-tagline {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    max-width: 26rem;
+  }
+
+  .proj-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0;
+  }
+
+  .proj-tech-tag {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+    border: 1px solid color-mix(in srgb, var(--accent-text) 45%, transparent);
+    padding: 0.375rem 0.625rem;
+    list-style: none;
+  }
+
+  .proj-deprecated .proj-tech-tag {
+    color: var(--text-tertiary);
+    border-color: color-mix(in srgb, var(--text-tertiary) 45%, transparent);
+  }
+
+  .proj-desc {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 36rem;
+  }
+
+  .proj-highlights {
+    margin-top: 0.875rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .proj-highlights li {
+    list-style: none;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    padding-left: 1.125rem;
+    position: relative;
+  }
+
+  .proj-highlights li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent-text);
+  }
+
+  .proj-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.125rem;
+  }
+
+  .proj-link {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-color);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-text);
+    padding-bottom: 0.125rem;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .proj-link:hover {
+    color: var(--accent-text);
+  }
+
+  .proj-arrow {
+    display: inline-block;
+    margin-left: 0.375em;
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .proj-link:hover .proj-arrow {
+    transform: translate(2px, -2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .proj-arrow,
+    .proj-link {
+      transition: none;
+    }
+  }
+</style>

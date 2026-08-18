@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import WhatIDo from '../components/WhatIDo.astro';
 import Experience from '../components/Experience.astro';
+import Projects from '../components/Projects.astro';
 import Stack from '../components/Stack.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import IndexTravelMap from '../components/travel/IndexTravelMap';
@@ -22,13 +23,16 @@ const japanVisits = travelLocations.find((loc) => loc.country === 'Japan')?.visi
   <!-- 02 Experience -->
   <Experience />
 
-  <!-- 03 Stack -->
+  <!-- 03 Projects -->
+  <Projects />
+
+  <!-- 04 Stack -->
   <Stack />
 
-  <!-- 04 Travel -->
+  <!-- 05 Travel -->
   <section class="py-12 sm:py-16" id="travel" style="border-top: var(--rule);">
     <div class="max-w-6xl mx-auto px-5 sm:px-8">
-      <SectionHeader number="04" title="Off the Clock" />
+      <SectionHeader number="05" title="Off the Clock" />
 
       <div class="travel-layout mt-6 sm:mt-8 reveal-item">
         <div class="travel-stats">
