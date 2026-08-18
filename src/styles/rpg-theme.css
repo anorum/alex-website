@@ -1,7 +1,6 @@
 /* RPG Theme - Inspired by Final Fantasy 7 */
 
-/* Import pixel font */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+/* Press Start 2P is loaded from the combined Google Fonts link in BaseLayout.astro */
 
 /* Theme-specific CSS variables */
 .theme-rpg {

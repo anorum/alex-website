@@ -15,7 +15,7 @@ import type {
   FloaterKind,
 } from './types';
 
-// mulberry32 step — RNG state lives in BattleState so replays are exact
+// mulberry32 step - RNG state lives in BattleState so replays are exact
 function nextRng(state: number): [value: number, next: number] {
   const t = (state + 0x6d2b79f5) | 0;
   let r = Math.imul(t ^ (t >>> 15), 1 | t);

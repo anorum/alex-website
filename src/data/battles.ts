@@ -1,4 +1,4 @@
-// Battle data for the RPG mode battle arena. Pure data — no React, no DOM.
+// Battle data for the RPG mode battle arena. Pure data - no React, no DOM.
 
 export interface BossAttack {
   name: string;
@@ -88,7 +88,7 @@ export const bosses: Boss[] = [
     spriteId: 'monolith',
     intro: 'LEGACY MONOLITH looms over the platform!',
     defeatLine: 'LEGACY MONOLITH crumbles. GitOps reigns.',
-    experienceMatch: { company: 'LegalZoom', period: '2021 – 2023' },
+    experienceMatch: { company: 'LegalZoom', period: '2021 - 2023' },
   },
   {
     id: 'rogue-agent',
@@ -105,7 +105,7 @@ export const bosses: Boss[] = [
     spriteId: 'agent',
     intro: 'ROGUE AGENT materializes from the context window!',
     defeatLine: 'ROGUE AGENT is aligned. The MCP server hums.',
-    experienceMatch: { company: 'LegalZoom', period: '2023 – Present' },
+    experienceMatch: { company: 'LegalZoom', period: '2023 - Present' },
   },
 ];
 

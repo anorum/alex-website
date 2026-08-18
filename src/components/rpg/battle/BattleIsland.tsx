@@ -57,7 +57,7 @@ export default function BattleIsland() {
       try {
         localStorage.setItem(WINS_KEY, JSON.stringify(next));
       } catch {
-        // private mode etc. — wins just don't persist
+        // private mode etc. - wins just don't persist
       }
       return next;
     });

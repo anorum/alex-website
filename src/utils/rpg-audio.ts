@@ -1,5 +1,5 @@
 // Original synthesized chiptune SFX for the RPG battle arena.
-// No audio files, no copyrighted material — pure WebAudio oscillators/noise.
+// No audio files, no copyrighted material - pure WebAudio oscillators/noise.
 // AudioContext is created lazily inside play* calls, which always originate
 // from user gestures (click/keydown), satisfying autoplay policies.
 
@@ -100,7 +100,7 @@ export const playLimit = () => guard(() => {
   [440, 554, 659, 880, 1109].forEach((f, i) => tone(f, i * 60, 70, 'square', 0.8));
 });
 export const playVictory = () => guard(() => {
-  // Original I–IV–V-flavored fanfare motif
+  // Original I-IV-V-flavored fanfare motif
   const notes: Array<[number, number, number]> = [
     [523, 0, 110], [523, 120, 110], [523, 240, 110], [523, 360, 220],
     [415, 600, 220], [466, 840, 220], [523, 1080, 180], [466, 1280, 90], [523, 1380, 420],

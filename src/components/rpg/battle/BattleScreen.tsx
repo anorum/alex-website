@@ -63,7 +63,7 @@ export default function BattleScreen({
       </div>
 
       <div className="rpgb-window rpgb-message" aria-live="polite" data-testid="battle-message">
-        {state.message || `${boss.name} — ${boss.era}`}
+        {state.message || `${boss.name} - ${boss.era}`}
       </div>
 
       <div className="rpgb-bottom">

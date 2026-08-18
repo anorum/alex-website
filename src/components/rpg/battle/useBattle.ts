@@ -72,7 +72,7 @@ export function useBattle({ boss, seed, speed, active }: UseBattleOptions): [Bat
     if (!active) return;
     const handler = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || isFormTarget(e.target)) return;
-      // FF7 nav menu overlays the screen — let its own handler own the keys
+      // FF7 nav menu overlays the screen - let its own handler own the keys
       const nav = document.getElementById('ff7-nav');
       if (nav && !nav.classList.contains('hidden')) return;
       if (phaseRef.current !== 'command') return;

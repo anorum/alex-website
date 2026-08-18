@@ -120,7 +120,7 @@ h1, h2, h3, h4, h5, h6 {
    UTILITY CLASSES
    ============================================ */
 
-/* Editorial type helpers (opt-in classes only — bare element rules leak into RPG) */
+/* Editorial type helpers (opt-in classes only - bare element rules leak into RPG) */
 .eyebrow {
   font-family: var(--font-mono);
   font-size: 0.6875rem;

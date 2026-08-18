@@ -1,5 +1,5 @@
 /* ============================================
-   STANDARD THEME — "Bold Editorial"
+   STANDARD THEME - "Bold Editorial"
    Light mode: paper + ink + electric green
    Dark mode: deep forest-black inversion
    ============================================ */
@@ -10,7 +10,7 @@
   --text-secondary: var(--color-muted);
   --text-tertiary: color-mix(in srgb, var(--color-muted) 75%, var(--color-paper));
   --accent-color: var(--color-accent);
-  /* Darker accent for small text — base green fails AA below ~18px on paper */
+  /* Darker accent for small text - base green fails AA below ~18px on paper */
   --accent-text: var(--color-accent-deep);
   /* Text color on accent-filled surfaces (white on deep green / ink on bright green) */
   --on-accent: #ffffff;
