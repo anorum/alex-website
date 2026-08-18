@@ -173,6 +173,23 @@ export const dialogs: Record<string, DialogScript> = {
     { kind: 'line', text: 'A chart of every voyage, inked by hand.' },
     { kind: 'action', action: { type: 'openWindow', window: 'travel-map' } },
   ],
+
+  'arena-gatekeeper': [
+    {
+      kind: 'line',
+      speaker: 'GATEKEEPER',
+      text: 'Four bosses wait inside. Each one guards a real chapter of the career.',
+    },
+    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what was actually shipped is yours.' },
+    {
+      kind: 'choice',
+      prompt: 'Enter the arena?',
+      options: [
+        { label: 'FIGHT', action: { type: 'battle' } },
+        { label: 'NOT YET', action: { type: 'end' } },
+      ],
+    },
+  ],
 };
 
 export function getScript(id: string): DialogScript {

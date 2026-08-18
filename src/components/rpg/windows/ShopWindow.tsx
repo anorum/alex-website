@@ -6,7 +6,6 @@ const statusTag: Record<string, string> = {
   live: 'IN SERVICE',
   active: 'IN SERVICE',
   stable: 'FIELD TESTED',
-  internal: 'GUILD PROPERTY',
   deprecated: 'BROKEN',
 };
 

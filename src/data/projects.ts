@@ -1,7 +1,7 @@
 // Side projects shown in the Projects section (standard theme) and the
 // RPG item shop. Pure data - no React, no DOM.
 
-export type ProjectStatus = 'live' | 'active' | 'stable' | 'internal' | 'deprecated';
+export type ProjectStatus = 'live' | 'active' | 'stable' | 'deprecated';
 
 export interface Project {
   id: string;
@@ -22,13 +22,13 @@ export const projects: Project[] = [
     name: 'PDX Train',
     tagline: 'Is the train blocking the intersection?',
     description:
-      'Portland freight trains park across SE crossings, so this tells me before I leave the house. ODOT camera frames run through a Kafka, Flink, and Iceberg pipeline on my k3s cluster, with Postgres and Cloudflare serving the live board. A real streaming stack pointed at a tiny problem, on purpose.',
+      'Portland freight trains park across SE crossings, so this tells me before I leave the house. ODOT camera frames run through a Kafka and Iceberg pipeline on my k3s cluster, with Postgres and Cloudflare serving the live board.',
     highlights: [
       'Watching 6 cameras every 30 seconds since Aug 2026',
       'Per-camera trained image classifier in production',
       'ODOT never archives its footage, so this history exists nowhere else',
     ],
-    tech: ['Kafka', 'Flink', 'Iceberg', 'Postgres', 'k3s'],
+    tech: ['Kafka', 'Iceberg', 'Postgres', 'k3s'],
     links: {
       live: 'https://pdxtrain.alexnorum.com',
       repo: 'https://github.com/anorum/trainspotter',
@@ -38,26 +38,6 @@ export const projects: Project[] = [
       itemName: 'PDX TRAIN SCOPE',
       itemDescription:
         'Sees through steel. Reveals whether a freight train blocks the path ahead before you set out.',
-    },
-  },
-  {
-    id: 'data-hero',
-    name: 'Data Hero',
-    tagline: 'A Slack agent that answers the platform questions.',
-    description:
-      'Internal Slack agent for data platform support at LegalZoom. It remembered context, plugged into the tools the team already used, and answered the questions that used to interrupt engineers. A message wakes the agent, and the agent manages its own work from there.',
-    highlights: [
-      'Answered the questions that used to interrupt the team',
-      'Remembered context across conversations and tools',
-      'Stupid simple beat the hype-cycle architecture',
-    ],
-    tech: ['Python', 'Slack', 'MCP', 'Snowflake'],
-    links: {},
-    status: 'internal',
-    rpg: {
-      itemName: 'DATA HERO SUMMON',
-      itemDescription:
-        'Summons a tireless helper to the guild hall. Answers every question so the platform keepers can sleep.',
     },
   },
   {

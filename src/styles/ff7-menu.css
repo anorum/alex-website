@@ -1,7 +1,6 @@
 /* FF7 Menu Styles - Based on the FF7 menu example */
 
 /* Import pixel fonts */
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 /* FF7 Menu Container */
 .ff7-game-menu {
@@ -55,128 +54,8 @@
   color: var(--ff7-text-highlight, #ffff00);
 }
 
-/* Character Panel */
-.ff7-character-panel {
-  display: flex;
-  padding: 10px;
-  border-bottom: 1px solid rgba(192, 192, 192, 0.5);
-  position: relative;
-}
-
-.ff7-character-portrait {
-  width: 64px;
-  height: 64px;
-  border: 1px solid #c0c0c0;
-  margin-right: 15px;
-  background-color: #000040;
-}
-
-.ff7-character-info {
-  flex: 1;
-}
-
-.ff7-character-name {
-  color: #00ffff; /* Cyan color for names */
-  margin-bottom: 5px;
-}
-
-.ff7-character-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.ff7-stat-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ff7-stat-label {
-  width: 30px;
-  color: #00ffff;
-}
-
-.ff7-stat-value {
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-}
-
-.ff7-stat-value span {
-  margin: 0 5px;
-}
-
-.ff7-stat-bar-container {
-  flex: 1;
-  height: 10px;
-  background-color: #333;
-  border: 1px solid #666;
-  position: relative;
-}
-
-.ff7-stat-bar {
-  height: 100%;
-  background-color: #00ff00; /* Green for HP */
-}
-
 .ff7-stat-bar.mp {
   background-color: #00ffff; /* Cyan for MP */
-}
-
-/* Level indicator */
-.ff7-level {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.ff7-level-label {
-  color: #00ffff;
-  margin-right: 5px;
-}
-
-.ff7-level-value {
-  color: #ffffff;
-}
-
-/* Next level progress */
-.ff7-next-level {
-  margin-top: 10px;
-}
-
-.ff7-next-level-label {
-  color: #ffffff;
-  margin-bottom: 5px;
-}
-
-.ff7-next-level-bar {
-  height: 8px;
-  background-color: #333;
-  border: 1px solid #666;
-  position: relative;
-}
-
-.ff7-next-level-progress {
-  height: 100%;
-  background-color: #ff6666; /* Light red for XP */
-  width: 70%; /* Example progress */
-}
-
-/* Limit level */
-.ff7-limit-level {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.ff7-limit-level-label {
-  color: #ffffff;
-  margin-right: 10px;
-}
-
-.ff7-limit-level-value {
-  color: #ffffff;
 }
 
 /* Menu Header */
@@ -251,25 +130,6 @@
   animation: ff7-cursor-blink 1s infinite;
 }
 
-/* Submenu */
-.ff7-submenu {
-  position: absolute;
-  left: -170px;
-  top: 0;
-  background-color: #000080;
-  border: 2px solid #c0c0c0;
-  width: 160px;
-  padding: 5px 0;
-}
-
-.ff7-submenu-title {
-  background-color: #0000aa;
-  color: #ffffff;
-  padding: 5px 10px;
-  text-align: center;
-  border-bottom: 1px solid #c0c0c0;
-}
-
 /* Status bar */
 .ff7-status-bar {
   background-color: #0000aa;
@@ -290,39 +150,12 @@
   color: #ffffff;
 }
 
-/* Materia slots */
-.ff7-materia-slots {
-  display: flex;
-  gap: 5px;
-  margin-top: 10px;
-}
-
-.ff7-materia-slot {
-  width: 15px;
-  height: 15px;
-  border: 1px solid #c0c0c0;
-  border-radius: 50%;
-  background-color: #333;
-}
-
-.ff7-materia-slot.magic {
-  background-color: #00ffff; /* Cyan for magic materia */
-}
-
-.ff7-materia-slot.summon {
-  background-color: #ff6666; /* Red for summon materia */
-}
-
 .ff7-materia-slot.command {
   background-color: #ffff00; /* Yellow for command materia */
 }
 
 .ff7-materia-slot.support {
   background-color: #00ff00; /* Green for support materia */
-}
-
-.ff7-materia-slot.independent {
-  background-color: #ff00ff; /* Purple for independent materia */
 }
 
 /* Animation for cursor */

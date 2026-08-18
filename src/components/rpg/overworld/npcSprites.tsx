@@ -212,6 +212,21 @@ Object.assign(interiorSprites, {
     palette: { C: '#2a3f5e', H: '#4a3325', F: '#e8b88a', E: '#1f2937', B: '#2a3f5e', S: '#10122e' },
   },
 
+  // Armored arena gatekeeper
+  gatekeeper: {
+    pixels: [
+      '..MMMM..',
+      '.MMMMMM.',
+      '.MFEEFM.',
+      '..AAAA..',
+      '.MAAAAM.',
+      '..AAAA..',
+      '..A..A..',
+      '..M..M..',
+    ],
+    palette: { M: '#8a8f98', F: '#e8b88a', E: '#1f2937', A: '#5f646e' },
+  },
+
   // Framed sea chart on the wall
   chart: {
     pixels: [

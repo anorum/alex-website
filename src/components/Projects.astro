@@ -6,14 +6,13 @@ const statusLabel: Record<string, string> = {
   live: 'Live',
   active: 'Active',
   stable: 'Stable',
-  internal: 'Internal',
   deprecated: 'Deprecated',
 };
 ---
 
 <section class="section-pad" id="projects" style="border-top: var(--rule);">
   <div class="max-w-6xl mx-auto px-5 sm:px-8">
-    <SectionHeader number="03" title="Projects" />
+    <SectionHeader number="03" title="Fun Projects" />
     <p class="proj-lede reveal-item">
       Things I build on nights and weekends.
     </p>
@@ -120,8 +119,7 @@ const statusLabel: Record<string, string> = {
     font-size: 0.75em;
   }
 
-  .proj-status-stable,
-  .proj-status-internal {
+  .proj-status-stable {
     color: var(--text-secondary);
   }
 

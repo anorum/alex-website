@@ -14,27 +14,22 @@ import type { Interactable, Scene, SceneExit } from './types';
 export type { Interactable, Scene, SceneExit } from './types';
 export { STEP_MS };
 
-const interiorIds = new Set(interiors.map((s) => s.id));
-
-/** The overworld as a scene. Doors to buildings whose interior exists become
- *  scene exits; the rest fall back to the legacy section-window path. */
+/** The overworld as a scene. Every building door is an exit into its interior. */
 export const worldScene: Scene = {
   id: 'world',
   name: 'WORLD',
   rows: worldRows,
   legend: tileLegend,
   spawn: { ...worldSpawn, facing: 'down' },
-  exits: worldLocations
-    .filter((loc) => interiorIds.has(loc.id))
-    .map((loc): SceneExit => {
-      const interior = interiors.find((s) => s.id === loc.id)!;
-      return {
-        at: loc.door,
-        to: { scene: loc.id, ...interior.spawn },
-        label: `ENTER ${loc.name}`,
-        hint: loc.hint,
-      };
-    }),
+  exits: worldLocations.map((loc): SceneExit => {
+    const interior = interiors.find((s) => s.id === loc.id)!;
+    return {
+      at: loc.door,
+      to: { scene: loc.id, ...interior.spawn },
+      label: `ENTER ${loc.name}`,
+      hint: loc.hint,
+    };
+  }),
   interactables: [],
 };
 
@@ -56,15 +51,6 @@ export function isWalkableIn(scene: Scene, x: number, y: number): boolean {
 
 export function exitAt(scene: Scene, x: number, y: number): SceneExit | null {
   return scene.exits.find((e) => e.at.x === x && e.at.y === y) ?? null;
-}
-
-/** World doors without a built interior yet: legacy section windows. */
-export function legacyDoorAt(scene: Scene, x: number, y: number) {
-  if (scene.id !== 'world') return null;
-  const loc = worldLocations.find(
-    (l) => l.door.x === x && l.door.y === y && !interiorIds.has(l.id)
-  );
-  return loc ? { sectionId: loc.sectionId, label: `ENTER ${loc.name}`, hint: loc.hint } : null;
 }
 
 /** The interactable on the tile directly ahead of (x, y) facing dir. */

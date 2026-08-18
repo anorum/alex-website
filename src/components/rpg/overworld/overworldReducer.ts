@@ -8,7 +8,6 @@ import {
   getScene,
   interactableAhead,
   isWalkableIn,
-  legacyDoorAt,
   type SceneExit,
 } from '../../../data/scenes';
 import { getScript, type DialogAction } from '../../../data/dialogs';
@@ -32,8 +31,6 @@ export interface Prompt {
   kind: 'exit' | 'interact';
   label: string;
   hint?: string;
-  /** world doors without an interior yet: open this legacy section instead */
-  legacySection?: string;
 }
 
 export interface DialogState {
@@ -98,10 +95,6 @@ function computePrompt(state: OverworldState): Prompt | null {
   const scene = getScene(state.scene);
   const exit = exitAt(scene, state.x, state.y);
   if (exit) return { kind: 'exit', label: exit.label, hint: exit.hint };
-  const legacy = legacyDoorAt(scene, state.x, state.y);
-  if (legacy) {
-    return { kind: 'exit', label: legacy.label, hint: legacy.hint, legacySection: legacy.sectionId };
-  }
   const ahead = interactableAhead(scene, state.x, state.y, state.facing);
   if (ahead) return { kind: 'interact', label: ahead.name, hint: ahead.hint };
   return null;
@@ -309,13 +302,6 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
       if (state.mode !== 'walk' || state.stepping || !state.prompt) return state;
 
       if (state.prompt.kind === 'exit') {
-        if (state.prompt.legacySection) {
-          return {
-            ...state,
-            entered: state.prompt.legacySection,
-            confirmSeq: state.confirmSeq + 1,
-          };
-        }
         const exit = exitAt(getScene(state.scene), state.x, state.y);
         return exit ? startFade(state, exit.to) : state;
       }

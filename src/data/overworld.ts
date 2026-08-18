@@ -54,8 +54,6 @@ export interface WorldLocation {
   name: string;
   /** Short label drawn on the map, matches the FF7 menu vocabulary */
   label: string;
-  /** RPG section opened on entry (switchRPGSection id) */
-  sectionId: string;
   /** Short hint under the prompt */
   hint: string;
   kind: BuildingKind;
@@ -70,7 +68,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'house',
     label: 'STATUS',
     name: 'MY HOUSE',
-    sectionId: 'status',
     hint: 'Character data',
     kind: 'house',
     at: { x: 2, y: 2 },
@@ -80,7 +77,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'hall',
     label: 'QUESTS',
     name: 'QUEST HALL',
-    sectionId: 'quests',
     hint: 'Career history',
     kind: 'hall',
     at: { x: 9, y: 2 },
@@ -90,7 +86,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'tower',
     label: 'ABILITIES',
     name: 'MAGE TOWER',
-    sectionId: 'abilities',
     hint: 'Abilities',
     kind: 'tower',
     at: { x: 17, y: 2 },
@@ -100,7 +95,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'dojo',
     label: 'SKILLS',
     name: 'TRAINING DOJO',
-    sectionId: 'skills',
     hint: 'Materia and skills',
     kind: 'dojo',
     at: { x: 4, y: 7 },
@@ -110,7 +104,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'shop',
     label: 'SHOP',
     name: 'ITEM SHOP',
-    sectionId: 'projects',
     hint: 'Side projects',
     kind: 'shop',
     at: { x: 12, y: 7 },
@@ -120,7 +113,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'arena',
     label: 'BATTLE',
     name: 'BATTLE ARENA',
-    sectionId: 'battle',
     hint: 'Fight the bosses',
     kind: 'arena',
     at: { x: 17, y: 7 },
@@ -130,7 +122,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'camp',
     label: 'CRAFTS',
     name: 'CAMPSITE',
-    sectionId: 'crafts',
     hint: 'Off the clock',
     kind: 'camp',
     at: { x: 8, y: 11 },
@@ -140,7 +131,6 @@ export const worldLocations: WorldLocation[] = [
     id: 'harbor',
     label: 'TRAVEL',
     name: 'HARBOR',
-    sectionId: 'map',
     hint: 'Places traveled',
     kind: 'harbor',
     at: { x: 4, y: 12 },

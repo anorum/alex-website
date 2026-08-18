@@ -42,6 +42,14 @@ const dojoPalette: ScenePalette = {
   rug: '#7d3b3b',
 };
 
+const arenaPalette: ScenePalette = {
+  wall: '#6b6f78',
+  wallTop: '#4f525a',
+  floorA: '#c9b58a',
+  floorB: '#bfab80',
+  rug: '#8a2f2f',
+};
+
 const shopPalette: ScenePalette = {
   wall: '#7a5a38',
   wallTop: '#59412a',
@@ -431,5 +439,42 @@ export const interiors: Scene[] = [
       },
     ],
     palette: harborPalette,
+  },
+  {
+    id: 'arena',
+    name: 'BATTLE ARENA',
+    rows: assertRoom([
+      '############',
+      '#..........#',
+      '#..r....r..#',
+      '#..........#',
+      '#....rr....#',
+      '#....rr....#',
+      '#..........#',
+      '#..........#',
+      '############',
+    ]),
+    legend: interiorLegend,
+    spawn: { x: 5, y: 6, facing: 'up' },
+    exits: [
+      {
+        at: { x: 5, y: 7 },
+        to: { scene: 'world', x: 18, y: 9, facing: 'down' },
+        label: 'LEAVE',
+        hint: 'Back to the world',
+      },
+    ],
+    interactables: [
+      {
+        id: 'gatekeeper',
+        kind: 'npc',
+        name: 'TALK TO GATEKEEPER',
+        at: { x: 5, y: 2 },
+        sprite: 'gatekeeper',
+        scriptId: 'arena-gatekeeper',
+        hint: 'The arena',
+      },
+    ],
+    palette: arenaPalette,
   },
 ];
