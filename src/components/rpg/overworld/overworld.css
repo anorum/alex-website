@@ -30,6 +30,17 @@
   image-rendering: pixelated;
 }
 
+/* Building labels drawn on the map, in tile units */
+.ow-map-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42px;
+  fill: #ffffff;
+  stroke: #10122e;
+  stroke-width: 0.14px;
+  paint-order: stroke;
+  shape-rendering: auto;
+}
+
 /* FF7-style dialog overlaid on the bottom of the map */
 .ow-prompt {
   position: absolute;

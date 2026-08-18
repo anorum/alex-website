@@ -52,6 +52,8 @@ export interface WorldLocation {
   id: string;
   /** Name shown in the enter prompt */
   name: string;
+  /** Short label drawn on the map, matches the FF7 menu vocabulary */
+  label: string;
   /** RPG section opened on entry (switchRPGSection id) */
   sectionId: string;
   /** Short hint under the prompt */
@@ -66,6 +68,7 @@ export interface WorldLocation {
 export const worldLocations: WorldLocation[] = [
   {
     id: 'house',
+    label: 'STATUS',
     name: 'MY HOUSE',
     sectionId: 'status',
     hint: 'Character data',
@@ -75,6 +78,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'hall',
+    label: 'QUESTS',
     name: 'QUEST HALL',
     sectionId: 'quests',
     hint: 'Career history',
@@ -84,6 +88,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'tower',
+    label: 'ABILITIES',
     name: 'MAGE TOWER',
     sectionId: 'abilities',
     hint: 'Abilities',
@@ -93,6 +98,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'dojo',
+    label: 'SKILLS',
     name: 'TRAINING DOJO',
     sectionId: 'skills',
     hint: 'Materia and skills',
@@ -102,6 +108,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'shop',
+    label: 'SHOP',
     name: 'ITEM SHOP',
     sectionId: 'projects',
     hint: 'Side projects',
@@ -111,6 +118,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'arena',
+    label: 'BATTLE',
     name: 'BATTLE ARENA',
     sectionId: 'battle',
     hint: 'Fight the bosses',
@@ -120,6 +128,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'camp',
+    label: 'CRAFTS',
     name: 'CAMPSITE',
     sectionId: 'crafts',
     hint: 'Off the clock',
@@ -129,6 +138,7 @@ export const worldLocations: WorldLocation[] = [
   },
   {
     id: 'harbor',
+    label: 'TRAVEL',
     name: 'HARBOR',
     sectionId: 'map',
     hint: 'Places traveled',

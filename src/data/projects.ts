@@ -18,9 +18,9 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: 'blockade',
-    name: 'Blockade',
-    tagline: 'Is a freight train blocking the intersection?',
+    id: 'pdx-train',
+    name: 'PDX Train',
+    tagline: 'Is the train blocking the intersection?',
     description:
       'Detects freight trains blocking street crossings in SE Portland using public traffic cameras, and alerts before you leave the house. The state never archives its camera images, so the history this project builds exists nowhere else.',
     highlights: [
@@ -29,10 +29,13 @@ export const projects: Project[] = [
       'Full history of every blockage stored in Postgres',
     ],
     tech: ['Python', 'Kafka', 'Postgres', 'k3s'],
-    links: { repo: 'https://github.com/anorum/trainspotter' },
+    links: {
+      live: 'https://pdxtrain.alexnorum.com',
+      repo: 'https://github.com/anorum/trainspotter',
+    },
     status: 'live',
     rpg: {
-      itemName: 'BLOCKADE SCOPE',
+      itemName: 'PDX TRAIN SCOPE',
       itemDescription:
         'Sees through steel. Reveals whether a freight train blocks the path ahead before you set out.',
     },
@@ -85,10 +88,10 @@ export const projects: Project[] = [
     name: 'Homelab',
     tagline: 'The cluster in the closet that runs it all.',
     description:
-      'A Kubernetes cluster running at home that hosts Blockade, app deploys, and whatever gets built next. Everything is declared in git and deploys itself.',
+      'A Kubernetes cluster running at home that hosts PDX Train, app deploys, and whatever gets built next. Everything is declared in git and deploys itself.',
     highlights: [
       'k3s cluster with GitOps deploys via ArgoCD',
-      'Runs the Blockade pipeline around the clock',
+      'Runs the PDX Train pipeline around the clock',
       'Every app and config lives in version control',
     ],
     tech: ['k3s', 'ArgoCD', 'Terraform'],

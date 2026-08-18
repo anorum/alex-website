@@ -222,12 +222,19 @@ export const WorldTerrain = memo(function WorldTerrain({ shimmer }: WorldTerrain
     />
   ));
 
+  const labels = worldLocations.map((loc) => (
+    <text key={`l${loc.id}`} className="ow-map-label" x={loc.at.x + 1} y={loc.at.y - 0.3} textAnchor="middle">
+      {loc.label}
+    </text>
+  ));
+
   return (
     <g>
       {tiles}
       {glyphs}
       {doors}
       {buildings}
+      {labels}
     </g>
   );
 });

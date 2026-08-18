@@ -18,7 +18,7 @@ export const experience: ExperienceItem[] = [
   {
     company: "LegalZoom",
     logo: legalZoomLogo,
-    role: "Group Manager, Data Engineering",
+    role: "Head of Data Platform",
     period: "2023 - Present",
     year: "2023",
     description: "Leading a small team that owns LegalZoom's data platform - Snowflake, Airflow on Kubernetes, dbt, Terraform, and the self-service tooling around all of it.",

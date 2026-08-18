@@ -14,8 +14,9 @@ import { experience } from '../../data/experience';
 ---
 
 <div class="rpg-container">
+  <div id="rpg-window-backdrop" class="rpg-window-backdrop" style="display: none;" onclick="switchRPGSection('overworld')"></div>
   <button id="rpg-back-world" class="rpg-back-world" style="display: none;" onclick="switchRPGSection('overworld')">
-    ◀ WORLD
+    ◀ BACK TO WORLD <span class="rpg-back-esc">ESC</span>
   </button>
 
   <div id="rpg-overworld" class="rpg-section active">
@@ -159,9 +160,12 @@ import { experience } from '../../data/experience';
     var menu = document.getElementById('ff7-nav');
     if (menu) menu.classList.add('hidden');
 
-    // "Back to world" affordance shows inside every location, not on the world itself
+    // Locations open as windows over the world; backdrop and back bar show together
+    var inWindow = sectionId !== 'overworld';
     var back = document.getElementById('rpg-back-world');
-    if (back) back.style.display = sectionId === 'overworld' ? 'none' : '';
+    if (back) back.style.display = inWindow ? '' : 'none';
+    var backdrop = document.getElementById('rpg-window-backdrop');
+    if (backdrop) backdrop.style.display = inWindow ? '' : 'none';
 
     // Leaflet needs a resize kick when its container becomes visible
     if (sectionId === 'map') {
@@ -208,36 +212,83 @@ import { experience } from '../../data/experience';
   }
 
   .rpg-back-world {
-    display: block;
-    margin: 0 auto 0.75rem;
-    max-width: 1200px;
-    width: 100%;
-    text-align: left;
+    position: fixed;
+    z-index: 510;
+    top: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
     border: 1px solid var(--ff7-border);
     background-color: var(--ff7-blue-dark);
     color: var(--ff7-text-highlight);
     font-family: var(--font-body);
     font-size: 11px;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.875rem;
     cursor: pointer;
+    white-space: nowrap;
   }
 
   .rpg-back-world:hover {
     background-color: var(--ff7-blue);
   }
 
-  .rpg-section {
-    display: none;
-    animation: rpgFadeIn 0.3s ease-in-out;
+  .rpg-back-esc {
+    color: var(--ff7-text);
+    border: 1px solid var(--ff7-border);
+    padding: 0.0625rem 0.375rem;
+    margin-left: 0.5rem;
+    font-size: 9px;
   }
 
+  .rpg-section {
+    display: none;
+  }
+
+  /* The overworld is the persistent stage: always visible in RPG mode */
+  #rpg-overworld.rpg-section {
+    display: block;
+  }
+
+  /* Every other section opens as a window floating over the world */
   .rpg-section.active {
     display: block;
   }
 
-  @keyframes rpgFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  .rpg-section.active:not(#rpg-overworld) {
+    position: fixed;
+    z-index: 500;
+    top: 3.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(1200px, calc(100vw - 1.5rem));
+    max-height: calc(100vh - 5rem);
+    max-height: calc(100dvh - 5rem);
+    overflow-y: auto;
+    animation: rpgWindowIn 0.22s var(--ease-out);
+  }
+
+  .rpg-window-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 490;
+    background-color: rgba(2, 2, 30, 0.55);
+    cursor: pointer;
+  }
+
+  @keyframes rpgWindowIn {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rpg-section.active:not(#rpg-overworld) {
+      animation: none;
+    }
   }
 
   .ff7-menu {
