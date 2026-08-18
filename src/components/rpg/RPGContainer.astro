@@ -4,6 +4,7 @@ import SkillsRPG from './SkillsRPG.astro';
 import WhatIDoRPG from './WhatIDoRPG.astro';
 import InterestItemRPG from './InterestItemRPG.astro';
 import ProjectsRPG from './ProjectsRPG.astro';
+import OverworldIsland from './overworld/OverworldIsland';
 import IndexTravelMap from '../travel/IndexTravelMap';
 import BattleIsland from './battle/BattleIsland';
 import { travelLocations } from '../../data/travel';
@@ -13,7 +14,20 @@ import { experience } from '../../data/experience';
 ---
 
 <div class="rpg-container">
-  <div id="rpg-status" class="rpg-section active">
+  <button id="rpg-back-world" class="rpg-back-world" style="display: none;" onclick="switchRPGSection('overworld')">
+    ◀ WORLD
+  </button>
+
+  <div id="rpg-overworld" class="rpg-section active">
+    <div class="ff7-menu">
+      <div class="ff7-menu-header">WORLD</div>
+      <div class="ff7-menu-content">
+        <OverworldIsland client:visible />
+      </div>
+    </div>
+  </div>
+
+  <div id="rpg-status" class="rpg-section">
     <HeroRPG />
   </div>
 
@@ -145,6 +159,10 @@ import { experience } from '../../data/experience';
     var menu = document.getElementById('ff7-nav');
     if (menu) menu.classList.add('hidden');
 
+    // "Back to world" affordance shows inside every location, not on the world itself
+    var back = document.getElementById('rpg-back-world');
+    if (back) back.style.display = sectionId === 'overworld' ? 'none' : '';
+
     // Leaflet needs a resize kick when its container becomes visible
     if (sectionId === 'map') {
       setTimeout(function() {
@@ -167,6 +185,18 @@ import { experience } from '../../data/experience';
     var saved = sessionStorage.getItem('rpg-active-section');
     if (saved) window.switchRPGSection(saved);
   });
+
+  // Escape from any location back to the overworld.
+  // Skipped while the FF7 menu is open (it owns Escape) and during battle (it uses Escape to cancel menus).
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!document.documentElement.classList.contains('theme-rpg')) return;
+    var nav = document.getElementById('ff7-nav');
+    if (nav && !nav.classList.contains('hidden')) return;
+    var active = document.querySelector('.rpg-section.active');
+    if (!active || active.id === 'rpg-overworld' || active.id === 'rpg-battle') return;
+    window.switchRPGSection('overworld');
+  });
 </script>
 
 <style>
@@ -175,6 +205,26 @@ import { experience } from '../../data/experience';
     max-width: 1400px;
     margin: 0 auto;
     padding: 1rem;
+  }
+
+  .rpg-back-world {
+    display: block;
+    margin: 0 auto 0.75rem;
+    max-width: 1200px;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 1px solid var(--ff7-border);
+    background-color: var(--ff7-blue-dark);
+    color: var(--ff7-text-highlight);
+    font-family: var(--font-body);
+    font-size: 11px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+  }
+
+  .rpg-back-world:hover {
+    background-color: var(--ff7-blue);
   }
 
   .rpg-section {
