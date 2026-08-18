@@ -2,9 +2,13 @@ import type { ReactNode } from 'react';
 import { useWindowKeys } from './useWindowKeys';
 import './ff7-window.css';
 
-interface WindowProps {
-  title: string;
+/** What every window in src/components/rpg/windows receives. */
+export interface WindowContentProps {
   onClose: () => void;
+}
+
+interface WindowProps extends WindowContentProps {
+  title: string;
   children: ReactNode;
   /** extra keyboard handling, e.g. cursor lists */
   onKey?: (e: KeyboardEvent) => boolean | void;

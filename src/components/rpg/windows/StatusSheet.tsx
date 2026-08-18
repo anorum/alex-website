@@ -1,6 +1,8 @@
 import { character } from '../../../data/character';
-import Window from '../ui/Window';
+import Window, { type WindowContentProps } from '../ui/Window';
 import meImage from '../../../assets/me.jpeg';
+
+const highlight = { color: 'var(--ff7-text-highlight)' };
 
 function Bar({ pct, color }: { pct: number; color: string }) {
   return (
@@ -10,16 +12,16 @@ function Bar({ pct, color }: { pct: number; color: string }) {
   );
 }
 
-export default function StatusSheet({ onClose }: { onClose: () => void }) {
+export default function StatusSheet({ onClose }: WindowContentProps) {
   const c = character;
   return (
     <Window title="CHARACTER DATA" onClose={onClose}>
       <div className="rpgs-head">
         <img className="rpgw-portrait" src={meImage.src} alt="Alex" />
         <div>
-          <div style={{ color: 'var(--ff7-text-highlight)', fontWeight: 'bold' }}>{c.name}</div>
+          <div style={{ ...highlight, fontWeight: 'bold' }}>{c.name}</div>
           <div>{c.charClass}</div>
-          <div style={{ color: 'var(--ff7-text-highlight)' }}>LV {c.level}</div>
+          <div style={highlight}>LV {c.level}</div>
         </div>
       </div>
 
@@ -62,7 +64,7 @@ export default function StatusSheet({ onClose }: { onClose: () => void }) {
       {c.equipment.map((eq) => (
         <div key={eq.slot} className="rpgs-equip">
           <span>{eq.slot}</span>
-          <span style={{ color: 'var(--ff7-text-highlight)' }}>{eq.name}</span>
+          <span style={highlight}>{eq.name}</span>
           <span className="rpgs-orbs">
             {eq.materia.map((m, i) => (
               <span key={i} className={`rpgw-orb rpgw-orb-${m.color}`} />
@@ -74,18 +76,18 @@ export default function StatusSheet({ onClose }: { onClose: () => void }) {
       <div className="rpgw-divider" />
 
       <div className="rpgw-label">LIMIT BREAK</div>
-      <div style={{ color: 'var(--ff7-text-highlight)', margin: '0.25rem 0' }}>{c.limitBreak.name}</div>
+      <div style={{ ...highlight, margin: '0.25rem 0' }}>{c.limitBreak.name}</div>
       <div style={{ fontStyle: 'italic', fontSize: '10px' }}>{c.limitBreak.description}</div>
 
       <div className="rpgw-divider" />
 
       <div className="rpgs-equip">
         <span>LOCATION</span>
-        <span style={{ color: 'var(--ff7-text-highlight)' }}>{c.location}</span>
+        <span style={highlight}>{c.location}</span>
       </div>
       <div className="rpgs-equip">
         <span>GUILD</span>
-        <span style={{ color: 'var(--ff7-text-highlight)' }}>{c.guild}</span>
+        <span style={highlight}>{c.guild}</span>
       </div>
 
       <div style={{ marginTop: '0.75rem' }}>

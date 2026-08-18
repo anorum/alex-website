@@ -4,6 +4,14 @@
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
+/** One tile of movement per facing, shared by the reducer and the scene helpers. */
+export const DIRECTION_DELTA: Record<Direction, { dx: number; dy: number }> = {
+  up: { dx: 0, dy: -1 },
+  down: { dx: 0, dy: 1 },
+  left: { dx: -1, dy: 0 },
+  right: { dx: 1, dy: 0 },
+};
+
 export interface TileDef {
   walkable: boolean;
 }
@@ -143,22 +151,8 @@ export const spawn = { x: 11, y: 5 };
 /** ms per tile step at speed 1 */
 export const STEP_MS = 190;
 
-export function terrainAt(x: number, y: number): TileDef | undefined {
-  if (y < 0 || y >= worldRows.length || x < 0 || x >= worldCols) return undefined;
-  return tileLegend[worldRows[y][x]];
-}
-
 export function insideBuilding(x: number, y: number): boolean {
   return worldLocations.some(
     (loc) => x >= loc.at.x && x <= loc.at.x + 1 && y >= loc.at.y && y <= loc.at.y + 1
   );
-}
-
-export function isWalkable(x: number, y: number): boolean {
-  const t = terrainAt(x, y);
-  return !!t && t.walkable && !insideBuilding(x, y);
-}
-
-export function doorAt(x: number, y: number): WorldLocation | null {
-  return worldLocations.find((loc) => loc.door.x === x && loc.door.y === y) ?? null;
 }

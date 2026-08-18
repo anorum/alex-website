@@ -1,7 +1,7 @@
 import { whatIDo } from '../../../data/whatido';
-import Window from '../ui/Window';
+import Window, { type WindowContentProps } from '../ui/Window';
 
-export default function AbilityList({ onClose }: { onClose: () => void }) {
+export default function AbilityList({ onClose }: WindowContentProps) {
   return (
     <Window title="COMMAND MENU" onClose={onClose}>
       {whatIDo.map((item) => (

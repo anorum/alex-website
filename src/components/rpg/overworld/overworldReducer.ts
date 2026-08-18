@@ -2,16 +2,9 @@
 // No DOM, no side effects. Side effects (sfx, section switches) are driven
 // by seq counters and the `entered` field, which the hook watches.
 
-import {
-  STEP_MS,
-  exitAt,
-  getScene,
-  interactableAhead,
-  isWalkableIn,
-  type SceneExit,
-} from '../../../data/scenes';
+import { STEP_MS, exitAt, getScene, interactableAhead, isWalkableIn } from '../../../data/scenes';
 import { getScript, type DialogAction } from '../../../data/dialogs';
-import type { Direction } from '../../../data/overworld';
+import { DIRECTION_DELTA, type Direction } from '../../../data/overworld';
 
 /** ms of game clock per revealed dialog character */
 export const CHAR_MS = 28;
@@ -84,13 +77,6 @@ export type OverworldAction =
   | { type: 'TELEPORT'; scene: string }
   | { type: 'ACK_ENTER' };
 
-const DELTA: Record<Direction, { dx: number; dy: number }> = {
-  up: { dx: 0, dy: -1 },
-  down: { dx: 0, dy: 1 },
-  left: { dx: -1, dy: 0 },
-  right: { dx: 1, dy: 0 },
-};
-
 function computePrompt(state: OverworldState): Prompt | null {
   const scene = getScene(state.scene);
   const exit = exitAt(scene, state.x, state.y);
@@ -157,7 +143,7 @@ function tryStartStep(state: OverworldState): OverworldState {
   const dir = state.queue[0];
   if (!dir) return state;
   const scene = getScene(state.scene);
-  const { dx, dy } = DELTA[dir];
+  const { dx, dy } = DIRECTION_DELTA[dir];
   const tx = state.x + dx;
   const ty = state.y + dy;
   if (!isWalkableIn(scene, tx, ty)) {
@@ -301,12 +287,13 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
 
       if (state.mode !== 'walk' || state.stepping || !state.prompt) return state;
 
+      const scene = getScene(state.scene);
       if (state.prompt.kind === 'exit') {
-        const exit = exitAt(getScene(state.scene), state.x, state.y);
+        const exit = exitAt(scene, state.x, state.y);
         return exit ? startFade(state, exit.to) : state;
       }
 
-      const ahead = interactableAhead(getScene(state.scene), state.x, state.y, state.facing);
+      const ahead = interactableAhead(scene, state.x, state.y, state.facing);
       if (!ahead) return state;
       const opened: OverworldState = {
         ...state,

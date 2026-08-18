@@ -1,7 +1,7 @@
 import { interests } from '../../../data/interests';
-import Window from '../ui/Window';
+import Window, { type WindowContentProps } from '../ui/Window';
 
-export default function CraftsWindow({ onClose }: { onClose: () => void }) {
+export default function CraftsWindow({ onClose }: WindowContentProps) {
   return (
     <Window title="OFF THE CLOCK" onClose={onClose}>
       <ul className="rpgc-grid" role="list">

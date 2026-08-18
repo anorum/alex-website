@@ -8,8 +8,12 @@ import {
   type ScenePos,
 } from './overworldReducer';
 import { playConfirm, playCursor } from '../../../utils/rpg-audio';
+import { ff7MenuIsOpen } from '../../../utils/rpg-menu';
 
 const POS_KEY = 'rpg-ow';
+
+/** Defined by the script tag in RPGContainer.astro */
+type RPGWindow = Window & { switchRPGSection?: (id: string) => void };
 
 interface UseOverworldOptions {
   speed: number;
@@ -40,9 +44,22 @@ function isFormTarget(target: EventTarget | null): boolean {
   );
 }
 
-function menuIsOpen(): boolean {
-  const nav = document.getElementById('ff7-nav');
-  return !!nav && !nav.classList.contains('hidden');
+function isConfirmKey(key: string): boolean {
+  return key === 'Enter' || key === ' ' || key === 'e';
+}
+
+function isCancelKey(key: string): boolean {
+  return key === 'Escape' || key === 'x';
+}
+
+/** Play a sound each time the reducer bumps one of its sound counters. */
+function useSoundOnSeq(seq: number, play: () => void): void {
+  const last = useRef(seq);
+  useEffect(() => {
+    if (seq === last.current) return;
+    last.current = seq;
+    play();
+  }, [seq]);
 }
 
 function readSavedPos(): Partial<ScenePos> | null {
@@ -54,7 +71,10 @@ function readSavedPos(): Partial<ScenePos> | null {
   }
 }
 
-export function useOverworld({ speed, active }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
+export function useOverworld({
+  speed,
+  active,
+}: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
   const [state, dispatch] = useReducer(overworldReducer, undefined, () =>
     createOverworldState(readSavedPos())
   );
@@ -87,7 +107,7 @@ export function useOverworld({ speed, active }: UseOverworldOptions): [Overworld
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || isFormTarget(e.target)) return;
       // FF7 nav menu overlays the screen - let its own handler own the keys
-      if (menuIsOpen()) return;
+      if (ff7MenuIsOpen()) return;
 
       const mode = modeRef.current;
       if (mode === 'window') return; // window components own their keys
@@ -96,14 +116,16 @@ export function useOverworld({ speed, active }: UseOverworldOptions): [Overworld
         return;
       }
 
+      const dir = KEY_DIRS[e.key];
+
       if (mode === 'dialog') {
-        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        if (dir === 'up') {
           dispatch({ type: 'DIALOG_NAV', delta: -1 });
-        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        } else if (dir === 'down') {
           dispatch({ type: 'DIALOG_NAV', delta: 1 });
-        } else if (e.key === 'Enter' || e.key === ' ' || e.key === 'e') {
+        } else if (isConfirmKey(e.key)) {
           dispatch({ type: 'INTERACT' });
-        } else if (e.key === 'Escape' || e.key === 'x') {
+        } else if (isCancelKey(e.key)) {
           dispatch({ type: 'DIALOG_CANCEL' });
         } else {
           return;
@@ -112,13 +134,12 @@ export function useOverworld({ speed, active }: UseOverworldOptions): [Overworld
         return;
       }
 
-      const dir = KEY_DIRS[e.key];
       if (dir) {
         if (!e.repeat) dispatch({ type: 'INPUT_DOWN', dir });
         e.preventDefault();
         return;
       }
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'e') {
+      if (isConfirmKey(e.key)) {
         dispatch({ type: 'INTERACT' });
         e.preventDefault();
       }
@@ -162,30 +183,16 @@ export function useOverworld({ speed, active }: UseOverworldOptions): [Overworld
     }
   }, [state.scene, state.x, state.y, state.facing, state.stepping, state.mode]);
 
-  // Sounds: new prompt or cursor move blips, confirms confirm, cancel on dialog close
-  const lastPromptSeq = useRef(0);
-  useEffect(() => {
-    if (state.promptSeq !== lastPromptSeq.current) {
-      lastPromptSeq.current = state.promptSeq;
-      playCursor();
-    }
-  }, [state.promptSeq]);
+  // Sounds: a new prompt or a moved dialog cursor blips, confirm-style actions confirm
+  useSoundOnSeq(state.promptSeq, playCursor);
+  useSoundOnSeq(state.confirmSeq, playConfirm);
 
-  const lastConfirmSeq = useRef(0);
+  // Section handoff: the arena gatekeeper hands the player over to the battle section
   useEffect(() => {
-    if (state.confirmSeq !== lastConfirmSeq.current) {
-      lastConfirmSeq.current = state.confirmSeq;
-      playConfirm();
-    }
-  }, [state.confirmSeq]);
-
-  // Section handoff (battle, plus legacy doors until all interiors exist)
-  useEffect(() => {
-    if (state.entered) {
-      const fn = (window as unknown as { switchRPGSection?: (id: string) => void }).switchRPGSection;
-      if (fn) fn(state.entered);
-      dispatch({ type: 'ACK_ENTER' });
-    }
+    if (!state.entered) return;
+    const switchSection = (window as RPGWindow).switchRPGSection;
+    if (switchSection) switchSection(state.entered);
+    dispatch({ type: 'ACK_ENTER' });
   }, [state.entered]);
 
   return [state, dispatch];

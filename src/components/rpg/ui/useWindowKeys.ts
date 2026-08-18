@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { ff7MenuIsOpen } from '../../../utils/rpg-menu';
 
 /** Window-scoped keys: Escape/x close; optional handler gets everything else.
  *  Skips while the FF7 nav menu is open (it owns its own keys). */
@@ -9,8 +10,7 @@ export function useWindowKeys(
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const nav = document.getElementById('ff7-nav');
-      if (nav && !nav.classList.contains('hidden')) return;
+      if (ff7MenuIsOpen()) return;
       if (e.key === 'Escape' || e.key === 'x') {
         onClose();
         e.preventDefault();

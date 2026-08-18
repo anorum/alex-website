@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { getScene } from '../../../data/scenes';
-import { getScript } from '../../../data/dialogs';
-import { CHAR_MS, lineRevealed } from './overworldReducer';
+import { getScript, type DialogStep } from '../../../data/dialogs';
+import { CHAR_MS, lineRevealed, type OverworldState } from './overworldReducer';
 import { useOverworld } from './useOverworld';
 import { WorldTerrain } from './WorldMap';
 import { SceneTerrain } from './SceneTerrain';
@@ -9,6 +9,7 @@ import PlayerSprite from './PlayerSprite';
 import LocationPrompt from './LocationPrompt';
 import TouchControls from './TouchControls';
 import DialogBox from '../ui/DialogBox';
+import type { WindowContentProps } from '../ui/Window';
 import StatusSheet from '../windows/StatusSheet';
 import QuestLog from '../windows/QuestLog';
 import AbilityList from '../windows/AbilityList';
@@ -24,7 +25,7 @@ function readParam(name: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-const WINDOWS: Record<string, React.ComponentType<{ onClose: () => void }>> = {
+const WINDOWS: Record<string, React.ComponentType<WindowContentProps>> = {
   status: StatusSheet,
   quests: QuestLog,
   abilities: AbilityList,
@@ -33,12 +34,30 @@ const WINDOWS: Record<string, React.ComponentType<{ onClose: () => void }>> = {
   'travel-map': TravelMapWindow,
 };
 
-function windowFor(id: string, onClose: () => void) {
+function windowFor(id: string, onClose: () => void): ReactElement | null {
   if (id.startsWith('materia:')) {
     return <MateriaList label={id.slice('materia:'.length)} onClose={onClose} />;
   }
   const Component = WINDOWS[id];
   return Component ? <Component onClose={onClose} /> : null;
+}
+
+/** Fade covers the screen at the swap point: 0 -> 1 fading out, 1 -> 0 fading in. */
+function fadeOpacity(fade: OverworldState['fade']): number {
+  if (!fade) return 0;
+  const t = Math.min(fade.t, 1);
+  return fade.phase === 'out' ? t : 1 - t;
+}
+
+/** Characters of the current dialog line to show, after the typewriter. */
+function revealedChars(
+  state: OverworldState,
+  step: DialogStep | null,
+  reducedMotion: boolean
+): number {
+  if (!state.dialog || step?.kind !== 'line') return 0;
+  if (reducedMotion || state.dialog.revealAll || lineRevealed(state)) return step.text.length;
+  return Math.floor((state.clock - state.dialog.openedAt) / CHAR_MS);
 }
 
 export default function OverworldIsland() {
@@ -54,9 +73,7 @@ export default function OverworldIsland() {
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     setReady(true);
 
-    const isSectionActive = () =>
-      document.getElementById('rpg-overworld')?.classList.contains('active') ?? false;
-    setActive(isSectionActive());
+    setActive(document.getElementById('rpg-overworld')?.classList.contains('active') ?? false);
 
     const onSectionChange = (e: Event) => {
       const detail = (e as CustomEvent<{ section?: string }>).detail;
@@ -71,15 +88,13 @@ export default function OverworldIsland() {
   return <OverworldGame speed={speed} active={active} reducedMotion={reducedMotion} />;
 }
 
-function OverworldGame({
-  speed,
-  active,
-  reducedMotion,
-}: {
+interface OverworldGameProps {
   speed: number;
   active: boolean;
   reducedMotion: boolean;
-}) {
+}
+
+function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
   const [state, dispatch] = useOverworld({ speed, active });
   const scene = getScene(state.scene);
   const cols = scene.rows[0].length;
@@ -87,30 +102,15 @@ function OverworldGame({
 
   // Interpolated render position in tile units.
   // Reduced motion: steps keep their normal timing but snap tile to tile.
-  const t = reducedMotion ? 1 : state.stepping ? state.progress : 1;
-  const px = state.fromX + (state.x - state.fromX) * Math.min(t, 1);
-  const py = state.fromY + (state.y - state.fromY) * Math.min(t, 1);
+  const stepT = reducedMotion || !state.stepping ? 1 : Math.min(state.progress, 1);
+  const px = state.fromX + (state.x - state.fromX) * stepT;
+  const py = state.fromY + (state.y - state.fromY) * stepT;
 
   // Water shimmer flips about twice a second (paused under reduced motion)
   const shimmer = reducedMotion ? 0 : Math.floor(state.clock / 600) % 2;
 
-  // Fade overlay opacity
-  const fadeOpacity = state.fade
-    ? state.fade.phase === 'out'
-      ? Math.min(state.fade.t, 1)
-      : 1 - Math.min(state.fade.t, 1)
-    : 0;
-
-  // Dialog step + typewriter reveal
   const dialogStep = state.dialog ? getScript(state.dialog.scriptId)[state.dialog.step] : null;
-  let revealed = 0;
-  if (state.dialog && dialogStep?.kind === 'line') {
-    revealed =
-      reducedMotion || state.dialog.revealAll || lineRevealed(state)
-        ? dialogStep.text.length
-        : Math.floor((state.clock - state.dialog.openedAt) / CHAR_MS);
-  }
-
+  const revealed = revealedChars(state, dialogStep, reducedMotion);
   const overlayOpen = state.mode === 'dialog' || state.mode === 'window';
 
   return (
@@ -155,7 +155,7 @@ function OverworldGame({
 
         {state.window && windowFor(state.window, () => dispatch({ type: 'CLOSE_WINDOW' }))}
 
-        <div className="ow-fade" style={{ opacity: fadeOpacity }} aria-hidden="true" />
+        <div className="ow-fade" style={{ opacity: fadeOpacity(state.fade) }} aria-hidden="true" />
       </div>
 
       <p className="ow-help" aria-hidden="true">

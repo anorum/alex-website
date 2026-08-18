@@ -8,6 +8,23 @@ export interface SpriteDef {
 
 const outline = '#10122e';
 
+/** Materia shelving, one variant per skill category orb color. */
+function shelf(orb: string): SpriteDef {
+  return {
+    pixels: [
+      'DDDDDDDD',
+      'D.M..M.D',
+      'DDDDDDDD',
+      'D.M..M.D',
+      'DDDDDDDD',
+      'D.M..M.D',
+      'DDDDDDDD',
+      '.D....D.',
+    ],
+    palette: { D: '#6b4a32', M: orb },
+  };
+}
+
 export const interiorSprites: Record<string, SpriteDef> = {
   // A curly labradoodle, seated, facing the room
   mara: {
@@ -134,9 +151,7 @@ export const interiorSprites: Record<string, SpriteDef> = {
     ],
     palette: { R: '#b33a3a', H: '#8a8f98', F: '#e8b88a', E: '#1f2937', W: '#e8e4d8', S: '#4a3325' },
   },
-};
 
-Object.assign(interiorSprites, {
   // Shopkeeper in an apron
   shopkeeper: {
     pixels: [
@@ -241,20 +256,4 @@ Object.assign(interiorSprites, {
     ],
     palette: { F: '#8a6b3f', W: '#c8e0e8', G: '#3f7d3a' },
   },
-} satisfies Record<string, SpriteDef>);
-
-function shelf(orb: string): SpriteDef {
-  return {
-    pixels: [
-      'DDDDDDDD',
-      'D.M..M.D',
-      'DDDDDDDD',
-      'D.M..M.D',
-      'DDDDDDDD',
-      'D.M..M.D',
-      'DDDDDDDD',
-      '.D....D.',
-    ],
-    palette: { D: '#6b4a32', M: orb },
-  };
-}
+};

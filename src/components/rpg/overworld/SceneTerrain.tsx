@@ -1,28 +1,21 @@
 // Interior scene renderer: floors, walls, exit mats, and interactable
 // sprites, as SVG rects in tile space. Memoized per scene.
 
-import { memo } from 'react';
-import type { Scene } from '../../../data/scenes';
+import { memo, type ReactElement } from 'react';
+import { woodPalette, type Scene, type ScenePalette } from '../../../data/scenes';
 import { gridCols, pixelRects } from './pixels';
-import { interiorSprites } from './npcSprites';
+import { interiorSprites } from './interiorSprites';
 
-const DEFAULT_PALETTE = {
-  wall: '#6b4a32',
-  wallTop: '#4c3322',
-  floorA: '#a97e55',
-  floorB: '#9d744d',
-  rug: '#7d3b3b',
-};
+/** Void outside the room, painted flat black. */
+const VOID_FILL = '#05060f';
 
-function Glyph({
-  spriteId,
-  x,
-  y,
-}: {
+interface GlyphProps {
   spriteId: string;
   x: number;
   y: number;
-}) {
+}
+
+function Glyph({ spriteId, x, y }: GlyphProps): ReactElement | null {
   const def = interiorSprites[spriteId];
   if (!def) return null;
   return (
@@ -32,26 +25,38 @@ function Glyph({
   );
 }
 
+function tileFill(scene: Scene, palette: ScenePalette, x: number, y: number): string {
+  switch (scene.rows[y][x]) {
+    case '#': {
+      // wall face where the room is below, wall top otherwise
+      const below = scene.rows[y + 1]?.[x];
+      return below && below !== '#' && below !== '_' ? palette.wall : palette.wallTop;
+    }
+    case 'r':
+      return palette.rug;
+    case '_':
+      return VOID_FILL;
+    default:
+      return (x + y) % 2 === 0 ? palette.floorA : palette.floorB;
+  }
+}
+
 export const SceneTerrain = memo(function SceneTerrain({ scene }: { scene: Scene }) {
-  const palette = scene.palette ?? DEFAULT_PALETTE;
-  const tiles = [];
+  const palette = scene.palette ?? woodPalette;
+  const tiles: ReactElement[] = [];
 
   for (let y = 0; y < scene.rows.length; y++) {
     for (let x = 0; x < scene.rows[y].length; x++) {
-      const ch = scene.rows[y][x];
-      let fill: string;
-      if (ch === '#') {
-        // wall face where the room is below, wall top otherwise
-        const below = scene.rows[y + 1]?.[x];
-        fill = below && below !== '#' && below !== '_' ? palette.wall : palette.wallTop;
-      } else if (ch === 'r') {
-        fill = palette.rug;
-      } else if (ch === '_') {
-        fill = '#05060f';
-      } else {
-        fill = (x + y) % 2 === 0 ? palette.floorA : palette.floorB;
-      }
-      tiles.push(<rect key={`t${x}-${y}`} x={x} y={y} width="1.02" height="1.02" fill={fill} />);
+      tiles.push(
+        <rect
+          key={`t${x}-${y}`}
+          x={x}
+          y={y}
+          width="1.02"
+          height="1.02"
+          fill={tileFill(scene, palette, x, y)}
+        />
+      );
     }
   }
 

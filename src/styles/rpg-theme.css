@@ -219,15 +219,6 @@
   color: var(--ff7-text-highlight);
 }
 
-/* Footer */
-.theme-rpg .footer {
-  border-top: var(--menu-border);
-  background-color: var(--ff7-blue);
-  color: var(--ff7-text);
-  padding: 1rem 0;
-  font-size: 0.75rem;
-}
-
 /* Scrollbar */
 .theme-rpg ::-webkit-scrollbar {
   width: 8px;
@@ -244,18 +235,6 @@
 
 .theme-rpg ::-webkit-scrollbar-thumb:hover {
   background: var(--ff7-text);
-}
-
-/* FF7 Cursor */
-.theme-rpg .ff7-cursor {
-  color: var(--cursor-color);
-  font-size: 1rem;
-  animation: ff7-cursor-blink 1s infinite;
-}
-
-@keyframes ff7-cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
 }
 
 /* ============================================

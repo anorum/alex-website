@@ -10,7 +10,8 @@ export const interiorLegend: Record<string, TileDef> = {
   _: { walkable: false },
 };
 
-const woodPalette: ScenePalette = {
+/** Also the fallback palette for any scene that does not define one. */
+export const woodPalette: ScenePalette = {
   wall: '#6b4a32',
   wallTop: '#4c3322',
   floorA: '#a97e55',

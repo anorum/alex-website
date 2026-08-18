@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { projects } from '../../../data/projects';
-import Window from '../ui/Window';
+import Window, { type WindowContentProps } from '../ui/Window';
 
 const statusTag: Record<string, string> = {
   live: 'IN SERVICE',
@@ -9,7 +9,7 @@ const statusTag: Record<string, string> = {
   deprecated: 'BROKEN',
 };
 
-export default function ShopWindow({ onClose }: { onClose: () => void }) {
+export default function ShopWindow({ onClose }: WindowContentProps) {
   const [index, setIndex] = useState(0);
   const p = projects[index];
 

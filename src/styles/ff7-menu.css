@@ -1,7 +1,5 @@
 /* FF7 Menu Styles - Based on the FF7 menu example */
 
-/* Import pixel fonts */
-
 /* FF7 Menu Container */
 .ff7-game-menu {
   background-color: #000080; /* Deep blue background */
@@ -52,10 +50,6 @@
 .ff7-menu-button:hover {
   background-color: var(--ff7-blue-light, #0000cc);
   color: var(--ff7-text-highlight, #ffff00);
-}
-
-.ff7-stat-bar.mp {
-  background-color: #00ffff; /* Cyan for MP */
 }
 
 /* Menu Header */
@@ -150,14 +144,6 @@
   color: #ffffff;
 }
 
-.ff7-materia-slot.command {
-  background-color: #ffff00; /* Yellow for command materia */
-}
-
-.ff7-materia-slot.support {
-  background-color: #00ff00; /* Green for support materia */
-}
-
 /* Animation for cursor */
 @keyframes ff7-cursor-blink {
   0%, 50% { opacity: 1; }
@@ -200,21 +186,6 @@
   
   .ff7-action-exit {
     margin-bottom: 40px; /* Add space below exit button on mobile */
-  }
-  
-  .ff7-character-panel {
-    flex-direction: column;
-  }
-  
-  .ff7-character-portrait {
-    margin-right: 0;
-    margin-bottom: 10px;
-  }
-  
-  .ff7-submenu {
-    left: 0;
-    top: 100%;
-    width: 100%;
   }
 }
 

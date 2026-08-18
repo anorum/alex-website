@@ -4,7 +4,6 @@
 
 export interface MateriaSlot {
   color: 'green' | 'yellow' | 'red' | 'blue' | 'purple';
-  linked?: boolean;
 }
 
 export interface EquipmentSlot {
@@ -33,12 +32,12 @@ export const character = {
     {
       slot: 'WEAPON',
       name: 'TERRAFORM ENGINE',
-      materia: [{ color: 'blue', linked: true }, { color: 'red' }, { color: 'yellow' }],
+      materia: [{ color: 'blue' }, { color: 'red' }, { color: 'yellow' }],
     },
     {
       slot: 'ARMOR',
       name: 'KUBERNETES CLUSTER',
-      materia: [{ color: 'blue', linked: true }, { color: 'purple' }],
+      materia: [{ color: 'blue' }, { color: 'purple' }],
     },
     {
       slot: 'ACCESSORY',
@@ -55,5 +54,3 @@ export const character = {
   guild: 'FREE AGENT',
   contact: { label: 'SEND MESSAGE', href: 'https://www.linkedin.com/in/alex-norum/' },
 };
-
-export type Character = typeof character;

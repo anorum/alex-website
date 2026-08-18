@@ -1,6 +1,7 @@
 // Scene registry and scene-aware collision helpers. Pure data - no DOM.
 
 import {
+  DIRECTION_DELTA,
   tileLegend,
   worldRows,
   worldLocations,
@@ -9,13 +10,14 @@ import {
   STEP_MS,
 } from '../overworld';
 import { interiors } from './interiors';
-import type { Interactable, Scene, SceneExit } from './types';
+import type { Direction, Interactable, Scene, SceneExit } from './types';
 
-export type { Interactable, Scene, SceneExit } from './types';
+export type { Scene, ScenePalette } from './types';
+export { woodPalette } from './interiors';
 export { STEP_MS };
 
 /** The overworld as a scene. Every building door is an exit into its interior. */
-export const worldScene: Scene = {
+const worldScene: Scene = {
   id: 'world',
   name: 'WORLD',
   rows: worldRows,
@@ -33,7 +35,7 @@ export const worldScene: Scene = {
   interactables: [],
 };
 
-export const scenes: Record<string, Scene> = Object.fromEntries(
+const scenes: Record<string, Scene> = Object.fromEntries(
   [worldScene, ...interiors].map((s) => [s.id, s])
 );
 
@@ -58,10 +60,8 @@ export function interactableAhead(
   scene: Scene,
   x: number,
   y: number,
-  facing: 'up' | 'down' | 'left' | 'right'
+  facing: Direction
 ): Interactable | null {
-  const d = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[facing];
-  const tx = x + d[0];
-  const ty = y + d[1];
-  return scene.interactables.find((i) => i.at.x === tx && i.at.y === ty) ?? null;
+  const { dx, dy } = DIRECTION_DELTA[facing];
+  return scene.interactables.find((i) => i.at.x === x + dx && i.at.y === y + dy) ?? null;
 }

@@ -1,24 +1,31 @@
 import { skillCategories } from '../../../data/skills';
-import Window from '../ui/Window';
+import Window, { type WindowContentProps } from '../ui/Window';
+
+const HONEST_LEVELS = 'Honest levels';
 
 const ORB_BY_LABEL: Record<string, string> = {
   Core: 'green',
   Also: 'blue',
   AI: 'purple',
-  'Honest levels': 'yellow',
+  [HONEST_LEVELS]: 'yellow',
 };
 
-export default function MateriaList({ label, onClose }: { label: string; onClose: () => void }) {
+interface MateriaListProps extends WindowContentProps {
+  /** skill category label, e.g. "Core" */
+  label: string;
+}
+
+export default function MateriaList({ label, onClose }: MateriaListProps) {
   const category = skillCategories.find((c) => c.label === label);
-  const orb = ORB_BY_LABEL[label] ?? 'green';
   if (!category) return null;
 
+  const orb = ORB_BY_LABEL[label] ?? 'green';
   // Honest-levels entries are sentences; everything else is an orb list.
-  const sentences = label === 'Honest levels';
+  const asSentences = label === HONEST_LEVELS;
 
   return (
     <Window title={`${label.toUpperCase()} MATERIA`} onClose={onClose}>
-      {sentences ? (
+      {asSentences ? (
         category.items.map((item) => (
           <p key={item} className="rpgq-desc" style={{ marginBottom: '0.5rem' }}>
             {item}.

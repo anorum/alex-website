@@ -9,14 +9,21 @@ interface TouchControlsProps {
   showCancel: boolean;
 }
 
-const PADS: { dir: Direction; label: string; area: string }[] = [
-  { dir: 'up', label: '▲', area: 'up' },
-  { dir: 'left', label: '◀', area: 'left' },
-  { dir: 'right', label: '▶', area: 'right' },
-  { dir: 'down', label: '▼', area: 'down' },
+// Direction doubles as the d-pad grid-area name, see .ow-dpad in overworld.css
+const PADS: { dir: Direction; label: string }[] = [
+  { dir: 'up', label: '▲' },
+  { dir: 'left', label: '◀' },
+  { dir: 'right', label: '▶' },
+  { dir: 'down', label: '▼' },
 ];
 
-export default function TouchControls({ onDown, onUp, onInteract, onCancel, showCancel }: TouchControlsProps) {
+export default function TouchControls({
+  onDown,
+  onUp,
+  onInteract,
+  onCancel,
+  showCancel,
+}: TouchControlsProps) {
   return (
     <div className="ow-touch">
       <div className="ow-dpad">
@@ -25,7 +32,7 @@ export default function TouchControls({ onDown, onUp, onInteract, onCancel, show
             key={p.dir}
             type="button"
             className="ow-dpad-btn"
-            style={{ gridArea: p.area }}
+            style={{ gridArea: p.dir }}
             aria-label={`Move ${p.dir}`}
             onPointerDown={(e) => {
               e.currentTarget.setPointerCapture(e.pointerId);

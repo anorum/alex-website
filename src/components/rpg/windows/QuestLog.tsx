@@ -1,7 +1,7 @@
 import { experience } from '../../../data/experience';
-import Window from '../ui/Window';
+import Window, { type WindowContentProps } from '../ui/Window';
 
-export default function QuestLog({ onClose }: { onClose: () => void }) {
+export default function QuestLog({ onClose }: WindowContentProps) {
   return (
     <Window title="QUEST LOG" onClose={onClose}>
       {experience.map((item) => (

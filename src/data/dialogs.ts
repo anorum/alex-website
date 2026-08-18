@@ -5,10 +5,9 @@ import { creed, creedCoda } from './creed';
 import { skillCategories } from './skills';
 import { travelLocations, travelStats } from './travel';
 
-export type WindowId = string;
-
 export type DialogAction =
-  | { type: 'openWindow'; window: WindowId }
+  /** `window` is a window id resolved by OverworldIsland, e.g. "shop" or "materia:Core" */
+  | { type: 'openWindow'; window: string }
   | { type: 'battle' }
   | { type: 'end' };
 

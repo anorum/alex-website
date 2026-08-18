@@ -43,6 +43,7 @@ function resolveMode() {
   return html.classList.contains('dark') ? 'dark' : 'light';
 }
 
+/** @param {{ travelData?: import('../../data/travel').TravelLocation[] }} props */
 export default function IndexTravelMap({ travelData = [] }) {
   const [geoData, setGeoData] = useState(null);
   const [mode, setMode] = useState(resolveMode);
