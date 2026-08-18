@@ -40,6 +40,9 @@
 
   /* Editorial rule (line color set per theme) */
   --rule: 2px solid var(--line-color, currentColor);
+
+  /* Shared vertical rhythm for page sections */
+  --space-section: clamp(3.5rem, 7vw, 5.5rem);
 }
 
 /* ============================================
@@ -127,6 +130,12 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  font-feature-settings: 'tnum';
+}
+
+/* Shared section padding so every section sits on the same vertical rhythm */
+.section-pad {
+  padding-block: var(--space-section);
 }
 
 .display-type {

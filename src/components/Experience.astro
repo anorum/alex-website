@@ -3,7 +3,7 @@ import SectionHeader from './SectionHeader.astro';
 import { experience } from '../data/experience';
 ---
 
-<section class="py-12 sm:py-16" id="experience" style="border-top: var(--rule);">
+<section class="section-pad" id="experience" style="border-top: var(--rule);">
   <div class="max-w-6xl mx-auto px-5 sm:px-8">
     <SectionHeader number="02" title="Experience" />
 
@@ -44,6 +44,32 @@ import { experience } from '../data/experience';
     padding: 1.25rem 0;
     cursor: pointer;
     list-style: none;
+    position: relative;
+  }
+
+  /* Accent rule slides in from the left edge on hover */
+  .xp summary::before {
+    content: '';
+    position: absolute;
+    left: -1.25rem;
+    top: 25%;
+    bottom: 25%;
+    width: 3px;
+    background-color: var(--accent-color);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .xp summary:hover::before,
+  .xp[open] summary::before {
+    transform: scaleY(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .xp summary::before {
+      transition: none;
+    }
   }
 
   .xp summary::-webkit-details-marker {

@@ -1,8 +1,10 @@
 ---
 import meImage from '../assets/me.jpeg';
+
+const shippingYears = new Date().getFullYear() - 2013;
 ---
 
-<section class="pt-16 pb-14 sm:pt-24 sm:pb-20">
+<section class="pt-16 pb-10 sm:pt-24 sm:pb-14">
   <div class="max-w-6xl mx-auto px-5 sm:px-8 stagger-children">
     <p class="eyebrow reveal-item mb-6 sm:mb-8" style="color: var(--accent-text);">
       Portland, OR - Data Platform Engineering
@@ -39,9 +41,18 @@ import meImage from '../assets/me.jpeg';
       </div>
     </div>
 
-    <div class="reveal-item mt-12 sm:mt-16 flex items-center gap-3" aria-hidden="true">
-      <span class="scroll-cue eyebrow" style="color: var(--text-tertiary);">Scroll</span>
-      <span class="scroll-arrow" style="color: var(--accent-color);">↓</span>
+    <div class="hero-strip reveal-item mt-12 sm:mt-16">
+      <div class="hero-stats eyebrow">
+        <span class="hero-stat">Shipping since 2013</span>
+        <span class="hero-stat-sep" aria-hidden="true">/</span>
+        <a class="hero-stat hero-stat-link" href="#projects">{shippingYears} yrs, 5 side projects</a>
+        <span class="hero-stat-sep hero-stat-wide" aria-hidden="true">/</span>
+        <span class="hero-stat hero-stat-wide">45.5°N 122.7°W</span>
+      </div>
+      <div class="flex items-center gap-3" aria-hidden="true">
+        <span class="scroll-cue eyebrow" style="color: var(--text-tertiary);">Scroll</span>
+        <span class="scroll-arrow" style="color: var(--accent-color);">↓</span>
+      </div>
     </div>
   </div>
 </section>
@@ -51,8 +62,8 @@ import meImage from '../assets/me.jpeg';
     width: 88px;
     height: 88px;
     object-fit: cover;
-    border-radius: 9999px;
     border: 2px solid var(--line-color);
+    box-shadow: 6px 6px 0 0 var(--accent-color);
     flex-shrink: 0;
   }
 
@@ -71,6 +82,44 @@ import meImage from '../assets/me.jpeg';
 
   .hero-links a:hover {
     color: var(--accent-text);
+  }
+
+  .hero-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: var(--rule);
+    padding-top: 1rem;
+  }
+
+  .hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    color: var(--text-secondary);
+    min-width: 0;
+  }
+
+  .hero-stat {
+    white-space: nowrap;
+  }
+
+  .hero-stat-sep {
+    color: var(--text-tertiary);
+  }
+
+  .hero-stat-link {
+    color: var(--accent-text);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 0.0625rem;
+  }
+
+  @media (max-width: 700px) {
+    .hero-stat-wide {
+      display: none;
+    }
   }
 
   .scroll-arrow {
