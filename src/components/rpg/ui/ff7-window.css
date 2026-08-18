@@ -3,7 +3,8 @@
 
 .theme-rpg .rpgw-window {
   position: absolute;
-  inset: 4%;
+  inset: 4% 4% auto 4%;
+  max-height: 92%;
   z-index: 20;
   display: flex;
   flex-direction: column;
@@ -228,6 +229,82 @@
   color: var(--ff7-text-highlight, #ffff00);
   text-decoration: underline;
   font-size: 11px;
+}
+
+/* --- quest log / abilities / materia layouts --- */
+
+.theme-rpg .rpgq-quest {
+  border: 1px solid rgba(192, 192, 192, 0.3);
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.625rem 0.75rem;
+  margin-bottom: 0.625rem;
+}
+
+.theme-rpg .rpgq-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.theme-rpg .rpgq-name {
+  color: var(--ff7-text-highlight, #ffff00);
+  font-weight: bold;
+}
+
+.theme-rpg .rpgq-status {
+  font-size: 8px;
+  color: var(--ff7-mp-color, #00ffff);
+}
+
+.theme-rpg .rpgq-meta {
+  font-size: 9px;
+  opacity: 0.85;
+  margin-top: 0.125rem;
+}
+
+.theme-rpg .rpgq-desc {
+  font-size: 10px;
+  line-height: 1.65;
+  margin: 0.375rem 0 0.5rem;
+}
+
+.theme-rpg .rpgq-rewards {
+  margin: 0.25rem 0 0;
+  padding: 0;
+}
+
+.theme-rpg .rpgq-rewards li {
+  list-style: none;
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.theme-rpg .rpgq-rewards span {
+  color: var(--ff7-text-highlight, #ffff00);
+}
+
+.theme-rpg .rpga-flavor {
+  font-style: italic;
+  font-size: 10px;
+  margin: 0.25rem 0;
+  opacity: 0.9;
+}
+
+.theme-rpg .rpgm-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.5rem 1rem;
+}
+
+.theme-rpg .rpgm-list li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
 @keyframes rpgw-blink {

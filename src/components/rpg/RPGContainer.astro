@@ -1,6 +1,4 @@
 ---
-import SkillsRPG from './SkillsRPG.astro';
-import WhatIDoRPG from './WhatIDoRPG.astro';
 import InterestItemRPG from './InterestItemRPG.astro';
 import ProjectsRPG from './ProjectsRPG.astro';
 import OverworldIsland from './overworld/OverworldIsland';
@@ -8,8 +6,6 @@ import IndexTravelMap from '../travel/IndexTravelMap';
 import BattleIsland from './battle/BattleIsland';
 import { travelLocations } from '../../data/travel';
 
-// Import experience data for quests section
-import { experience } from '../../data/experience';
 import { interests } from '../../data/interests';
 ---
 
@@ -24,51 +20,6 @@ import { interests } from '../../data/interests';
       <div class="ff7-menu-header">WORLD</div>
       <div class="ff7-menu-content">
         <OverworldIsland client:visible />
-      </div>
-    </div>
-  </div>
-
-  <div id="rpg-abilities" class="rpg-section">
-    <WhatIDoRPG />
-  </div>
-
-  <div id="rpg-skills" class="rpg-section">
-    <SkillsRPG />
-  </div>
-
-  <div id="rpg-quests" class="rpg-section">
-    <div class="ff7-menu">
-      <div class="ff7-menu-header">QUESTS</div>
-      <div class="ff7-menu-content">
-        <div class="ff7-text">
-          <h3 class="text-center mb-4">Quest Log</h3>
-          <!-- Inline timeline for RPG mode -->
-          <div class="space-y-3">
-            {experience.map((item) => (
-              <div class="p-3 border border-[rgba(192,192,192,0.3)] bg-[rgba(0,0,0,0.2)]">
-                <div class="flex items-center gap-2 mb-2">
-                  <div class="w-8 h-8 p-1 flex items-center justify-center" style="background-color: var(--ff7-blue-dark); border: 1px solid var(--ff7-border);">
-                    <img src={item.logo.src} alt={item.company} class="object-contain max-w-full max-h-full" />
-                  </div>
-                  <div>
-                    <div style="color: var(--ff7-text-highlight); font-weight: bold;">{item.role}</div>
-                    <div style="color: var(--ff7-text); font-size: 0.9em;">{item.company} &middot; {item.period}</div>
-                  </div>
-                </div>
-                <p style="color: var(--ff7-text); font-size: 0.9em; margin-bottom: 0.5rem;">{item.description}</p>
-                {item.achievements?.length > 0 && (
-                  <ul class="space-y-1">
-                    {item.achievements.map((ach) => (
-                      <li style="color: var(--ff7-text); font-size: 0.85em;">
-                        <span style="color: var(--ff7-text-highlight);">▸</span> {ach}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -173,7 +124,7 @@ import { interests } from '../../data/interests';
   // Restore last active section on load. Sections replaced by interiors
   // migrate to their scene so old sessions land inside the right room.
   document.addEventListener('DOMContentLoaded', function() {
-    var sceneMap = { status: 'house' };
+    var sceneMap = { status: 'house', quests: 'hall', abilities: 'tower', skills: 'dojo' };
     var saved = sessionStorage.getItem('rpg-active-section');
     if (saved && sceneMap[saved]) {
       try {

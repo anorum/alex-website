@@ -10,6 +10,9 @@ import LocationPrompt from './LocationPrompt';
 import TouchControls from './TouchControls';
 import DialogBox from '../ui/DialogBox';
 import StatusSheet from '../windows/StatusSheet';
+import QuestLog from '../windows/QuestLog';
+import AbilityList from '../windows/AbilityList';
+import MateriaList from '../windows/MateriaList';
 import './overworld.css';
 
 function readParam(name: string): number | null {
@@ -20,7 +23,17 @@ function readParam(name: string): number | null {
 
 const WINDOWS: Record<string, React.ComponentType<{ onClose: () => void }>> = {
   status: StatusSheet,
+  quests: QuestLog,
+  abilities: AbilityList,
 };
+
+function windowFor(id: string, onClose: () => void) {
+  if (id.startsWith('materia:')) {
+    return <MateriaList label={id.slice('materia:'.length)} onClose={onClose} />;
+  }
+  const Component = WINDOWS[id];
+  return Component ? <Component onClose={onClose} /> : null;
+}
 
 export default function OverworldIsland() {
   // Initialized SSR-safe (pre-rendered at build time by client:visible),
@@ -92,7 +105,6 @@ function OverworldGame({
         : Math.floor((state.clock - state.dialog.openedAt) / CHAR_MS);
   }
 
-  const WindowComponent = state.window ? WINDOWS[state.window] : null;
   const overlayOpen = state.mode === 'dialog' || state.mode === 'window';
 
   return (
@@ -135,7 +147,7 @@ function OverworldGame({
           />
         )}
 
-        {WindowComponent && <WindowComponent onClose={() => dispatch({ type: 'CLOSE_WINDOW' })} />}
+        {state.window && windowFor(state.window, () => dispatch({ type: 'CLOSE_WINDOW' }))}
 
         <div className="ow-fade" style={{ opacity: fadeOpacity }} aria-hidden="true" />
       </div>
