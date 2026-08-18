@@ -45,10 +45,10 @@ export const projects: Project[] = [
     name: 'Data Hero',
     tagline: 'A Slack agent that answers the platform questions.',
     description:
-      'Internal Slack agent for data platform support at LegalZoom. Persistent memory, connectors to GitHub, Snowflake, and Jira, and a knowledge base written for AI consumption. The architecture went webhook, then heartbeat, then hybrid: a message wakes the agent, and the agent manages its own task context.',
+      'Internal Slack agent for data platform support at LegalZoom. It remembered context, plugged into the tools the team already used, and answered the questions that used to interrupt engineers. A message wakes the agent, and the agent manages its own work from there.',
     highlights: [
       'Answered the questions that used to interrupt the team',
-      'Persistent memory plus GitHub, Snowflake, and Jira connectors',
+      'Remembered context across conversations and tools',
       'Stupid simple beat the hype-cycle architecture',
     ],
     tech: ['Python', 'Slack', 'MCP', 'Snowflake'],
