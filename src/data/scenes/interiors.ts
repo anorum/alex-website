@@ -42,6 +42,30 @@ const dojoPalette: ScenePalette = {
   rug: '#7d3b3b',
 };
 
+const shopPalette: ScenePalette = {
+  wall: '#7a5a38',
+  wallTop: '#59412a',
+  floorA: '#c2a06e',
+  floorB: '#b69564',
+  rug: '#3a6b4a',
+};
+
+const campPalette: ScenePalette = {
+  wall: '#2c5e26',
+  wallTop: '#1e4d1e',
+  floorA: '#4a8a42',
+  floorB: '#448038',
+  rug: '#6b4a32',
+};
+
+const harborPalette: ScenePalette = {
+  wall: '#4a5a6b',
+  wallTop: '#38434f',
+  floorA: '#9a6b3f',
+  floorB: '#8f6339',
+  rug: '#2a62b8',
+};
+
 /** 12x9 room shell: solid walls, floor inside. Rows must be rectangular. */
 function assertRoom(rows: string[]): string[] {
   const w = rows[0].length;
@@ -269,5 +293,143 @@ export const interiors: Scene[] = [
       },
     ],
     palette: dojoPalette,
+  },
+  {
+    id: 'shop',
+    name: 'ITEM SHOP',
+    rows: assertRoom([
+      '############',
+      '#..........#',
+      '#..........#',
+      '#..........#',
+      '#....rr....#',
+      '#....rr....#',
+      '#..........#',
+      '#..........#',
+      '############',
+    ]),
+    legend: interiorLegend,
+    spawn: { x: 5, y: 6, facing: 'up' },
+    exits: [
+      {
+        at: { x: 5, y: 7 },
+        to: { scene: 'world', x: 12, y: 9, facing: 'down' },
+        label: 'LEAVE',
+        hint: 'Back to the world',
+      },
+    ],
+    interactables: [
+      {
+        id: 'shopkeeper',
+        kind: 'npc',
+        name: 'TALK TO SHOPKEEPER',
+        at: { x: 6, y: 2 },
+        sprite: 'shopkeeper',
+        scriptId: 'shop-keeper',
+        hint: 'Side projects',
+      },
+      {
+        id: 'crate',
+        kind: 'object',
+        name: 'CHECK THE CRATES',
+        at: { x: 2, y: 2 },
+        sprite: 'crate',
+        scriptId: 'shop-crate',
+        hint: 'Spare parts',
+      },
+    ],
+    palette: shopPalette,
+  },
+  {
+    id: 'camp',
+    name: 'CAMPSITE',
+    rows: assertRoom([
+      '############',
+      '#..........#',
+      '#..........#',
+      '#..........#',
+      '#....rr....#',
+      '#....rr....#',
+      '#..........#',
+      '#..........#',
+      '############',
+    ]),
+    legend: interiorLegend,
+    spawn: { x: 5, y: 6, facing: 'up' },
+    exits: [
+      {
+        at: { x: 5, y: 7 },
+        to: { scene: 'world', x: 9, y: 13, facing: 'down' },
+        label: 'LEAVE',
+        hint: 'Back to the world',
+      },
+    ],
+    interactables: [
+      {
+        id: 'campfire',
+        kind: 'object',
+        name: 'SIT BY THE FIRE',
+        at: { x: 5, y: 3 },
+        sprite: 'campfire',
+        scriptId: 'camp-fire',
+        hint: 'Off the clock',
+      },
+      {
+        id: 'log',
+        kind: 'object',
+        name: 'EXAMINE THE LOG',
+        at: { x: 8, y: 4 },
+        sprite: 'log',
+        scriptId: 'camp-log',
+        hint: 'A good seat',
+      },
+    ],
+    palette: campPalette,
+  },
+  {
+    id: 'harbor',
+    name: 'HARBOR',
+    rows: assertRoom([
+      '############',
+      '#..........#',
+      '#..........#',
+      '#..........#',
+      '#....rr....#',
+      '#....rr....#',
+      '#..........#',
+      '#..........#',
+      '############',
+    ]),
+    legend: interiorLegend,
+    spawn: { x: 5, y: 6, facing: 'up' },
+    exits: [
+      {
+        at: { x: 5, y: 7 },
+        to: { scene: 'world', x: 6, y: 13, facing: 'down' },
+        label: 'LEAVE',
+        hint: 'Back to the world',
+      },
+    ],
+    interactables: [
+      {
+        id: 'captain',
+        kind: 'npc',
+        name: 'TALK TO CAPTAIN',
+        at: { x: 2, y: 3 },
+        sprite: 'captain',
+        scriptId: 'harbor-captain',
+        hint: 'Voyages',
+      },
+      {
+        id: 'chart',
+        kind: 'object',
+        name: 'STUDY THE CHART',
+        at: { x: 8, y: 1 },
+        sprite: 'chart',
+        scriptId: 'harbor-chart',
+        hint: 'The world map',
+      },
+    ],
+    palette: harborPalette,
   },
 ];

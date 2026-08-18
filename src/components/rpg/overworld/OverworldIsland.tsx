@@ -13,6 +13,9 @@ import StatusSheet from '../windows/StatusSheet';
 import QuestLog from '../windows/QuestLog';
 import AbilityList from '../windows/AbilityList';
 import MateriaList from '../windows/MateriaList';
+import ShopWindow from '../windows/ShopWindow';
+import CraftsWindow from '../windows/CraftsWindow';
+import TravelMapWindow from '../windows/TravelMapWindow';
 import './overworld.css';
 
 function readParam(name: string): number | null {
@@ -25,6 +28,9 @@ const WINDOWS: Record<string, React.ComponentType<{ onClose: () => void }>> = {
   status: StatusSheet,
   quests: QuestLog,
   abilities: AbilityList,
+  shop: ShopWindow,
+  crafts: CraftsWindow,
+  'travel-map': TravelMapWindow,
 };
 
 function windowFor(id: string, onClose: () => void) {

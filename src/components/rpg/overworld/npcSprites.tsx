@@ -136,6 +136,98 @@ export const interiorSprites: Record<string, SpriteDef> = {
   },
 };
 
+Object.assign(interiorSprites, {
+  // Shopkeeper in an apron
+  shopkeeper: {
+    pixels: [
+      '..HHHH..',
+      '.HFFFFH.',
+      '.HFEEFH.',
+      '..GGGG..',
+      '.FGAAGF.',
+      '..GAAG..',
+      '..A..A..',
+      '..S..S..',
+    ],
+    palette: { H: '#4a3325', F: '#e8b88a', E: '#1f2937', G: '#6b4a32', A: '#e8e4d8', S: '#4a3325' },
+  },
+
+  // Stacked crates
+  crate: {
+    pixels: [
+      '.CCCCCC.',
+      '.C....C.',
+      '.C.CC.C.',
+      '.CCCCCC.',
+      'CCCCCCCC',
+      'C......C',
+      'C..CC..C',
+      'CCCCCCCC',
+    ],
+    palette: { C: '#8a6b3f' },
+  },
+
+  // Campfire with flames
+  campfire: {
+    pixels: [
+      '...Y....',
+      '..YOY...',
+      '.YOOOY..',
+      '.OORROO.',
+      '..ORRO..',
+      'LLLLLLLL',
+      '.L.LL.L.',
+      '........',
+    ],
+    palette: { Y: '#ffd23f', O: '#ff9d2f', R: '#ff5722', L: '#6b4a32' },
+  },
+
+  // Sitting log with a book on it
+  log: {
+    pixels: [
+      '........',
+      '......BB',
+      '......BB',
+      'LLLLLLLL',
+      'LLLLLLLL',
+      '.L....L.',
+      '........',
+      '........',
+    ],
+    palette: { L: '#8a6b3f', B: '#3a5bb3' },
+  },
+
+  // Ship captain, coat and cap
+  captain: {
+    pixels: [
+      '..CCCC..',
+      '.CCCCCC.',
+      '.HFEEFH.',
+      '..BBBB..',
+      '.FBBBBF.',
+      '..BBBB..',
+      '..B..B..',
+      '..S..S..',
+    ],
+    palette: { C: '#2a3f5e', H: '#4a3325', F: '#e8b88a', E: '#1f2937', B: '#2a3f5e', S: '#10122e' },
+  },
+
+  // Framed sea chart on the wall
+  chart: {
+    pixels: [
+      'FFFFFFFF',
+      'FWWWWWWF',
+      'FWGG.WWF',
+      'FW.GGWWF',
+      'FWW.G.WF',
+      'FWWWWWWF',
+      'FFFFFFFF',
+      '...FF...',
+    ],
+    palette: { F: '#8a6b3f', W: '#c8e0e8', G: '#3f7d3a' },
+  },
+} satisfies Record<string, SpriteDef>);
+
 function shelf(orb: string): SpriteDef {
   return {
     pixels: [

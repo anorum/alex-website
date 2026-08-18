@@ -1,12 +1,6 @@
 ---
-import InterestItemRPG from './InterestItemRPG.astro';
-import ProjectsRPG from './ProjectsRPG.astro';
 import OverworldIsland from './overworld/OverworldIsland';
-import IndexTravelMap from '../travel/IndexTravelMap';
 import BattleIsland from './battle/BattleIsland';
-import { travelLocations } from '../../data/travel';
-
-import { interests } from '../../data/interests';
 ---
 
 <div class="rpg-container">
@@ -24,33 +18,6 @@ import { interests } from '../../data/interests';
     </div>
   </div>
 
-  <div id="rpg-crafts" class="rpg-section">
-    <div class="ff7-menu">
-      <div class="ff7-menu-header">CRAFTS</div>
-      <div class="ff7-menu-content">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {interests.map((item) => (
-            <InterestItemRPG
-              title={item.title}
-              description={item.description}
-              icon={`<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.iconPath}" /></svg>`}
-              colorScheme={item.colorScheme}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="rpg-projects" class="rpg-section">
-    <div class="ff7-menu">
-      <div class="ff7-menu-header">SHOP</div>
-      <div class="ff7-menu-content">
-        <ProjectsRPG />
-      </div>
-    </div>
-  </div>
-
   <div id="rpg-battle" class="rpg-section">
     <div class="ff7-menu">
       <div class="ff7-menu-header">BATTLE</div>
@@ -60,19 +27,6 @@ import { interests } from '../../data/interests';
     </div>
   </div>
 
-  <div id="rpg-map" class="rpg-section">
-    <div class="ff7-menu">
-      <div class="ff7-menu-header">MAP</div>
-      <div class="ff7-menu-content">
-        <div class="ff7-text">
-          <h3 class="text-center mb-4">Places I've Been</h3>
-          <div id="travel-map-container" class="h-[400px] w-full relative overflow-hidden">
-            <IndexTravelMap client:only="react" travelData={travelLocations} />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- switchRPGSection is defined HERE, co-located with the DOM it manages -->
@@ -98,21 +52,6 @@ import { interests } from '../../data/interests';
     var backdrop = document.getElementById('rpg-window-backdrop');
     if (backdrop) backdrop.style.display = inWindow ? '' : 'none';
 
-    // Leaflet needs a resize kick when its container becomes visible
-    if (sectionId === 'map') {
-      setTimeout(function() {
-        var mapContainer = document.querySelector('#travel-map-container .leaflet-container');
-        if (mapContainer && mapContainer._leaflet_id) {
-          // Access the Leaflet map instance and invalidate size
-          var maps = document.querySelectorAll('.leaflet-container');
-          maps.forEach(function(el) {
-            if (el._leaflet_map) el._leaflet_map.invalidateSize();
-          });
-        }
-        // Fallback: trigger window resize which Leaflet listens to
-        window.dispatchEvent(new Event('resize'));
-      }, 100);
-    }
   };
 
   // Quick travel into a scene: back to the overworld section, then teleport
@@ -124,7 +63,7 @@ import { interests } from '../../data/interests';
   // Restore last active section on load. Sections replaced by interiors
   // migrate to their scene so old sessions land inside the right room.
   document.addEventListener('DOMContentLoaded', function() {
-    var sceneMap = { status: 'house', quests: 'hall', abilities: 'tower', skills: 'dojo' };
+    var sceneMap = { status: 'house', quests: 'hall', abilities: 'tower', skills: 'dojo', projects: 'shop', crafts: 'camp', map: 'harbor' };
     var saved = sessionStorage.getItem('rpg-active-section');
     if (saved && sceneMap[saved]) {
       try {

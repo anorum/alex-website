@@ -3,6 +3,7 @@
 
 import { creed, creedCoda } from './creed';
 import { skillCategories } from './skills';
+import { travelLocations, travelStats } from './travel';
 
 export type WindowId = string;
 
@@ -24,6 +25,8 @@ export type DialogScript = DialogStep[];
 
 const honestItems =
   skillCategories.find((c) => c.label === 'Honest levels')?.items ?? [];
+
+const japanVisits = travelLocations.find((l) => l.country === 'Japan')?.visits ?? 0;
 
 export const dialogs: Record<string, DialogScript> = {
   'house-mirror': [
@@ -116,6 +119,59 @@ export const dialogs: Record<string, DialogScript> = {
       speaker: 'SENSEI',
       text: 'Everything else on these shelves gets used in production. That is the only level that matters.',
     },
+  ],
+
+  'shop-keeper': [
+    {
+      kind: 'line',
+      speaker: 'SHOPKEEPER',
+      text: 'Welcome, traveler. Everything here was forged after hours.',
+    },
+    {
+      kind: 'choice',
+      prompt: 'Browse the wares?',
+      options: [
+        { label: 'BROWSE', action: { type: 'openWindow', window: 'shop' } },
+        { label: 'JUST LOOKING', action: { type: 'end' } },
+      ],
+    },
+  ],
+
+  'shop-crate': [
+    {
+      kind: 'line',
+      text: 'Crates of spare parts and old project boxes. Something in here still works.',
+    },
+  ],
+
+  'camp-fire': [
+    { kind: 'line', text: 'The fire crackles. Off the clock at last.' },
+    { kind: 'action', action: { type: 'openWindow', window: 'crafts' } },
+  ],
+
+  'camp-log': [
+    {
+      kind: 'line',
+      text: 'A good sitting log, worn smooth. Sheet music and a paperback left on one end.',
+    },
+  ],
+
+  'harbor-captain': [
+    {
+      kind: 'line',
+      speaker: 'CAPTAIN',
+      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. The log does not lie.`,
+    },
+    {
+      kind: 'line',
+      speaker: 'CAPTAIN',
+      text: `Japan, ${japanVisits} times. I stopped asking why. The answer is always the trains and the food.`,
+    },
+  ],
+
+  'harbor-chart': [
+    { kind: 'line', text: 'A chart of every voyage, inked by hand.' },
+    { kind: 'action', action: { type: 'openWindow', window: 'travel-map' } },
   ],
 };
 
