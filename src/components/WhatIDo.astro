@@ -54,17 +54,17 @@ import { whatIDo } from '../data/whatido';
     }
     .card {
       padding: 1.75rem 1.75rem 2rem;
+      border-bottom: var(--rule);
     }
-    .card:nth-child(odd) {
+    .card:nth-child(odd):not(.card-inverted) {
       border-right: var(--rule);
     }
-    .card:nth-last-child(-n + 2):nth-child(odd),
+    /* the inverted card is the full-width accent band at the bottom */
+    .card-inverted {
+      grid-column: 1 / -1;
+    }
     .card:last-child {
       border-bottom: none;
-    }
-    /* re-apply bottom border to first row */
-    .card:nth-child(-n + 2) {
-      border-bottom: var(--rule);
     }
   }
 
@@ -84,7 +84,8 @@ import { whatIDo } from '../data/whatido';
     color: var(--accent-text);
   }
 
-  .card-inverted .card-icon {
+  .card-inverted .card-icon,
+  .card-inverted .card-title {
     color: var(--on-accent);
   }
 

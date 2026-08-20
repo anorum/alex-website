@@ -48,7 +48,7 @@ export const experience: ExperienceItem[] = [
   {
     company: "New Relic",
     logo: newRelicLogo,
-    role: "Senior Software Engineer, Data Platform",
+    role: "Lead Data Analyst → Software Engineer, Data Platform",
     period: "2018 - 2021",
     year: "2018",
     description: "Joined as a data analyst, left owning the data platform roadmap. Built blue/green deployments, testing frameworks, and brought dbt to the org.",
