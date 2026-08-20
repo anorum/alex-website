@@ -43,7 +43,7 @@ export const projects: Project[] = [
   {
     id: 'sightread',
     name: 'Sightread',
-    tagline: 'Piano sight-reading practice that listens back.',
+    tagline: 'Sight-reading practice for piano with a MIDI keyboard.',
     description:
       'Generates random but musically sensible sight-reading exercises for piano, from easy to brutal. Plug in a MIDI keyboard and it checks what you actually played, note by note.',
     highlights: [
@@ -106,7 +106,7 @@ export const projects: Project[] = [
   {
     id: 'mara-bot',
     name: 'mara-bot',
-    tagline: 'A chatbot of my dog. She had opinions.',
+    tagline: 'A chatbot of my dog.',
     description:
       'A chatbot version of my labradoodle Mara that lived on an earlier version of this website. Retired, but preserved for the record.',
     highlights: [],

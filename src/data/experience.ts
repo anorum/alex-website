@@ -51,7 +51,7 @@ export const experience: ExperienceItem[] = [
     role: "Lead Data Analyst → Software Engineer, Data Platform",
     period: "2018 - 2021",
     year: "2018",
-    description: "Joined as a data analyst, left owning the data platform roadmap. Built blue/green deployments, testing frameworks, and brought dbt to the org.",
+    description: "Started as a data analyst and moved to the data platform team. Owned the platform roadmap, built blue/green deployments and testing frameworks, and brought dbt to the org.",
     achievements: [
       "Introduced dbt - first adoption across the data org",
       "Built Spark pipelines ingesting 10+ sources into Delta Lake",

@@ -41,7 +41,7 @@ export default function MateriaList({ label, onClose }: MateriaListProps) {
         </ul>
       )}
       <div className="rpgw-divider" />
-      <p className="rpga-flavor">No levels. No mastery bars. It ships or it does not.</p>
+      <p className="rpga-flavor">No levels or mastery bars here.</p>
     </Window>
   );
 }
