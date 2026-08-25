@@ -1,6 +1,6 @@
 ---
 import SectionHeader from './SectionHeader.astro';
-import { creed, creedCoda } from '../data/creed';
+import { creed } from '../data/creed';
 ---
 
 <section class="section-pad" id="how-i-think" style="border-top: var(--rule);">
@@ -12,8 +12,6 @@ import { creed, creedCoda } from '../data/creed';
         <li class="creed-line reveal-item">{line}</li>
       ))}
     </ul>
-
-    <p class="creed-coda reveal-item">{creedCoda}</p>
   </div>
 </section>
 
@@ -37,14 +35,5 @@ import { creed, creedCoda } from '../data/creed';
 
   .creed-line:last-child {
     border-bottom: 1px solid var(--hairline-color);
-  }
-
-  .creed-coda {
-    margin-top: 1.5rem;
-    max-width: 40rem;
-    font-family: var(--font-body);
-    font-size: 0.9375rem;
-    line-height: 1.65;
-    color: var(--text-secondary);
   }
 </style>

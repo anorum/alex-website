@@ -1,7 +1,7 @@
 // Dialog scripts for interior NPCs and objects. Pure data - no React, no DOM.
 // The reducer walks these; the island renders them.
 
-import { creed, creedCoda } from './creed';
+import { creed } from './creed';
 import { skillCategories } from './skills';
 import { travelLocations, travelStats } from './travel';
 
@@ -81,7 +81,6 @@ export const dialogs: Record<string, DialogScript> = {
   'tower-lectern': [
     { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same five places.' },
     ...creed.map((line) => ({ kind: 'line' as const, speaker: "ENGINEER'S CREED", text: line })),
-    { kind: 'line', text: creedCoda },
   ],
 
   'tower-orb': [
