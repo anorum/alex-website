@@ -22,13 +22,13 @@ export const projects: Project[] = [
     name: 'PDX Train',
     tagline: 'Is the train blocking the intersection?',
     description:
-      'Portland freight trains park across SE crossings, so this tells me before I leave the house. ODOT camera frames run through a Kafka and Iceberg pipeline on my k3s cluster, with Postgres and Cloudflare serving the live board.',
+      'Portland freight trains park across SE crossings, so this tells me before I leave the house. ODOT camera frames run through a Kafka pipeline on my k3s cluster for now, with Postgres and Cloudflare serving the live board.',
     highlights: [
       'Watching 6 cameras every 30 seconds since Aug 2026',
       'Per-camera trained image classifier in production',
       'ODOT never archives its footage, so this history exists nowhere else',
     ],
-    tech: ['Kafka', 'Iceberg', 'Postgres', 'k3s'],
+    tech: ['Kafka', 'Postgres', 'k3s'],
     links: {
       live: 'https://pdxtrain.alexnorum.com',
       repo: 'https://github.com/anorum/trainspotter',
@@ -88,7 +88,7 @@ export const projects: Project[] = [
     name: 'Homelab',
     tagline: 'Not a showpiece. A place I break things.',
     description:
-      'A k3s cluster (nodes swagman-1 and swagman-2) plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka, MinIO, and Iceberg for the data side. It runs PDX Train around the clock and whatever gets built next.',
+      'A k3s cluster (nodes swagman-1 and swagman-2) plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka and MinIO for the data side. It runs PDX Train around the clock and whatever gets built next.',
     highlights: [
       'GitOps deploys via ArgoCD, everything in version control',
       'Home Assistant with Zigbee and Lutron Caseta',

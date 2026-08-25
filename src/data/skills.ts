@@ -20,7 +20,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     label: "Also",
-    items: ["Delta Lake", "Iceberg", "Postgres", "Docker", "GitHub Actions", "GitOps"],
+    items: ["Delta Lake", "Postgres", "Docker", "GitHub Actions", "GitOps"],
   },
   {
     label: "AI",
