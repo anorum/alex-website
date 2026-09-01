@@ -36,7 +36,7 @@ const rpgLinks = [
 
 <div id="ff7-nav" class="ff7-game-menu hidden">
   <div class="ff7-status-bar ff7-status-top">
-    <div class="ff7-time">Time 0:54:53</div>
+    <div class="ff7-time">Time <span id="ff7-clock">0:00:00</span></div>
     <div class="ff7-gil">Gil 2230</div>
   </div>
   <div class="ff7-menu-header">MENU</div>
@@ -67,6 +67,18 @@ const rpgLinks = [
     var menu = document.getElementById('ff7-nav');
     if (menu) menu.classList.toggle('hidden');
   }
+
+  // Play time, like the real thing: counts up while the page is open
+  (function() {
+    var start = Date.now();
+    var el = document.getElementById('ff7-clock');
+    if (!el) return;
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    setInterval(function() {
+      var s = Math.floor((Date.now() - start) / 1000);
+      el.textContent = Math.floor(s / 3600) + ':' + pad(Math.floor(s / 60) % 60) + ':' + pad(s % 60);
+    }, 1000);
+  })();
 
   function exitRPGMode() {
     localStorage.setItem('site-theme', 'standard');

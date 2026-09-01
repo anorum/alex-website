@@ -8,6 +8,6 @@ interface Props {
 const { number, title, muted = true } = Astro.props;
 ---
 
-<p class="eyebrow reveal-item" style={muted ? 'color: var(--text-secondary);' : undefined}>
+<h2 class="eyebrow reveal-item" style={muted ? 'color: var(--text-secondary);' : undefined}>
   {number} - {title}
-</p>
+</h2>

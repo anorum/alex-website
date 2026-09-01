@@ -178,6 +178,14 @@ const japanVisits = travelLocations.find((loc) => loc.country === 'Japan')?.visi
   .leaflet-control { z-index: 7 !important; }
   .leaflet-top, .leaflet-bottom { z-index: 8 !important; }
 
+  /* Ocean color behind the country polygons (there is no tile layer) */
+  .theme-standard .leaflet-container {
+    background-color: #e4ebe7;
+  }
+  .theme-standard.dark .leaflet-container {
+    background-color: #0f1a15;
+  }
+
   .theme-standard .leaflet-popup-content-wrapper {
     border-radius: 0 !important;
     border: 2px solid var(--line-color) !important;

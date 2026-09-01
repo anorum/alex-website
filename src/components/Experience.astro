@@ -9,7 +9,7 @@ import { experience } from '../data/experience';
 
     <div class="mt-4 sm:mt-6">
       {experience.map((item, i) => (
-        <details class="xp reveal-item" open={item.isCurrent}>
+        <details class="xp reveal-item" open={item.defaultOpen}>
           <summary>
             <span class="xp-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <span class="xp-heading">

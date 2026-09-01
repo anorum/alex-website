@@ -1,19 +1,14 @@
 interface ScrollAnimationOptions {
   selector: string;
   animationClass?: string;
-  staggerDelay?: number;
   threshold?: number;
   once?: boolean;
 }
 
+// Reveals elements as they scroll into view. Stagger between siblings is
+// handled in CSS (.stagger-children) so nothing waits on a page-wide index.
 export function initScrollAnimations(options: ScrollAnimationOptions): void {
-  const {
-    selector,
-    animationClass = 'animate-reveal',
-    staggerDelay = 100,
-    threshold = 0.1,
-    once = true,
-  } = options;
+  const { selector, animationClass = 'animate-reveal', threshold = 0.1, once = true } = options;
 
   const elements = document.querySelectorAll(selector);
   if (!elements.length) return;
@@ -22,18 +17,13 @@ export function initScrollAnimations(options: ScrollAnimationOptions): void {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement;
-          el.classList.add(animationClass);
-          if (once) observer.unobserve(el);
+          entry.target.classList.add(animationClass);
+          if (once) observer.unobserve(entry.target);
         }
       });
     },
     { threshold }
   );
 
-  elements.forEach((el, i) => {
-    const htmlEl = el as HTMLElement;
-    htmlEl.style.setProperty('--reveal-delay', `${i * staggerDelay}ms`);
-    observer.observe(el);
-  });
+  elements.forEach((el) => observer.observe(el));
 }

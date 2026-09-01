@@ -39,6 +39,7 @@ import chocoboIcon from '../assets/cocoboicon.png';
         document.documentElement.classList.add('theme-' + next);
         localStorage.setItem('site-theme', next);
         document.dispatchEvent(new CustomEvent('theme:change', { detail: { theme: next } }));
+        window.scrollTo(0, 0);
 
         if (next === 'rpg') {
           btn.classList.add('active');

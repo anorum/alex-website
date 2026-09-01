@@ -86,8 +86,8 @@ export default function StatusSheet({ onClose }: WindowContentProps) {
         <span style={highlight}>{c.location}</span>
       </div>
       <div className="rpgs-equip">
-        <span>GUILD</span>
-        <span style={highlight}>{c.guild}</span>
+        <span>PARTY</span>
+        <span style={highlight}>{c.party}</span>
       </div>
 
       <div style={{ marginTop: '0.75rem' }}>

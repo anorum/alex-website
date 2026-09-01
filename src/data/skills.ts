@@ -24,7 +24,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     label: "AI",
-    items: ["LLM tooling", "MCP servers", "Agents", "Slack bots", "Claude Code and Cursor, daily"],
+    items: ["LLM tooling", "MCP servers", "Agents", "Slack bots", "Claude Code and Cursor every day"],
   },
   {
     label: "Honest levels",

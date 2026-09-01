@@ -64,11 +64,6 @@ export const dialogs: Record<string, DialogScript> = {
       text: 'The ledger is public. Every contract closed, every reward accounted for.',
     },
     {
-      kind: 'line',
-      speaker: 'RECEPTIONIST',
-      text: 'Between us: the guild is open to new quests.',
-    },
-    {
       kind: 'choice',
       prompt: 'See the quest log?',
       options: [

@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Alex Norum - Page not found" description="That page is off the map.">
+  <main id="main" class="nf">
+    <p class="eyebrow" style="color: var(--accent-text);">404 - Off the map</p>
+    <h1 class="display-type-md nf-title">Nothing here.</h1>
+    <p class="nf-body">That page does not exist, or it moved. The whole site lives on one page anyway.</p>
+    <a href="/" class="btn btn-outline nf-link">Back home</a>
+  </main>
+</BaseLayout>
+
+<style>
+  .nf {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+
+  .nf-title {
+    color: var(--text-color);
+  }
+
+  .nf-body {
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+    max-width: 32rem;
+  }
+
+  .nf-link {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-color);
+    border: var(--rule);
+    padding: 0.75rem 1.25rem;
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+  }
+
+  .nf-link:hover {
+    background-color: var(--accent-color);
+    color: var(--on-accent);
+  }
+</style>

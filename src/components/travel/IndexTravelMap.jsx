@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+import { MapContainer, GeoJSON, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const countryNameToCode = {
@@ -24,17 +24,21 @@ const palettes = {
     visitedStroke: '#0a6e4c',
     otherFill: '#dcd7ca',
     otherStroke: '#b3ac99',
-    tiles: 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
   },
   dark: {
     visitedFill: '#1fc784',
     visitedStroke: '#1fc784',
     otherFill: '#22332c',
     otherStroke: '#3a4f45',
-    tiles: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
   },
 };
 
+const VISITED_OPACITY = 0.75;
+const OTHER_OPACITY = 0.35;
+
+// No basemap tiles: the vendored country polygons draw the whole world and
+// the ocean is a themed background color (see the leaflet-container rules),
+// so the map has no third-party runtime dependency.
 // RPG mode always uses the light palette so the FF7 pixelated filter
 // in rpg-theme.css keeps its intended look regardless of dark mode.
 function resolveMode() {
@@ -43,16 +47,28 @@ function resolveMode() {
   return html.classList.contains('dark') ? 'dark' : 'light';
 }
 
+function popupHtml(loc) {
+  return `
+    <div class="text-center p-2">
+      <div class="text-2xl mb-1">${loc.flag}</div>
+      <div class="font-semibold text-sm">${loc.country}</div>
+      ${loc.visits > 1 ? `<div class="text-xs mt-1" style="opacity: 0.7">${loc.visits} visits</div>` : ''}
+    </div>
+  `;
+}
+
 /** @param {{ travelData?: import('../../data/travel').TravelLocation[] }} props */
 export default function IndexTravelMap({ travelData = [] }) {
   const [geoData, setGeoData] = useState(null);
   const [mode, setMode] = useState(resolveMode);
 
+  // Country outlines are vendored (Natural Earth 110m) so the map never
+  // depends on a third-party host at runtime.
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
-      .then(res => res.json())
-      .then(data => setGeoData(data))
-      .catch(err => console.error('Failed to load countries GeoJSON:', err));
+    fetch('/data/countries.geojson')
+      .then((res) => res.json())
+      .then((data) => setGeoData(data))
+      .catch((err) => console.error('Failed to load countries GeoJSON:', err));
   }, []);
 
   useEffect(() => {
@@ -71,59 +87,39 @@ export default function IndexTravelMap({ travelData = [] }) {
 
   const palette = palettes[mode];
 
-  const visitedCountries = new Set(
-    travelData.map(loc => countryNameToCode[loc.country]).filter(Boolean)
-  );
-
-  const countryStats = travelData.reduce((acc, loc) => {
+  const byCode = {};
+  for (const loc of travelData) {
     const code = countryNameToCode[loc.country];
-    if (code) {
-      if (!acc[code]) acc[code] = { name: loc.country, flag: loc.flag, visits: 0 };
-      acc[code].visits += loc.visits || 1;
-    }
-    return acc;
-  }, {});
+    if (code) byCode[code] = loc;
+  }
 
-  const getCountryCode = (properties) => {
-    return properties.ISO_A3 || properties.ADM0_A3 || properties.iso_a3 || properties.SOV_A3;
-  };
+  const getCountryCode = (properties) =>
+    properties.ISO_A3 || properties.ADM0_A3 || properties.iso_a3 || properties.SOV_A3;
 
   const getStyle = (feature) => {
-    const countryCode = getCountryCode(feature.properties);
-    const isVisited = visitedCountries.has(countryCode);
-
+    const isVisited = !!byCode[getCountryCode(feature.properties)];
     return {
       fillColor: isVisited ? palette.visitedFill : palette.otherFill,
       weight: 0.5,
       opacity: 1,
       color: isVisited ? palette.visitedStroke : palette.otherStroke,
-      fillOpacity: isVisited ? 0.75 : 0.35,
+      fillOpacity: isVisited ? VISITED_OPACITY : OTHER_OPACITY,
     };
   };
 
   const onEachFeature = (feature, layer) => {
-    const countryCode = getCountryCode(feature.properties);
-    const stats = countryStats[countryCode];
-
-    if (stats) {
-      layer.bindPopup(`
-        <div class="text-center p-2">
-          <div class="text-2xl mb-1">${stats.flag}</div>
-          <div class="font-semibold text-sm">${stats.name}</div>
-          ${stats.visits > 1 ? `<div class="text-xs mt-1" style="opacity: 0.7">${stats.visits} visits</div>` : ''}
-        </div>
-      `);
-
-      layer.on({
-        mouseover: (e) => {
-          e.target.setStyle({ fillOpacity: 0.9, weight: 2 });
-        },
-        mouseout: (e) => {
-          e.target.setStyle({ fillOpacity: 0.7, weight: 0.5 });
-        },
-      });
-    }
+    const loc = byCode[getCountryCode(feature.properties)];
+    if (!loc) return;
+    layer.bindPopup(popupHtml(loc));
+    layer.on({
+      mouseover: (e) => e.target.setStyle({ fillOpacity: 0.9, weight: 2 }),
+      mouseout: (e) => e.target.setStyle({ fillOpacity: VISITED_OPACITY, weight: 0.5 }),
+    });
   };
+
+  // City-states like Singapore and Hong Kong are too small for the 110m
+  // polygons, so they get a marker at their coordinates instead.
+  const markers = travelData.filter((loc) => Array.isArray(loc.coords));
 
   return (
     <MapContainer
@@ -140,15 +136,26 @@ export default function IndexTravelMap({ travelData = [] }) {
       worldCopyJump={false}
       zoomControl={typeof window !== 'undefined' && window.innerWidth >= 640}
     >
-      <TileLayer key={mode} url={palette.tiles} noWrap={true} />
       {geoData && (
-        <GeoJSON
-          key={`geo-${mode}`}
-          data={geoData}
-          style={getStyle}
-          onEachFeature={onEachFeature}
-        />
+        <GeoJSON key={`geo-${mode}`} data={geoData} style={getStyle} onEachFeature={onEachFeature} />
       )}
+      {markers.map((loc) => (
+        <CircleMarker
+          key={`${loc.country}-${mode}`}
+          center={loc.coords}
+          radius={5}
+          pathOptions={{
+            color: palette.visitedStroke,
+            fillColor: palette.visitedFill,
+            fillOpacity: 0.95,
+            weight: 1.5,
+          }}
+        >
+          <Popup>
+            <div dangerouslySetInnerHTML={{ __html: popupHtml(loc) }} />
+          </Popup>
+        </CircleMarker>
+      ))}
     </MapContainer>
   );
 }

@@ -23,3 +23,7 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .superpowers/
+
+# local screenshots and tool logs
+/*.png
+.playwright-mcp/

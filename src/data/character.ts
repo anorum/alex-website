@@ -51,6 +51,6 @@ export const character = {
       'Unleashes a full-stack data platform assault: automates workflows, deploys secure self-service pipelines, and slices legacy runtimes from hours to minutes. Grants party-wide observability and governance buffs.',
   },
   location: 'PORTLAND',
-  guild: 'FREE AGENT',
+  party: 'MARA (LABRADOODLE)',
   contact: { label: 'SEND MESSAGE', href: 'https://www.linkedin.com/in/alex-norum/' },
 };

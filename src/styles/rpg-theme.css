@@ -241,8 +241,9 @@
    RPG-THEMED TRAVEL MAP (FF7 World Map Style)
    ============================================ */
 
-/* Pixelation effect for map tiles */
+/* FF7 world-map look: deep blue ocean, pixelated rendering */
 .theme-rpg .leaflet-container {
+  background-color: #1e3f7a;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -253,6 +254,11 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+}
+
+/* Disabled zoom step (at min/max zoom) reads as a blank block under the pixel filter */
+.theme-rpg .leaflet-control-zoom a.leaflet-disabled {
+  opacity: 0.35;
 }
 
 /* FF7 styled popups */

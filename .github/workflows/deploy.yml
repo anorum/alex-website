@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -33,6 +33,15 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Install Chromium for end-to-end checks
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end checks
+        run: npm run e2e
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

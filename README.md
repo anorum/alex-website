@@ -18,3 +18,13 @@ npm run dev      # dev server at localhost:4321
 npm run build    # static build to dist/
 npm run preview  # serve the built site locally
 ```
+
+## Checks
+
+```bash
+npm run typecheck   # TypeScript
+npm run build && npm run e2e   # headless browser checks against dist/ (needs `npx playwright install chromium` once)
+```
+
+The end-to-end suite in `tests/e2e.mjs` walks both themes: the editorial page (headings, links, metadata, map) and the RPG (every interior, dialogs, windows, battle handoff, touch controls).
+It runs in CI before every deploy.

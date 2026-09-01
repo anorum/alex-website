@@ -51,6 +51,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* keep anchored sections clear of the sticky nav */
+  scroll-padding-top: 4.5rem;
   transition: background-color var(--duration-slow) var(--ease-out),
               color var(--duration-slow) var(--ease-out);
 }
@@ -64,7 +66,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings use Space Grotesk */
+/* Headings use Archivo; body copy uses Inter */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 700;
@@ -112,12 +114,15 @@ h1, h2, h3, h4, h5, h6 {
   animation: pageEnter 0.6s var(--ease-out) both;
 }
 
-/* Stagger children utility */
+/* Stagger siblings that reveal together (capped so nothing waits long) */
 .stagger-children > :nth-child(1) { --reveal-delay: 0ms; }
-.stagger-children > :nth-child(2) { --reveal-delay: 80ms; }
-.stagger-children > :nth-child(3) { --reveal-delay: 160ms; }
-.stagger-children > :nth-child(4) { --reveal-delay: 240ms; }
-.stagger-children > :nth-child(5) { --reveal-delay: 320ms; }
+.stagger-children > :nth-child(2) { --reveal-delay: 70ms; }
+.stagger-children > :nth-child(3) { --reveal-delay: 140ms; }
+.stagger-children > :nth-child(4) { --reveal-delay: 210ms; }
+.stagger-children > :nth-child(5) { --reveal-delay: 280ms; }
+.stagger-children > :nth-child(6) { --reveal-delay: 350ms; }
+.stagger-children > :nth-child(7) { --reveal-delay: 420ms; }
+.stagger-children > :nth-child(n + 8) { --reveal-delay: 490ms; }
 
 /* ============================================
    UTILITY CLASSES
@@ -176,6 +181,23 @@ h1, h2, h3, h4, h5, h6 {
 /* Card hover elevation */
 [style*="card-shadow"]:hover {
   box-shadow: var(--card-shadow-hover);
+}
+
+/* Skip link for keyboard users: visible only when focused */
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: var(--rule);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
 }
 
 /* Smooth focus outlines */

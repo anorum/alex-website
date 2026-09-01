@@ -63,6 +63,7 @@
       document.documentElement.classList.add('theme-rpg');
       localStorage.setItem('site-theme', 'rpg');
       document.dispatchEvent(new CustomEvent('theme:change', { detail: { theme: 'rpg' } }));
+      window.scrollTo(0, 0);
     });
   })();
 </script>
