@@ -1,17 +1,29 @@
-// Pure deterministic reducer for the RPG scenes (overworld + interiors).
-// No DOM, no side effects. Side effects (sfx, section switches) are driven
-// by seq counters and the `entered` field, which the hook watches.
+// Pure deterministic reducer for the RPG: overworld, interiors, dialogs,
+// windows, and battles. No DOM, no side effects. Side effects (sfx, save
+// writes) are driven by seq counters and state.save, which the hook watches.
 
 import { STEP_MS, exitAt, getScene, interactableAhead, isWalkableIn } from '../../../data/scenes';
 import { getScript, type DialogAction } from '../../../data/dialogs';
 import { DIRECTION_DELTA, type Direction } from '../../../data/overworld';
+import { bossById } from '../../../data/bosses';
+import { itemById } from '../../../data/items';
+import { levelFromExp } from '../../../data/party';
+import type { SaveData } from '../../../utils/rpg-save';
+import { createBattleState, battleReducer, type BattleSetup } from '../battle/battleReducer';
+import { nextRng } from '../battle/damage';
+import type { BattleAction, BattleState } from '../battle/types';
+import { rollEncounter } from './encounters';
 
 /** ms of game clock per revealed dialog character */
 export const CHAR_MS = 28;
 /** ms of game clock per fade phase (out, then in) */
 export const FADE_MS = 180;
+/** ms of game clock for the battle swirl */
+export const SWIRL_MS = 500;
+/** settled steps after a battle before the next roll can fire */
+export const ENCOUNTER_GRACE_STEPS = 4;
 
-export type Mode = 'walk' | 'dialog' | 'window' | 'fade';
+export type Mode = 'walk' | 'dialog' | 'window' | 'fade' | 'battle';
 
 export interface ScenePos {
   scene: string;
@@ -57,8 +69,14 @@ export interface OverworldState {
   dialog: DialogState | null;
   /** open content window id, if any */
   window: string | null;
-  /** section id emitted for the hook to open via switchRPGSection */
-  entered: string | null;
+  /** the persisted save, held here so the reducer stays pure */
+  save: SaveData;
+  battle: BattleState | null;
+  /** queued while the encounter swirl plays */
+  pendingBattle: BattleSetup | null;
+  stepsSinceBattle: number;
+  /** mulberry32 state for encounter rolls and battle seeds */
+  rng: number;
   /** increments when a new prompt appears or the dialog cursor moves (cursor sfx) */
   promptSeq: number;
   /** increments on confirm-style actions (confirm sfx) */
@@ -75,7 +93,14 @@ export type OverworldAction =
   | { type: 'DIALOG_CANCEL' }
   | { type: 'CLOSE_WINDOW' }
   | { type: 'TELEPORT'; scene: string }
-  | { type: 'ACK_ENTER' };
+  | { type: 'START_BATTLE'; setup: BattleSetup }
+  | { type: 'BATTLE'; action: BattleAction }
+  | { type: 'TOGGLE_ENCOUNTERS' }
+  | { type: 'SET_ENCOUNTERS'; on: boolean }
+  | { type: 'SET_SOUND'; on: boolean }
+  | { type: 'SET_SAVE'; save: SaveData }
+  | { type: 'BUY'; itemId: string }
+  | { type: 'SHOW_INTRO' };
 
 function computePrompt(state: OverworldState): Prompt | null {
   const scene = getScene(state.scene);
@@ -96,7 +121,11 @@ function withPrompt(state: OverworldState): OverworldState {
   };
 }
 
-export function createOverworldState(saved?: Partial<ScenePos> | null): OverworldState {
+export function createOverworldState(
+  saved: Partial<ScenePos> | null | undefined,
+  save: SaveData,
+  seed: number
+): OverworldState {
   const scene = getScene(saved?.scene ?? 'world');
   let x = saved?.x ?? scene.spawn.x;
   let y = saved?.y ?? scene.spawn.y;
@@ -121,22 +150,60 @@ export function createOverworldState(saved?: Partial<ScenePos> | null): Overworl
     fade: null,
     dialog: null,
     window: null,
-    entered: null,
+    save,
+    battle: null,
+    pendingBattle: null,
+    stepsSinceBattle: ENCOUNTER_GRACE_STEPS,
+    rng: seed >>> 0 || 1,
     promptSeq: 0,
     confirmSeq: 0,
   };
   return { ...base, prompt: computePrompt(base) };
 }
 
+function battleSetupFromSave(state: OverworldState, partial: Pick<BattleSetup, 'kind' | 'enemies' | 'bossId' | 'seed'>): BattleSetup {
+  return {
+    ...partial,
+    level: state.save.level,
+    exp: state.save.exp,
+    gil: state.save.gil,
+    inventory: state.save.inventory,
+  };
+}
+
+function startBattle(state: OverworldState, setup: BattleSetup): OverworldState {
+  return {
+    ...state,
+    mode: 'fade',
+    fade: { phase: 'out', t: 0 },
+    pendingBattle: setup,
+    prompt: null,
+    dialog: null,
+    window: null,
+    queue: [],
+    confirmSeq: state.confirmSeq + 1,
+  };
+}
+
 function settle(state: OverworldState): OverworldState {
-  return withPrompt({
+  const settled = withPrompt({
     ...state,
     stepping: false,
     progress: 0,
     fromX: state.x,
     fromY: state.y,
     stepFrame: state.stepFrame === 0 ? 1 : 0,
+    stepsSinceBattle: state.stepsSinceBattle + 1,
   });
+  if (settled.scene !== 'world' || !settled.save.encounters || settled.stepsSinceBattle < ENCOUNTER_GRACE_STEPS) {
+    return settled;
+  }
+  const roll = rollEncounter(settled.rng, settled.x, settled.y);
+  if (!roll.group) return { ...settled, rng: roll.rng };
+  return startBattle(
+    { ...settled, rng: roll.rng },
+    battleSetupFromSave(settled, { kind: 'random', enemies: roll.group, seed: roll.rng })
+  );
 }
 
 function tryStartStep(state: OverworldState): OverworldState {
@@ -180,6 +247,18 @@ function endDialog(state: OverworldState): OverworldState {
   return withPrompt({ ...state, mode: 'walk', dialog: null });
 }
 
+function openDialog(state: OverworldState, scriptId: string): OverworldState {
+  const opened: OverworldState = {
+    ...state,
+    mode: 'dialog',
+    prompt: null,
+    queue: [],
+    dialog: { scriptId, step: 0, openedAt: state.clock, revealAll: false, choiceIndex: 0 },
+  };
+  // scripts may open with an action step
+  return enterStep(opened, 0);
+}
+
 function runAction(state: OverworldState, action: DialogAction): OverworldState {
   switch (action.type) {
     case 'openWindow':
@@ -189,8 +268,19 @@ function runAction(state: OverworldState, action: DialogAction): OverworldState 
         window: action.window,
         confirmSeq: state.confirmSeq + 1,
       };
-    case 'battle':
-      return { ...endDialog(state), entered: 'battle', confirmSeq: state.confirmSeq + 1 };
+    case 'battle': {
+      const boss = bossById(action.bossId);
+      if (!boss) return endDialog(state);
+      const [, seed] = nextRng(state.rng);
+      return startBattle(
+        { ...endDialog(state), rng: seed },
+        battleSetupFromSave(state, { kind: 'boss', bossId: boss.id, enemies: [boss], seed })
+      );
+    }
+    case 'setEncounters': {
+      const next = { ...state, save: { ...state.save, encounters: action.on }, confirmSeq: state.confirmSeq + 1 };
+      return openDialog(next, action.then);
+    }
     case 'end':
     default:
       return endDialog(state);
@@ -220,14 +310,51 @@ export function lineRevealed(state: OverworldState): boolean {
   return (state.clock - dialog.openedAt) / CHAR_MS >= step.text.length;
 }
 
+/** Apply a finished battle's result to the save and leave battle mode. */
+function finishBattle(state: OverworldState): OverworldState {
+  const result = state.battle?.result;
+  const inventory = { ...(state.battle?.inventory ?? state.save.inventory) };
+  let save: SaveData = { ...state.save, inventory };
+  if (result?.outcome === 'victory') {
+    const exp = state.save.exp + result.exp;
+    save = {
+      ...save,
+      exp,
+      gil: state.save.gil + result.gil,
+      level: levelFromExp(exp),
+      bossesBeaten:
+        result.bossId && !state.save.bossesBeaten.includes(result.bossId)
+          ? [...state.save.bossesBeaten, result.bossId]
+          : state.save.bossesBeaten,
+    };
+  }
+  const base: OverworldState = { ...state, battle: null, save, mode: 'walk', stepsSinceBattle: 0 };
+  if (result?.outcome === 'defeat') {
+    // wake at home, no penalty
+    const house = getScene('house');
+    return startFade(base, { scene: house.id, ...house.spawn });
+  }
+  return withPrompt(base);
+}
+
 export function overworldReducer(state: OverworldState, action: OverworldAction): OverworldState {
   switch (action.type) {
     case 'TICK': {
       let next = { ...state, clock: state.clock + action.dt };
       if (next.mode === 'fade' && next.fade) {
-        const t = next.fade.t + action.dt / FADE_MS;
+        const ms = next.pendingBattle ? SWIRL_MS : FADE_MS;
+        const t = next.fade.t + action.dt / ms;
         if (t < 1) {
           next.fade = { ...next.fade, t };
+        } else if (next.fade.phase === 'out' && next.pendingBattle) {
+          next = {
+            ...next,
+            mode: 'battle',
+            fade: null,
+            battle: createBattleState(next.pendingBattle),
+            pendingBattle: null,
+            stepsSinceBattle: 0,
+          };
         } else if (next.fade.phase === 'out' && next.fade.to) {
           const to = next.fade.to;
           next = {
@@ -247,12 +374,15 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
         }
         return next;
       }
+      if (next.mode === 'battle' && next.battle) {
+        return { ...next, battle: battleReducer(next.battle, { type: 'TICK', dt: action.dt }) };
+      }
       if (next.mode !== 'walk') return next;
       if (next.stepping) {
         next.progress = next.progress + action.dt / STEP_MS;
         if (next.progress >= 1) next = settle(next);
       }
-      if (!next.stepping) next = tryStartStep(next);
+      if (next.mode === 'walk' && !next.stepping) next = tryStartStep(next);
       return next;
     }
 
@@ -295,22 +425,7 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
 
       const ahead = interactableAhead(scene, state.x, state.y, state.facing);
       if (!ahead) return state;
-      const opened: OverworldState = {
-        ...state,
-        mode: 'dialog',
-        prompt: null,
-        queue: [],
-        confirmSeq: state.confirmSeq + 1,
-        dialog: {
-          scriptId: ahead.scriptId,
-          step: 0,
-          openedAt: state.clock,
-          revealAll: false,
-          choiceIndex: 0,
-        },
-      };
-      // scripts may open with an action step
-      return enterStep(opened, 0);
+      return openDialog({ ...state, confirmSeq: state.confirmSeq + 1 }, ahead.scriptId);
     }
 
     case 'DIALOG_NAV': {
@@ -333,14 +448,54 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
         : state;
 
     case 'TELEPORT': {
-      if (state.mode === 'fade') return state;
+      if (state.mode === 'fade' || state.mode === 'battle') return state;
       const scene = getScene(action.scene);
       if (scene.id === state.scene && state.mode === 'walk') return state;
       return startFade(state, { scene: scene.id, ...scene.spawn });
     }
 
-    case 'ACK_ENTER':
-      return state.entered === null ? state : { ...state, entered: null };
+    case 'START_BATTLE':
+      if (state.mode === 'battle' || state.mode === 'fade') return state;
+      return startBattle(state, action.setup);
+
+    case 'BATTLE': {
+      if (state.mode !== 'battle' || !state.battle) return state;
+      const battle = battleReducer(state.battle, action.action);
+      if (battle.phase !== 'done') return { ...state, battle };
+      return finishBattle({ ...state, battle });
+    }
+
+    case 'TOGGLE_ENCOUNTERS':
+      return {
+        ...state,
+        save: { ...state.save, encounters: !state.save.encounters },
+        confirmSeq: state.confirmSeq + 1,
+      };
+
+    case 'SET_ENCOUNTERS':
+      return { ...state, save: { ...state.save, encounters: action.on } };
+
+    case 'SET_SOUND':
+      return { ...state, save: { ...state.save, sound: action.on } };
+
+    case 'SET_SAVE':
+      return { ...state, save: action.save };
+
+    case 'BUY': {
+      const item = itemById(action.itemId);
+      if (!item || state.save.gil < item.price) return state;
+      const inventory = { ...state.save.inventory, [item.id]: (state.save.inventory[item.id] ?? 0) + 1 };
+      return {
+        ...state,
+        save: { ...state.save, gil: state.save.gil - item.price, inventory },
+        confirmSeq: state.confirmSeq + 1,
+      };
+    }
+
+    case 'SHOW_INTRO': {
+      if (state.save.seenIntro || state.mode !== 'walk') return state;
+      return openDialog({ ...state, save: { ...state.save, seenIntro: true } }, 'intro-encounters');
+    }
 
     default:
       return state;

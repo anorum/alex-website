@@ -8,7 +8,10 @@ import { travelLocations, travelStats } from './travel';
 export type DialogAction =
   /** `window` is a window id resolved by OverworldIsland, e.g. "shop" or "materia:Core" */
   | { type: 'openWindow'; window: string }
-  | { type: 'battle' }
+  /** start a boss battle in the frame */
+  | { type: 'battle'; bossId: string }
+  /** flip the random-encounter flag, then continue with another script */
+  | { type: 'setEncounters'; on: boolean; then: string }
   | { type: 'end' };
 
 export type DialogStep =
@@ -49,6 +52,27 @@ export const dialogs: Record<string, DialogScript> = {
       kind: 'line',
       text: 'She had a chatbot once. It cannot be repaired. She seems fine about it.',
     },
+    {
+      kind: 'choice',
+      prompt: 'Have Mara keep watch? Wild data leaves the fields alone while she is on duty.',
+      options: [
+        { label: 'KEEP WATCH', action: { type: 'setEncounters', on: false, then: 'mara-watch-on' } },
+        { label: 'LET HER SLEEP', action: { type: 'setEncounters', on: true, then: 'mara-watch-off' } },
+      ],
+    },
+  ],
+
+  'mara-watch-on': [
+    { kind: 'line', speaker: 'MARA', text: 'Mara keeps watch. The fields go quiet.' },
+  ],
+
+  'mara-watch-off': [
+    { kind: 'line', speaker: 'MARA', text: 'Mara goes back to sleep. Wild data roams again.' },
+  ],
+
+  'intro-encounters': [
+    { kind: 'line', text: 'Wild data roams these fields.' },
+    { kind: 'line', text: 'Press E if you would rather walk in peace. Mara can also keep watch at the house.' },
   ],
 
   'hall-board': [
@@ -122,9 +146,10 @@ export const dialogs: Record<string, DialogScript> = {
     },
     {
       kind: 'choice',
-      prompt: 'Browse the wares?',
+      prompt: 'What are you after?',
       options: [
-        { label: 'BROWSE', action: { type: 'openWindow', window: 'shop' } },
+        { label: 'BROWSE WARES', action: { type: 'openWindow', window: 'shop' } },
+        { label: 'BUY ITEMS', action: { type: 'openWindow', window: 'shop:buy' } },
         { label: 'JUST LOOKING', action: { type: 'end' } },
       ],
     },
@@ -176,9 +201,12 @@ export const dialogs: Record<string, DialogScript> = {
     { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what was actually shipped is yours.' },
     {
       kind: 'choice',
-      prompt: 'Enter the arena?',
+      prompt: 'Which one?',
       options: [
-        { label: 'FIGHT', action: { type: 'battle' } },
+        { label: 'ON-PREM TITAN', action: { type: 'battle', bossId: 'on-prem-titan' } },
+        { label: 'SPAGHETTI SQL HYDRA', action: { type: 'battle', bossId: 'sql-hydra' } },
+        { label: 'LEGACY MONOLITH', action: { type: 'battle', bossId: 'legacy-monolith' } },
+        { label: 'ROGUE AGENT', action: { type: 'battle', bossId: 'rogue-agent' } },
         { label: 'NOT YET', action: { type: 'end' } },
       ],
     },

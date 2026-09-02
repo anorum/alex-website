@@ -2285,7 +2285,7 @@ describe('encounters', () => {
   it('classifies terrain', () => {
     expect(terrainAt(11, 5)).toBe('grass'); // spawn
     expect(terrainAt(14, 3)).toBeNull(); // tree (not walkable)
-    expect(terrainAt(4, 13)).toBe('sand');
+    expect(terrainAt(7, 13)).toBe('sand');
     expect(terrainAt(4, 1)).toBe('forest'); // grass beside the northern trees
     for (const loc of worldLocations) expect(terrainAt(loc.door.x, loc.door.y)).toBeNull(); // door mats are safe
   });
@@ -2396,7 +2396,7 @@ export function rollEncounter(rng: number, x: number, y: number): { rng: number;
 }
 ```
 
-Coordinates were checked against `worldRows` in `src/data/overworld.ts`: (14,3) is a tree, (4,13) is sand, (1,8) is grass with water to its west, (4,1) is grass with a tree to its west. Forest means any grass tile touching a tree; requiring two tree neighbours would leave almost no forest on this map.
+Coordinates were checked against `worldRows` in `src/data/overworld.ts`: (14,3) is a tree, (7,13) is sand (the harbor footprint covers 4,13), (1,8) is grass with water to its west, (4,1) is grass with a tree to its west. Forest means any grass tile touching a tree; requiring two tree neighbours would leave almost no forest on this map.
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
