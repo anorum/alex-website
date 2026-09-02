@@ -169,14 +169,14 @@ try {
 
   console.log('rpg interiors');
   {
+    // encounters off and intro seen: these checks walk fixed routes
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await ctx.addInitScript(() => localStorage.setItem('site-theme', 'rpg'));
+    await ctx.addInitScript(() => { localStorage.setItem('site-theme', 'rpg'); localStorage.setItem('rpg-save', JSON.stringify({ v: 1, level: 5, exp: 0, gil: 0, inventory: { coffee: 2, runbook: 1 }, bossesBeaten: [], encounters: false, sound: false, seenIntro: true })); });
     const page = await ctx.newPage();
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
-    await dismissIntro(page);
     check('spawn 11,5 on world', (await tile(page)) === '11,5' && (await scene(page)) === 'world');
 
     await walk(page, 'ArrowRight', 3);
@@ -418,11 +418,10 @@ try {
       hasTouch: true,
       userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
     });
-    await ctx.addInitScript(() => localStorage.setItem('site-theme', 'rpg'));
+    await ctx.addInitScript(() => { localStorage.setItem('site-theme', 'rpg'); localStorage.setItem('rpg-save', JSON.stringify({ v: 1, level: 5, exp: 0, gil: 0, inventory: { coffee: 2, runbook: 1 }, bossesBeaten: [], encounters: false, sound: false, seenIntro: true })); });
     const page = await ctx.newPage();
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
-    await dismissIntro(page);
     check('d-pad visible on touch device', await page.locator('.ow-dpad').isVisible());
     const before = await tile(page);
     const btn = page.locator('.ow-dpad-btn[aria-label="Move right"]');
@@ -437,11 +436,10 @@ try {
   console.log('reduced motion');
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
-    await ctx.addInitScript(() => localStorage.setItem('site-theme', 'rpg'));
+    await ctx.addInitScript(() => { localStorage.setItem('site-theme', 'rpg'); localStorage.setItem('rpg-save', JSON.stringify({ v: 1, level: 5, exp: 0, gil: 0, inventory: { coffee: 2, runbook: 1 }, bossesBeaten: [], encounters: false, sound: false, seenIntro: true })); });
     const page = await ctx.newPage();
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
-    await dismissIntro(page);
     await walk(page, 'ArrowRight', 2);
     check('player moves under reduced motion', (await tile(page)) === '13,5', 'got ' + (await tile(page)));
     await ctx.close();
