@@ -42,6 +42,13 @@ function pick<T extends { weight: number }>(rng: number, entries: T[]): [T, numb
   return [entries[entries.length - 1], next];
 }
 
+/** How many enemies a non-pair encounter spawns, from a 0..1 roll. */
+function groupSize(r: number): number {
+  if (r < 0.55) return 1;
+  if (r < 0.9) return 2;
+  return 3;
+}
+
 export function rollEncounter(rng: number, x: number, y: number): { rng: number; group: EnemyDef[] | null } {
   const terrain = terrainAt(x, y);
   if (!terrain) return { rng, group: null };
@@ -57,7 +64,7 @@ export function rollEncounter(rng: number, x: number, y: number): { rng: number;
   if (lead.pair) return { rng: next, group: [lead] }; // pairs expand to two combatants in the reducer
 
   [r, next] = nextRng(next);
-  const count = r < 0.55 ? 1 : r < 0.9 ? 2 : 3;
+  const count = groupSize(r);
   const group: EnemyDef[] = [lead];
   for (let i = 1; i < count; i++) {
     const [extra, n2] = pick(next, terrainPools[terrain].filter((e) => !enemyById(e.id)!.pair));

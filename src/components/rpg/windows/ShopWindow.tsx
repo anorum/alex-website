@@ -38,12 +38,14 @@ export default function ShopWindow({ onClose, save, dispatch, initialTab }: Wind
         setTab((t) => (t === 'wares' ? 'buy' : 'wares'));
         return true;
       }
+      const up = e.key === 'ArrowUp' || e.key === 'w';
+      const down = e.key === 'ArrowDown' || e.key === 's';
       if (tab === 'wares') {
-        if (e.key === 'ArrowUp' || e.key === 'w') { setIndex((i) => (i - 1 + projects.length) % projects.length); return true; }
-        if (e.key === 'ArrowDown' || e.key === 's') { setIndex((i) => (i + 1) % projects.length); return true; }
+        if (up) { setIndex((i) => (i - 1 + projects.length) % projects.length); return true; }
+        if (down) { setIndex((i) => (i + 1) % projects.length); return true; }
       } else {
-        if (e.key === 'ArrowUp' || e.key === 'w') { setBuyIndex((i) => (i - 1 + items.length) % items.length); return true; }
-        if (e.key === 'ArrowDown' || e.key === 's') { setBuyIndex((i) => (i + 1) % items.length); return true; }
+        if (up) { setBuyIndex((i) => (i - 1 + items.length) % items.length); return true; }
+        if (down) { setBuyIndex((i) => (i + 1) % items.length); return true; }
         if (e.key === 'Enter') { buy(buyIndex); return true; }
       }
     },

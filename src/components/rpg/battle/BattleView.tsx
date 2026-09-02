@@ -5,6 +5,7 @@ import { useRef, type ReactElement } from 'react';
 import { items } from '../../../data/items';
 import { experience } from '../../../data/experience';
 import { bossById } from '../../../data/bosses';
+import { enemyById } from '../../../data/enemies';
 import { expForLevel } from '../../../data/party';
 import {
   availableMateria, combatant, livingEnemies, partyMembers, rootCommandsFor, targetPool,
@@ -17,7 +18,6 @@ import './battle.css';
 interface BattleViewProps {
   state: BattleState;
   dispatch: (action: BattleAction) => void;
-  reducedMotion: boolean;
 }
 
 const EXP_BAR_MS = 900;
@@ -32,22 +32,12 @@ const STATUS_LABEL: Record<string, string> = {
   atkUp: 'ATK+',
 };
 
+// The reducer only keeps a defId, so sprite ids are resolved from the defs.
 function spriteFor(c: Combatant): ReactElement {
   if (c.side === 'party') return <PartySprite id={c.defId as 'alex' | 'mara'} />;
-  const def = bossById(c.defId);
-  return <EnemySprite spriteId={def?.spriteId ?? spriteIdFor(c.defId)} name={c.name} />;
+  const def = bossById(c.defId) ?? enemyById(c.defId);
+  return <EnemySprite spriteId={def?.spriteId ?? 'flaky'} name={c.name} />;
 }
-
-function spriteIdFor(defId: string): string {
-  // enemy sprite ids are stored on the def; the reducer only keeps defId
-  return ENEMY_SPRITE[defId] ?? 'flaky';
-}
-
-const ENEMY_SPRITE: Record<string, string> = {
-  'flaky-test': 'flaky', 'null-pointer': 'nullptr', 'stale-cache': 'cache', 'off-by-one': 'offbyone',
-  'data-lake-monster': 'lake', 'spaghetti-code': 'spaghetti', 'merge-conflict': 'merge', 'dead-link': 'deadlink',
-  timeout: 'timeout', 'cron-gone-wrong': 'cron', 'race-condition': 'race', 'prod-incident': 'incident',
-};
 
 function TurnStrip({ state }: { state: BattleState }) {
   return (
@@ -120,12 +110,18 @@ function Card({ c, state, dispatch, index }: { c: Combatant; state: BattleState;
   );
 }
 
+function hpBarClass(hpPct: number): string {
+  if (hpPct <= 20) return ' rpgb-critical';
+  if (hpPct <= 45) return ' rpgb-low';
+  return '';
+}
+
 function StatusRows({ state }: { state: BattleState }) {
   return (
     <div className="rpgb-window rpgb-status" data-testid="party-status">
       {partyMembers(state).map((p) => {
         const hpPct = (p.hp / p.maxHp) * 100;
-        const hpClass = hpPct <= 20 ? ' rpgb-critical' : hpPct <= 45 ? ' rpgb-low' : '';
+        const hpClass = hpBarClass(hpPct);
         return (
           <div key={p.key} className={`rpgb-stat-row${state.active === p.key ? ' rpgb-active-row' : ''}${p.alive ? '' : ' rpgb-down'}`}>
             <span className="rpgb-stat-name">{p.name}</span>
@@ -155,20 +151,22 @@ function StatusRows({ state }: { state: BattleState }) {
   );
 }
 
+/** Message shown in the command window while nobody in the party is choosing. */
+function waitingHint(phase: BattleState['phase']): string {
+  if (phase === 'target') return 'Choose a target';
+  if (phase === 'intro') return '';
+  return 'Waiting...';
+}
+
 function Commands({ state, dispatch }: { state: BattleState; dispatch: BattleViewProps['dispatch'] }) {
   const active = state.active ? combatant(state, state.active) : null;
   const selecting = state.phase === 'select' && active?.side === 'party';
   const { open, cursor } = state.menu;
 
   if (!selecting || !active) {
-    const hint = state.phase === 'target'
-      ? 'Choose a target'
-      : state.phase === 'intro'
-        ? ''
-        : 'Waiting...';
     return (
       <div className="rpgb-window rpgb-commands" data-testid="command-menu">
-        <div className="rpgb-waiting">{hint}</div>
+        <div className="rpgb-waiting">{waitingHint(state.phase)}</div>
       </div>
     );
   }
@@ -293,7 +291,10 @@ function ResultWindow({ state, dispatch }: { state: BattleState; dispatch: Battl
 export default function BattleView({ state, dispatch }: BattleViewProps) {
   const shaking = state.clock < state.shakeUntil;
   const enemies = state.combatants.filter((c) => c.side === 'enemy');
-  const fallback = state.bossId ? `${bossById(state.bossId)?.name} - ${bossById(state.bossId)?.era}` : livingEnemies(state).map((e) => e.name).join(', ');
+  const boss = state.bossId ? bossById(state.bossId) : undefined;
+  const fallback = state.bossId
+    ? `${boss?.name} - ${boss?.era}`
+    : livingEnemies(state).map((e) => e.name).join(', ');
 
   return (
     <div className="rpgb" data-testid="battle-view" data-phase={state.phase} data-kind={state.kind}>

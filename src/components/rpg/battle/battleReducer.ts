@@ -75,11 +75,14 @@ export function createBattleState(setup: BattleSetup): BattleState {
     }
   }
   const enemyCount = combatants.filter((c) => c.side === 'enemy').length;
-  const intro = setup.kind === 'boss' && setup.bossId
-    ? bossById(setup.bossId)!.intro
-    : enemyCount > 1
-      ? `${setup.enemies[0].name} and company appear.`
-      : `${setup.enemies[0].name} appears.`;
+  let intro: string;
+  if (setup.kind === 'boss' && setup.bossId) {
+    intro = bossById(setup.bossId)!.intro;
+  } else if (enemyCount > 1) {
+    intro = `${setup.enemies[0].name} and company appear.`;
+  } else {
+    intro = `${setup.enemies[0].name} appears.`;
+  }
   return {
     kind: setup.kind,
     bossId: setup.bossId,
@@ -225,10 +228,10 @@ function randomTarget(s: BattleState, side: 'party' | 'enemy', mode: 'random' | 
 
 // ---------- action queuing ----------
 
+/** Closes out the acting combatant's turn: the queue drains, then beginTurn runs. */
 function endOfAction(s: BattleState, at: number) {
   s.queue.push({ at, type: 'end' });
   s.phase = 'resolving';
-  s.menu = { open: 'root', cursor: 0, pending: null, targetCursor: 0 };
 }
 
 function queuePhysical(s: BattleState, attacker: Combatant, target: Combatant, powerScale: number, at: number) {
@@ -241,11 +244,19 @@ function queuePhysical(s: BattleState, attacker: Combatant, target: Combatant, p
   s.queue.push({ at, type: 'damage', targetKey: target.key, amount, sfx: attacker.side === 'party' ? 'hit' : 'hurt' });
 }
 
+/** The callout shown for an element multiplier, if any. */
+function elementCallout(mult: number): CalloutKind | undefined {
+  if (mult === 2) return 'WEAK!';
+  if (mult === 0.5) return 'RESIST';
+  if (mult === 0) return 'ABSORB';
+  return undefined;
+}
+
 function queueMagic(s: BattleState, caster: Combatant, target: Combatant, m: MateriaDef, at: number) {
   const [amount, next] = magicDamage(caster, target, m.power, m.element, s.rng);
   s.rng = next;
   const mult = elementMultiplier(target, m.element);
-  const co: CalloutKind | undefined = mult === 2 ? 'WEAK!' : mult === 0.5 ? 'RESIST' : mult === 0 ? 'ABSORB' : undefined;
+  const co = elementCallout(mult);
   if (mult === 0) {
     s.queue.push({ at, type: 'heal', targetKey: target.key, stat: 'hp', amount: Math.round(m.power / 2) });
     s.queue.push({ at, type: 'damage', targetKey: target.key, amount: 0, callout: co, sfx: 'heal' });
@@ -304,22 +315,33 @@ function startPartyAction(s: BattleState, actor: Combatant, targetKey: string | 
     actor.mp -= m.mpCost;
     s.queue.push({ at: c, type: 'message', text: m.line });
     const at = c + lead;
-    if (m.kind === 'damage') {
-      const targets = m.target === 'enemies' ? livingEnemies(s) : [combatant(s, targetKey!)];
-      for (const t of targets) queueMagic(s, actor, t, m, at);
-    } else if (m.kind === 'heal') {
-      s.queue.push({ at, type: 'heal', targetKey: targetKey!, stat: 'hp', amount: m.power });
-    } else if (m.kind === 'status' && m.status) {
-      const t = m.target === 'self' ? actor : combatant(s, targetKey!);
-      const lands = roll(s) < m.status.chance && !t.immune.includes(m.status.id);
-      s.queue.push({ at, type: 'status', targetKey: t.key, status: lands ? { id: m.status.id, turns: m.status.turns } : null, text: lands ? m.status.id.toUpperCase() : 'NO EFFECT' });
-    } else if (m.kind === 'cure') {
-      for (const p of partyMembers(s)) s.queue.push({ at, type: 'cure', targetKey: p.key });
-    } else if (m.kind === 'scan') {
-      s.queue.push({ at, type: 'scan', targetKey: targetKey! });
-    } else if (m.kind === 'fetch') {
-      const pool = ['coffee', 'coffee', 'runbook', 'patch', 'pager'];
-      s.queue.push({ at, type: 'fetch', itemId: pool[Math.floor(roll(s) * pool.length)] });
+    switch (m.kind) {
+      case 'damage': {
+        const targets = m.target === 'enemies' ? livingEnemies(s) : [combatant(s, targetKey!)];
+        for (const t of targets) queueMagic(s, actor, t, m, at);
+        break;
+      }
+      case 'heal':
+        s.queue.push({ at, type: 'heal', targetKey: targetKey!, stat: 'hp', amount: m.power });
+        break;
+      case 'status':
+        if (m.status) {
+          const t = m.target === 'self' ? actor : combatant(s, targetKey!);
+          const lands = roll(s) < m.status.chance && !t.immune.includes(m.status.id);
+          s.queue.push({ at, type: 'status', targetKey: t.key, status: lands ? { id: m.status.id, turns: m.status.turns } : null, text: lands ? m.status.id.toUpperCase() : 'NO EFFECT' });
+        }
+        break;
+      case 'cure':
+        for (const p of partyMembers(s)) s.queue.push({ at, type: 'cure', targetKey: p.key });
+        break;
+      case 'scan':
+        s.queue.push({ at, type: 'scan', targetKey: targetKey! });
+        break;
+      case 'fetch': {
+        const pool = ['coffee', 'coffee', 'runbook', 'patch', 'pager'];
+        s.queue.push({ at, type: 'fetch', itemId: pool[Math.floor(roll(s) * pool.length)] });
+        break;
+      }
     }
     endOfAction(s, at + timing.settleMs);
     return;
@@ -341,67 +363,71 @@ function startPartyAction(s: BattleState, actor: Combatant, targetKey: string | 
   endOfAction(s, at + timing.settleMs);
 }
 
-function startEnemyAction(s: BattleState, enemy: Combatant) {
-  const c = s.clock;
+/** Who an enemy status move lands on. */
+function statusTargets(s: BattleState, enemy: Combatant, target: 'random' | 'self' | 'allies'): Combatant[] {
+  if (target === 'self') return [enemy];
+  if (target === 'allies') return s.combatants.filter((x) => x.side === 'enemy' && x.alive);
+  return [randomTarget(s, 'party')].filter((x): x is Combatant => !!x);
+}
+
+/** Queues one enemy action starting at `at`; returns the clock of its last beat. */
+function queueEnemyAction(s: BattleState, enemy: Combatant, a: AiAction, at: number): number {
   const lead = timing.messageLeadMs;
+  const announce = () => s.queue.push({ at, type: 'message' as const, text: `${enemy.name} uses ${a.name}.` });
+
+  switch (a.type) {
+    case 'attack': {
+      const t = randomTarget(s, 'party', a.target);
+      if (!t) return at;
+      announce();
+      const [base, next] = physicalDamage(enemy, t, a.power / 12, s.rng);
+      s.rng = next;
+      const mult = elementMultiplier(t, a.element);
+      s.queue.push({ at: at + lead, type: 'damage', targetKey: t.key, amount: Math.round(base * mult), sfx: 'hurt' });
+      return at + lead;
+    }
+    case 'attackAll': {
+      announce();
+      let hitAt = at + lead;
+      for (const p of partyMembers(s).filter((p) => p.alive)) {
+        const [base, next] = physicalDamage(enemy, p, a.power / 12, s.rng);
+        s.rng = next;
+        s.queue.push({ at: hitAt, type: 'damage', targetKey: p.key, amount: base, sfx: 'hurt' });
+        hitAt += timing.impactGapMs / 2;
+      }
+      return hitAt;
+    }
+    case 'status': {
+      announce();
+      for (const t of statusTargets(s, enemy, a.target)) {
+        const lands = roll(s) < a.chance && !t.immune.includes(a.status);
+        s.queue.push({ at: at + lead, type: 'status', targetKey: t.key, status: lands ? { id: a.status, turns: a.turns } : null, text: lands ? a.status.toUpperCase() : 'NO EFFECT' });
+      }
+      return at + lead;
+    }
+    case 'heal':
+      announce();
+      s.queue.push({ at: at + lead, type: 'heal', targetKey: enemy.key, stat: 'hp', amount: a.amount });
+      return at + lead;
+    case 'flee':
+      s.queue.push({ at, type: 'message', text: `${enemy.name} ${a.name.toLowerCase()}.` });
+      s.queue.push({ at: at + lead, type: 'flee', key: enemy.key });
+      return at + lead;
+    case 'wait':
+      s.queue.push({ at, type: 'message', text: `${enemy.name} ${a.name}.` });
+      return at + lead / 2;
+  }
+}
+
+function startEnemyAction(s: BattleState, enemy: Combatant) {
   const [action, rng] = chooseEnemyAction(enemy, s);
   s.rng = rng;
   s.queue = [];
-  const act = (a: AiAction, at: number): number => {
-    switch (a.type) {
-      case 'attack': {
-        const t = randomTarget(s, 'party', a.target);
-        if (!t) return at;
-        s.queue.push({ at, type: 'message', text: `${enemy.name} uses ${a.name}.` });
-        const [base, next] = physicalDamage(enemy, t, a.power / 12, s.rng);
-        s.rng = next;
-        const mult = elementMultiplier(t, a.element);
-        s.queue.push({ at: at + lead, type: 'damage', targetKey: t.key, amount: Math.round(base * mult), sfx: 'hurt' });
-        return at + lead;
-      }
-      case 'attackAll': {
-        s.queue.push({ at, type: 'message', text: `${enemy.name} uses ${a.name}.` });
-        let t2 = at + lead;
-        for (const p of partyMembers(s).filter((p) => p.alive)) {
-          const [base, next] = physicalDamage(enemy, p, a.power / 12, s.rng);
-          s.rng = next;
-          s.queue.push({ at: t2, type: 'damage', targetKey: p.key, amount: base, sfx: 'hurt' });
-          t2 += timing.impactGapMs / 2;
-        }
-        return t2;
-      }
-      case 'status': {
-        const targets = a.target === 'self'
-          ? [enemy]
-          : a.target === 'allies'
-            ? s.combatants.filter((x) => x.side === 'enemy' && x.alive)
-            : [randomTarget(s, 'party')].filter((x): x is Combatant => !!x);
-        s.queue.push({ at, type: 'message', text: `${enemy.name} uses ${a.name}.` });
-        for (const t of targets) {
-          const lands = roll(s) < a.chance && !t.immune.includes(a.status);
-          s.queue.push({ at: at + lead, type: 'status', targetKey: t.key, status: lands ? { id: a.status, turns: a.turns } : null, text: lands ? a.status.toUpperCase() : 'NO EFFECT' });
-        }
-        return at + lead;
-      }
-      case 'heal': {
-        s.queue.push({ at, type: 'message', text: `${enemy.name} uses ${a.name}.` });
-        s.queue.push({ at: at + lead, type: 'heal', targetKey: enemy.key, stat: 'hp', amount: a.amount });
-        return at + lead;
-      }
-      case 'flee':
-        s.queue.push({ at, type: 'message', text: `${enemy.name} ${a.name.toLowerCase()}.` });
-        s.queue.push({ at: at + lead, type: 'flee', key: enemy.key });
-        return at + lead;
-      case 'wait':
-        s.queue.push({ at, type: 'message', text: `${enemy.name} ${a.name}.` });
-        return at + lead / 2;
-    }
-  };
-  let at = act(action, c);
+  let at = queueEnemyAction(s, enemy, action, s.clock);
   if (enemy.actsTwice && enemy.alive) {
     const [second, rng2] = chooseEnemyAction(enemy, s);
     s.rng = rng2;
-    at = act(second, at + timing.impactGapMs);
+    at = queueEnemyAction(s, enemy, second, at + timing.impactGapMs);
   }
   s.queue.push({ at: at + timing.settleMs, type: 'end' });
   s.phase = 'resolving';
@@ -437,6 +463,7 @@ function beginTurn(s: BattleState) {
   }
   if (next.side === 'party') {
     s.phase = 'select';
+    // the menu is only visible during select, so this is the one place it resets
     s.menu = { open: 'root', cursor: 0, pending: null, targetCursor: 0 };
     s.message = '';
   } else {
@@ -750,6 +777,7 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
 
       // item submenu
       const item = items[cursor];
+      if (!item) return state;
       if ((s.inventory[item.id] ?? 0) <= 0) {
         sfx(s, 'buzzer');
         s.message = `No ${item.name} left.`;

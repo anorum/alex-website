@@ -18,9 +18,8 @@ import { ff7MenuIsOpen } from '../../../utils/rpg-menu';
 const POS_KEY = 'rpg-ow';
 
 interface UseOverworldOptions {
+  /** game clock multiplier, from the rpg-speed query param */
   speed: number;
-  /** overworld section is currently visible */
-  active: boolean;
 }
 
 const KEY_DIRS: Record<string, Direction> = {
@@ -127,7 +126,6 @@ function battleActionForKey(state: OverworldState, key: string): BattleAction | 
 
 export function useOverworld({
   speed,
-  active,
 }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
   const [state, dispatch] = useReducer(overworldReducer, undefined, () =>
     createOverworldState(readSavedPos(), loadSave(), readSeed())
@@ -138,7 +136,6 @@ export function useOverworld({
 
   // Single rAF loop driving movement, fades, dialog typewriter, and battle timing
   useEffect(() => {
-    if (!active) return;
     let raf = 0;
     let last = performance.now();
     const loop = (now: number) => {
@@ -150,14 +147,10 @@ export function useOverworld({
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [active, speed]);
+  }, [speed]);
 
-  // Keyboard controls, attached only while the overworld section is active
+  // Keyboard controls
   useEffect(() => {
-    if (!active) {
-      dispatch({ type: 'CLEAR_INPUT' });
-      return;
-    }
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || isFormTarget(e.target)) return;
       // FF7 nav menu overlays the screen - let its own handler own the keys
@@ -226,7 +219,7 @@ export function useOverworld({
       window.removeEventListener('keyup', onKeyUp);
       window.removeEventListener('blur', onBlur);
     };
-  }, [active]);
+  }, []);
 
   // Menu quick-travel and commands, dispatched by RPGContainer/NavigationRPG
   useEffect(() => {

@@ -385,7 +385,7 @@
 
 .theme-rpg .rpgb-exp {
   display: grid;
-  grid-template-columns: 40px 1fr 60px;
+  grid-template-columns: 44px 1fr 88px;
   align-items: center;
   gap: 0.5rem;
   font-size: 8px;

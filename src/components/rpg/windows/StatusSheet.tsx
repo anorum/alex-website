@@ -59,7 +59,6 @@ export default function StatusSheet({ onClose, save }: WindowContentProps) {
         <div><span className="rpgw-statrow-label">SPD</span> {alex.spd}</div>
         <div><span className="rpgw-statrow-label">GIL</span> {save.gil}</div>
         <div><span className="rpgw-statrow-label">BOSSES</span> {save.bossesBeaten.length}/4</div>
-        <div><span className="rpgw-statrow-label">TOTAL EXP</span> {save.exp}</div>
       </div>
 
       <div className="rpgw-divider" />

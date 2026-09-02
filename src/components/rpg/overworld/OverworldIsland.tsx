@@ -84,9 +84,9 @@ function revealedChars(
 }
 
 export default function OverworldIsland() {
-  // Initialized SSR-safe (pre-rendered at build time by client:visible),
-  // then synced from browser state after hydration.
-  const [active, setActive] = useState(false);
+  // Initialized SSR-safe (pre-rendered at build time by client:visible), then
+  // read from the browser after hydration. The game only mounts once ready, so
+  // its rAF loop never runs during the server render.
   const [speed, setSpeed] = useState(1);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [ready, setReady] = useState(false);
@@ -95,30 +95,20 @@ export default function OverworldIsland() {
     setSpeed(Math.min(readParam('rpg-speed') ?? 1, 16));
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     setReady(true);
-
-    setActive(document.getElementById('rpg-overworld')?.classList.contains('active') ?? false);
-
-    const onSectionChange = (e: Event) => {
-      const detail = (e as CustomEvent<{ section?: string }>).detail;
-      setActive(detail?.section === 'overworld');
-    };
-    document.addEventListener('rpg:section-change', onSectionChange);
-    return () => document.removeEventListener('rpg:section-change', onSectionChange);
   }, []);
 
   if (!ready) return <div className="ow-loading">LOADING WORLD...</div>;
 
-  return <OverworldGame speed={speed} active={active} reducedMotion={reducedMotion} />;
+  return <OverworldGame speed={speed} reducedMotion={reducedMotion} />;
 }
 
 interface OverworldGameProps {
   speed: number;
-  active: boolean;
   reducedMotion: boolean;
 }
 
-function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
-  const [state, dispatch] = useOverworld({ speed, active });
+function OverworldGame({ speed, reducedMotion }: OverworldGameProps) {
+  const [state, dispatch] = useOverworld({ speed });
   const scene = getScene(state.scene);
   const cols = scene.rows[0].length;
   const rows = scene.rows.length;
@@ -143,11 +133,9 @@ function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
     if (!state.save.seenIntro && state.mode === 'walk') dispatch({ type: 'SHOW_INTRO' });
   }, [state.save.seenIntro, state.mode, dispatch]);
 
-  const helpText = inBattle
-    ? 'ARROWS SELECT · ENTER CONFIRM · ESC BACK'
-    : overlayOpen
-      ? 'ENTER TO CONTINUE · ESC TO CLOSE'
-      : `ARROWS / WASD TO MOVE · ENTER TO INTERACT · E: ENCOUNTERS ${state.save.encounters ? 'ON' : 'OFF'}`;
+  let helpText = `ARROWS / WASD TO MOVE · ENTER TO INTERACT · E: ENCOUNTERS ${state.save.encounters ? 'ON' : 'OFF'}`;
+  if (inBattle) helpText = 'ARROWS SELECT · ENTER CONFIRM · ESC BACK';
+  else if (overlayOpen) helpText = 'ENTER TO CONTINUE · ESC TO CLOSE';
 
   return (
     <div className="ow" data-player-tile={`${state.x},${state.y}`} data-scene={state.scene}>
@@ -192,7 +180,7 @@ function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
         {state.window && windowFor(state.window, { onClose: () => dispatch({ type: 'CLOSE_WINDOW' }), save: state.save, dispatch })}
 
         {inBattle && state.battle && (
-          <BattleView state={state.battle} dispatch={(a) => dispatch({ type: 'BATTLE', action: a })} reducedMotion={reducedMotion} />
+          <BattleView state={state.battle} dispatch={(a) => dispatch({ type: 'BATTLE', action: a })} />
         )}
 
         <div

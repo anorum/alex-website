@@ -111,6 +111,11 @@ function computePrompt(state: OverworldState): Prompt | null {
   return null;
 }
 
+/** Marks a confirm-style action; the hook plays a confirm blip on each bump. */
+function confirmed(state: OverworldState): OverworldState {
+  return { ...state, confirmSeq: state.confirmSeq + 1 };
+}
+
 function withPrompt(state: OverworldState): OverworldState {
   const prompt = computePrompt(state);
   const changed = prompt?.label !== state.prompt?.label;
@@ -172,7 +177,7 @@ function battleSetupFromSave(state: OverworldState, partial: Pick<BattleSetup, '
 }
 
 function startBattle(state: OverworldState, setup: BattleSetup): OverworldState {
-  return {
+  return confirmed({
     ...state,
     mode: 'fade',
     fade: { phase: 'out', t: 0 },
@@ -181,8 +186,7 @@ function startBattle(state: OverworldState, setup: BattleSetup): OverworldState 
     dialog: null,
     window: null,
     queue: [],
-    confirmSeq: state.confirmSeq + 1,
-  };
+  });
 }
 
 function settle(state: OverworldState): OverworldState {
@@ -231,7 +235,7 @@ function tryStartStep(state: OverworldState): OverworldState {
 }
 
 function startFade(state: OverworldState, to: ScenePos): OverworldState {
-  return {
+  return confirmed({
     ...state,
     mode: 'fade',
     fade: { phase: 'out', t: 0, to },
@@ -239,8 +243,7 @@ function startFade(state: OverworldState, to: ScenePos): OverworldState {
     dialog: null,
     window: null,
     queue: [],
-    confirmSeq: state.confirmSeq + 1,
-  };
+  });
 }
 
 function endDialog(state: OverworldState): OverworldState {
@@ -262,12 +265,7 @@ function openDialog(state: OverworldState, scriptId: string): OverworldState {
 function runAction(state: OverworldState, action: DialogAction): OverworldState {
   switch (action.type) {
     case 'openWindow':
-      return {
-        ...endDialog(state),
-        mode: 'window',
-        window: action.window,
-        confirmSeq: state.confirmSeq + 1,
-      };
+      return confirmed({ ...endDialog(state), mode: 'window', window: action.window });
     case 'battle': {
       const boss = bossById(action.bossId);
       if (!boss) return endDialog(state);
@@ -278,7 +276,7 @@ function runAction(state: OverworldState, action: DialogAction): OverworldState 
       );
     }
     case 'setEncounters': {
-      const next = { ...state, save: { ...state.save, encounters: action.on }, confirmSeq: state.confirmSeq + 1 };
+      const next = confirmed({ ...state, save: { ...state.save, encounters: action.on } });
       return openDialog(next, action.then);
     }
     case 'end':
@@ -425,7 +423,7 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
 
       const ahead = interactableAhead(scene, state.x, state.y, state.facing);
       if (!ahead) return state;
-      return openDialog({ ...state, confirmSeq: state.confirmSeq + 1 }, ahead.scriptId);
+      return openDialog(confirmed(state), ahead.scriptId);
     }
 
     case 'DIALOG_NAV': {
@@ -466,11 +464,7 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
     }
 
     case 'TOGGLE_ENCOUNTERS':
-      return {
-        ...state,
-        save: { ...state.save, encounters: !state.save.encounters },
-        confirmSeq: state.confirmSeq + 1,
-      };
+      return confirmed({ ...state, save: { ...state.save, encounters: !state.save.encounters } });
 
     case 'SET_ENCOUNTERS':
       return { ...state, save: { ...state.save, encounters: action.on } };
@@ -485,11 +479,7 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
       const item = itemById(action.itemId);
       if (!item || state.save.gil < item.price) return state;
       const inventory = { ...state.save.inventory, [item.id]: (state.save.inventory[item.id] ?? 0) + 1 };
-      return {
-        ...state,
-        save: { ...state.save, gil: state.save.gil - item.price, inventory },
-        confirmSeq: state.confirmSeq + 1,
-      };
+      return confirmed({ ...state, save: { ...state.save, gil: state.save.gil - item.price, inventory } });
     }
 
     case 'SHOW_INTRO': {
