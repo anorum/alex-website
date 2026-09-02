@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "e2e": "node tests/e2e.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.5",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@types/leaflet": "^1.9.17",
     "@types/node": "^22.15.18",
-    "playwright": "^1.62.1"
+    "playwright": "^1.62.1",
+    "vitest": "^3.2.7"
   }
 }

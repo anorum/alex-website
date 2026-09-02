@@ -37,6 +37,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Unit tests
+        run: npm test
+
       - name: Install Chromium for end-to-end checks
         run: npx playwright install --with-deps chromium
 
