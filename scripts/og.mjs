@@ -12,7 +12,7 @@ import { dirname, resolve } from 'node:path';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = resolve(root, 'public/og.png');
 
-const eyebrow = 'Portland, OR · Data platform, engineering, analytics';
+const eyebrow = 'Portland, OR · Data Platform, Engineering, Analytics';
 const headline = ['Data platforms', 'teams want', 'to use.'];
 const accentLine = 1;
 const footer = 'Alex Norum · alexnorum.com';
