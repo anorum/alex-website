@@ -29,3 +29,11 @@ npm run build && npm run e2e   # headless browser checks against dist/ (needs `n
 
 The end-to-end suite in `tests/e2e.mjs` walks both themes: the editorial page (headings, links, metadata, map) and the RPG (every interior, dialogs, windows, random encounters, turn-based battles, touch controls).
 It runs in CI before every deploy.
+
+## Social preview
+
+`npm run og` re-renders `public/og.png` from the headline in `scripts/og.mjs`. Edit the text there when the hero changes.
+
+## Copy
+
+The unslop skill in `.claude/skills/unslop` is the house style for all site copy. Run it over any text change.

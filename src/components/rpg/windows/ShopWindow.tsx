@@ -114,7 +114,7 @@ export default function ShopWindow({ onClose, save, dispatch, initialTab }: Wind
             </div>
             <p className="rpga-flavor">{p.rpg.itemDescription}</p>
             <div className="rpgw-divider" />
-            <div className="rpgw-label">APPRAISAL - REAL WORLD DATA</div>
+            <div className="rpgw-label">APPRAISAL · REAL WORLD DATA</div>
             <p className="rpgq-desc">{p.description}</p>
             {p.highlights.length > 0 && (
               <ul className="rpgq-rewards">

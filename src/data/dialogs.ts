@@ -76,7 +76,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'hall-board': [
-    { kind: 'line', text: 'A board of closed contracts. Every job so far, in order.' },
+    { kind: 'line', text: 'Closed contracts, pinned in rows. Someone has finished a lot of quests.' },
     { kind: 'action', action: { type: 'openWindow', window: 'quests' } },
   ],
 
@@ -98,7 +98,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'tower-lectern': [
-    { kind: 'line', text: 'A heavy book, open. Five rules, one per page.' },
+    { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same six places.' },
     ...creed.map((line) => ({ kind: 'line' as const, speaker: "ENGINEER'S CREED", text: line })),
   ],
 
@@ -128,8 +128,8 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'dojo-sensei': [
-    { kind: 'line', speaker: 'SENSEI', text: 'No skill levels here.' },
-    { kind: 'line', speaker: 'SENSEI', text: 'Percentages on a resume are made up.' },
+    { kind: 'line', speaker: 'SENSEI', text: 'You want numbers? Little bars?' },
+    { kind: 'line', speaker: 'SENSEI', text: 'Percentages lie.' },
     ...honestItems.map((item) => ({ kind: 'line' as const, speaker: 'SENSEI', text: item + '.' })),
     {
       kind: 'line',
@@ -142,7 +142,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'SHOPKEEPER',
-      text: 'Welcome. Everything here was built on nights and weekends.',
+      text: 'Welcome, traveler. Alex forged everything here after hours.',
     },
     {
       kind: 'choice',
@@ -178,7 +178,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'CAPTAIN',
-      text: `${travelStats.totalCountries} countries and ${travelStats.totalVisits} trips in the log.`,
+      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. Every one of them logged.`,
     },
     {
       kind: 'line',
@@ -196,9 +196,9 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'GATEKEEPER',
-      text: 'Four bosses inside. Each one is tied to a real job.',
+      text: 'Four bosses wait inside. Each one guards a chapter of the career.',
     },
-    { kind: 'line', speaker: 'GATEKEEPER', text: 'Beat one and you get the list of what shipped there.' },
+    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what shipped is yours.' },
     {
       kind: 'choice',
       prompt: 'Which one?',

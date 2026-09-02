@@ -35,7 +35,7 @@ export const character = {
   limitBreak: {
     name: 'PLATFORM OMNISLASH',
     description:
-      'Five hits on one target. Earth element. Fills from damage taken or from defending.',
+      'Five hits in one turn: closes the access tickets, paves the road, kills the brittle cron, cuts the four-hour job to twenty minutes, and leaves a runbook behind.',
   },
   location: 'PORTLAND',
   party: 'MARA (LABRADOODLE)',
