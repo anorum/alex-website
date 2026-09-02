@@ -5,7 +5,7 @@ interface TouchControlsProps {
   onUp: (dir: Direction) => void;
   onInteract: () => void;
   onCancel: () => void;
-  /** show the B button (a dialog or window is open) */
+  /** show the B button (a dialog, window, or battle is open) */
   showCancel: boolean;
 }
 

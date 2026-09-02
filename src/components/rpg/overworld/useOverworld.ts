@@ -7,13 +7,15 @@ import {
   type OverworldState,
   type ScenePos,
 } from './overworldReducer';
-import { playConfirm, playCursor } from '../../../utils/rpg-audio';
+import type { BattleAction, SfxKind } from '../battle/types';
+import { loadSave, writeSave } from '../../../utils/rpg-save';
+import {
+  playBuzzer, playCancel, playConfirm, playCursor, playDefeat, playHeal, playHit, playHurt,
+  playLimit, playVictory, setMuted,
+} from '../../../utils/rpg-audio';
 import { ff7MenuIsOpen } from '../../../utils/rpg-menu';
 
 const POS_KEY = 'rpg-ow';
-
-/** Defined by the script tag in RPGContainer.astro */
-type RPGWindow = Window & { switchRPGSection?: (id: string) => void };
 
 interface UseOverworldOptions {
   speed: number;
@@ -36,6 +38,23 @@ const KEY_DIRS: Record<string, Direction> = {
   D: 'right',
 };
 
+const BATTLE_SFX: Record<SfxKind, () => void> = {
+  cursor: playCursor,
+  confirm: playConfirm,
+  cancel: playCancel,
+  buzzer: playBuzzer,
+  hit: playHit,
+  hurt: playHurt,
+  heal: playHeal,
+  limit: playLimit,
+  victory: playVictory,
+  defeat: playDefeat,
+  weak: playLimit,
+  miss: playCancel,
+  levelup: playVictory,
+  encounter: playBuzzer,
+};
+
 function isFormTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   return (
@@ -45,11 +64,15 @@ function isFormTarget(target: EventTarget | null): boolean {
 }
 
 function isConfirmKey(key: string): boolean {
-  return key === 'Enter' || key === ' ' || key === 'e';
+  return key === 'Enter' || key === ' ';
 }
 
 function isCancelKey(key: string): boolean {
   return key === 'Escape' || key === 'x';
+}
+
+function isEncounterKey(key: string): boolean {
+  return key === 'e' || key === 'E';
 }
 
 /** Play a sound each time the reducer bumps one of its sound counters. */
@@ -71,18 +94,49 @@ function readSavedPos(): Partial<ScenePos> | null {
   }
 }
 
+function readSeed(): number {
+  const v = new URLSearchParams(window.location.search).get('rpg-seed');
+  const n = v === null ? NaN : Number(v);
+  return Number.isFinite(n) && n > 0 ? n : Date.now() >>> 0;
+}
+
+/** Route a key press to the battle reducer, given the current battle phase. */
+function battleActionForKey(state: OverworldState, key: string): BattleAction | null {
+  const b = state.battle;
+  if (!b) return null;
+  const dir = KEY_DIRS[key];
+  if (b.phase === 'victory' || b.phase === 'defeat' || b.phase === 'fled') {
+    return isConfirmKey(key) ? { type: 'RESULT_CONTINUE' } : null;
+  }
+  if (b.phase === 'target') {
+    if (dir === 'left' || dir === 'up') return { type: 'TARGET_MOVE', delta: -1 };
+    if (dir === 'right' || dir === 'down') return { type: 'TARGET_MOVE', delta: 1 };
+    if (isConfirmKey(key)) return { type: 'TARGET_CONFIRM' };
+    if (isCancelKey(key)) return { type: 'MENU_CANCEL' };
+    return null;
+  }
+  if (b.phase === 'select') {
+    if (dir === 'up' || dir === 'left') return { type: 'MENU_MOVE', delta: -1 };
+    if (dir === 'down' || dir === 'right') return { type: 'MENU_MOVE', delta: 1 };
+    if (isConfirmKey(key)) return { type: 'MENU_CONFIRM' };
+    if (isCancelKey(key)) return { type: 'MENU_CANCEL' };
+    return null;
+  }
+  return null;
+}
+
 export function useOverworld({
   speed,
   active,
 }: UseOverworldOptions): [OverworldState, React.Dispatch<OverworldAction>] {
   const [state, dispatch] = useReducer(overworldReducer, undefined, () =>
-    createOverworldState(readSavedPos())
+    createOverworldState(readSavedPos(), loadSave(), readSeed())
   );
 
-  const modeRef = useRef(state.mode);
-  modeRef.current = state.mode;
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
-  // Single rAF loop driving movement, fades, and the dialog typewriter
+  // Single rAF loop driving movement, fades, dialog typewriter, and battle timing
   useEffect(() => {
     if (!active) return;
     let raf = 0;
@@ -109,9 +163,18 @@ export function useOverworld({
       // FF7 nav menu overlays the screen - let its own handler own the keys
       if (ff7MenuIsOpen()) return;
 
-      const mode = modeRef.current;
+      const current = stateRef.current;
+      const mode = current.mode;
       if (mode === 'window') return; // window components own their keys
       if (mode === 'fade') {
+        e.preventDefault();
+        return;
+      }
+
+      if (mode === 'battle') {
+        const action = battleActionForKey(current, e.key);
+        if (!action) return;
+        dispatch({ type: 'BATTLE', action });
         e.preventDefault();
         return;
       }
@@ -139,6 +202,11 @@ export function useOverworld({
         e.preventDefault();
         return;
       }
+      if (isEncounterKey(e.key)) {
+        dispatch({ type: 'TOGGLE_ENCOUNTERS' });
+        e.preventDefault();
+        return;
+      }
       if (isConfirmKey(e.key)) {
         dispatch({ type: 'INTERACT' });
         e.preventDefault();
@@ -160,19 +228,28 @@ export function useOverworld({
     };
   }, [active]);
 
-  // Menu quick-travel: RPGContainer dispatches 'rpg:goto' with a scene id
+  // Menu quick-travel and commands, dispatched by RPGContainer/NavigationRPG
   useEffect(() => {
     const onGoto = (e: Event) => {
       const detail = (e as CustomEvent<{ scene?: string }>).detail;
       if (detail?.scene) dispatch({ type: 'TELEPORT', scene: detail.scene });
     };
+    const onCommand = (e: Event) => {
+      const command = (e as CustomEvent<{ command?: string }>).detail?.command;
+      if (command === 'toggle-encounters') dispatch({ type: 'TOGGLE_ENCOUNTERS' });
+      if (command === 'toggle-sound') dispatch({ type: 'SET_SOUND', on: !stateRef.current.save.sound });
+    };
     document.addEventListener('rpg:goto', onGoto);
-    return () => document.removeEventListener('rpg:goto', onGoto);
+    document.addEventListener('rpg:command', onCommand);
+    return () => {
+      document.removeEventListener('rpg:goto', onGoto);
+      document.removeEventListener('rpg:command', onCommand);
+    };
   }, []);
 
   // Persist scene + settled position so reloads and theme flips resume in place
   useEffect(() => {
-    if (state.stepping || state.mode === 'fade') return;
+    if (state.stepping || state.mode === 'fade' || state.mode === 'battle') return;
     try {
       sessionStorage.setItem(
         POS_KEY,
@@ -183,17 +260,30 @@ export function useOverworld({
     }
   }, [state.scene, state.x, state.y, state.facing, state.stepping, state.mode]);
 
+  // Persist the save whenever it changes; mirror its flags onto the menu and the synth
+  useEffect(() => {
+    writeSave(state.save);
+    setMuted(!state.save.sound);
+    document.querySelectorAll('[data-encounters-label]').forEach((el) => {
+      el.textContent = state.save.encounters ? 'ENCOUNTERS: ON' : 'ENCOUNTERS: OFF';
+    });
+    document.querySelectorAll('[data-sound-label]').forEach((el) => {
+      el.textContent = state.save.sound ? 'SOUND: ON' : 'SOUND: OFF';
+    });
+  }, [state.save]);
+
   // Sounds: a new prompt or a moved dialog cursor blips, confirm-style actions confirm
   useSoundOnSeq(state.promptSeq, playCursor);
   useSoundOnSeq(state.confirmSeq, playConfirm);
 
-  // Section handoff: the arena gatekeeper hands the player over to the battle section
+  // Battle sound effects come from the battle reducer's own counter
+  const lastBattleSfx = useRef(0);
   useEffect(() => {
-    if (!state.entered) return;
-    const switchSection = (window as RPGWindow).switchRPGSection;
-    if (switchSection) switchSection(state.entered);
-    dispatch({ type: 'ACK_ENTER' });
-  }, [state.entered]);
+    const sfx = state.battle?.lastSfx;
+    if (!sfx || sfx.seq === lastBattleSfx.current) return;
+    lastBattleSfx.current = sfx.seq;
+    BATTLE_SFX[sfx.kind]?.();
+  }, [state.battle?.lastSfx]);
 
   return [state, dispatch];
 }

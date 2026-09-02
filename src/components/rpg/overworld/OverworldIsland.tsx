@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { getScene } from '../../../data/scenes';
+import type { Direction } from '../../../data/overworld';
 import { getScript, type DialogStep } from '../../../data/dialogs';
 import { CHAR_MS, lineRevealed, type OverworldState } from './overworldReducer';
 import { useOverworld } from './useOverworld';
@@ -17,6 +18,8 @@ import MateriaList from '../windows/MateriaList';
 import ShopWindow from '../windows/ShopWindow';
 import CraftsWindow from '../windows/CraftsWindow';
 import TravelMapWindow from '../windows/TravelMapWindow';
+import BattleView from '../battle/BattleView';
+import type { BattleAction } from '../battle/types';
 import './overworld.css';
 
 function readParam(name: string): number | null {
@@ -38,8 +41,27 @@ function windowFor(id: string, onClose: () => void): ReactElement | null {
   if (id.startsWith('materia:')) {
     return <MateriaList label={id.slice('materia:'.length)} onClose={onClose} />;
   }
-  const Component = WINDOWS[id];
+  const Component = WINDOWS[id.split(':')[0]];
   return Component ? <Component onClose={onClose} /> : null;
+}
+
+/** Touch D-pad in battle: same routing as the keyboard. */
+function battleActionForDir(state: OverworldState, dir: Direction): BattleAction | null {
+  const b = state.battle;
+  if (!b) return null;
+  const back = dir === 'up' || dir === 'left';
+  if (b.phase === 'target') return { type: 'TARGET_MOVE', delta: back ? -1 : 1 };
+  if (b.phase === 'select') return { type: 'MENU_MOVE', delta: back ? -1 : 1 };
+  return null;
+}
+
+function battleConfirm(state: OverworldState): BattleAction | null {
+  const b = state.battle;
+  if (!b) return null;
+  if (b.phase === 'target') return { type: 'TARGET_CONFIRM' };
+  if (b.phase === 'select') return { type: 'MENU_CONFIRM' };
+  if (b.phase === 'victory' || b.phase === 'defeat' || b.phase === 'fled') return { type: 'RESULT_CONTINUE' };
+  return null;
 }
 
 /** Fade covers the screen at the swap point: 0 -> 1 fading out, 1 -> 0 fading in. */
@@ -111,7 +133,20 @@ function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
 
   const dialogStep = state.dialog ? getScript(state.dialog.scriptId)[state.dialog.step] : null;
   const revealed = revealedChars(state, dialogStep, reducedMotion);
-  const overlayOpen = state.mode === 'dialog' || state.mode === 'window';
+  const inBattle = state.mode === 'battle' && !!state.battle;
+  const overlayOpen = state.mode === 'dialog' || state.mode === 'window' || inBattle;
+  const swirling = !!state.pendingBattle && !!state.fade && !reducedMotion;
+
+  // First visit: explain encounters and the E key once
+  useEffect(() => {
+    if (!state.save.seenIntro && state.mode === 'walk') dispatch({ type: 'SHOW_INTRO' });
+  }, [state.save.seenIntro, state.mode, dispatch]);
+
+  const helpText = inBattle
+    ? 'ARROWS SELECT · ENTER CONFIRM · ESC BACK'
+    : overlayOpen
+      ? 'ENTER TO CONTINUE · ESC TO CLOSE'
+      : `ARROWS / WASD TO MOVE · ENTER TO INTERACT · E: ENCOUNTERS ${state.save.encounters ? 'ON' : 'OFF'}`;
 
   return (
     <div className="ow" data-player-tile={`${state.x},${state.y}`} data-scene={state.scene}>
@@ -155,21 +190,40 @@ function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
 
         {state.window && windowFor(state.window, () => dispatch({ type: 'CLOSE_WINDOW' }))}
 
-        <div className="ow-fade" style={{ opacity: fadeOpacity(state.fade) }} aria-hidden="true" />
+        {inBattle && state.battle && (
+          <BattleView state={state.battle} dispatch={(a) => dispatch({ type: 'BATTLE', action: a })} reducedMotion={reducedMotion} />
+        )}
+
+        <div
+          className={`ow-fade${swirling ? ' ow-swirl' : ''}`}
+          style={swirling ? ({ '--swirl': Math.min(state.fade!.t, 1) } as React.CSSProperties) : { opacity: fadeOpacity(state.fade) }}
+          aria-hidden="true"
+        />
       </div>
 
-      <p className="ow-help" aria-hidden="true">
-        {overlayOpen
-          ? 'ENTER TO CONTINUE · ESC TO CLOSE'
-          : 'ARROWS / WASD TO MOVE · ENTER TO INTERACT · MENU FOR QUICK TRAVEL'}
-      </p>
+      <p className="ow-help" aria-hidden="true">{helpText}</p>
 
       <TouchControls
-        onDown={(dir) => dispatch({ type: 'INPUT_DOWN', dir })}
-        onUp={(dir) => dispatch({ type: 'INPUT_UP', dir })}
-        onInteract={() => dispatch({ type: 'INTERACT' })}
+        onDown={(dir) => {
+          if (inBattle) {
+            const a = battleActionForDir(state, dir);
+            if (a) dispatch({ type: 'BATTLE', action: a });
+            return;
+          }
+          dispatch({ type: 'INPUT_DOWN', dir });
+        }}
+        onUp={(dir) => { if (!inBattle) dispatch({ type: 'INPUT_UP', dir }); }}
+        onInteract={() => {
+          if (inBattle) {
+            const a = battleConfirm(state);
+            if (a) dispatch({ type: 'BATTLE', action: a });
+            return;
+          }
+          dispatch({ type: 'INTERACT' });
+        }}
         onCancel={() => {
-          if (state.mode === 'window') dispatch({ type: 'CLOSE_WINDOW' });
+          if (inBattle) dispatch({ type: 'BATTLE', action: { type: 'MENU_CANCEL' } });
+          else if (state.mode === 'window') dispatch({ type: 'CLOSE_WINDOW' });
           else if (state.mode === 'dialog') dispatch({ type: 'DIALOG_CANCEL' });
         }}
         showCancel={overlayOpen}
