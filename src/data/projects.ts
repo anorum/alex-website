@@ -26,7 +26,7 @@ export const projects: Project[] = [
     highlights: [
       'Watching 6 cameras every 30 seconds since Aug 2026',
       'Per-camera trained image classifier in production',
-      'ODOT never archives its footage, so this history exists nowhere else',
+      'ODOT does not archive its footage, so this is the only record',
     ],
     tech: ['Kafka', 'Postgres', 'k3s'],
     links: {
@@ -45,10 +45,10 @@ export const projects: Project[] = [
     name: 'Sightread',
     tagline: 'Sight-reading practice for piano with a MIDI keyboard.',
     description:
-      'Generates random but musically sensible sight-reading exercises for piano, from easy to brutal. Plug in a MIDI keyboard and it checks what you actually played, note by note.',
+      'Generates random but musically sensible sight-reading exercises for piano, from easy to brutal. Plug in a MIDI keyboard and it checks what you played, note by note.',
     highlights: [
-      'Real sheet music notation rendered in the browser',
-      'Live feedback from a real MIDI keyboard',
+      'Standard notation rendered in the browser',
+      'Note-by-note feedback from a MIDI keyboard',
       'Same seed always generates the same exercise',
     ],
     tech: ['Astro', 'React', 'VexFlow', 'Web MIDI'],
@@ -68,11 +68,11 @@ export const projects: Project[] = [
     name: 'SMO Save Editor',
     tagline: 'Rebuilt a lost Super Mario Odyssey save.',
     description:
-      'My nephew lost his Super Mario Odyssey save, so I built a save editor to rebuild his moon collection. It grew into a complete editor: every moon in every kingdom, viewable and editable by its real name.',
+      'My nephew lost his Super Mario Odyssey save, so I built a save editor to rebuild his moon collection. It grew into a full editor covering every moon in every kingdom.',
     highlights: [
       'Every moon editable by its in-game name, with search',
-      'Edits patch only the bytes it understands, the rest is untouched',
-      'Repairs saves where stored counts have drifted from reality',
+      'Edits patch only the bytes it understands and leave the rest alone',
+      'Repairs saves whose stored moon counts no longer match the moons collected',
     ],
     tech: ['Python', 'binary formats'],
     links: { repo: 'https://github.com/anorum/mario_odyssey_save_editor' },
@@ -86,13 +86,13 @@ export const projects: Project[] = [
   {
     id: 'homelab',
     name: 'Homelab',
-    tagline: 'Not a showpiece. A place I break things.',
+    tagline: 'A place to break things.',
     description:
-      'A k3s cluster (nodes swagman-1 and swagman-2) plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka and MinIO for the data side. It runs PDX Train around the clock and whatever gets built next.',
+      'A k3s cluster (nodes swagman-1 and swagman-2) plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka and MinIO for the data side. It hosts PDX Train and whatever comes next.',
     highlights: [
       'GitOps deploys via ArgoCD, everything in version control',
       'Home Assistant with Zigbee and Lutron Caseta',
-      'Runs the PDX Train pipeline around the clock',
+      'Keeps the PDX Train pipeline running',
     ],
     tech: ['k3s', 'ArgoCD', 'Strimzi', 'MinIO', 'Tailscale'],
     links: { repo: 'https://github.com/anorum/homelab' },

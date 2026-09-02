@@ -19,7 +19,7 @@ export const interests: Interest[] = [
   },
   {
     title: 'Running',
-    description: "Mostly to clear my head. Sometimes to train. Always tracking something.",
+    description: "Mostly to clear my head, sometimes to train. I log every run either way.",
     iconPath: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
     colorScheme: 'green',
   },

@@ -16,8 +16,8 @@ export const experience: ExperienceItem[] = [
     description: "Led the small team that owned LegalZoom's data platform - Snowflake, Airflow on Kubernetes, dbt, Terraform, and the self-service tooling around all of it.",
     achievements: [
       "Automated data access so teams got what they needed without tickets",
-      "Built AI tooling that took platform support off the team's plate",
-      "Automated the governance and privacy work that used to be manual",
+      "Built AI tooling that answered platform support questions for the team",
+      "Automated the governance and privacy reviews",
     ],
     defaultOpen: true,
   },

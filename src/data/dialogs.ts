@@ -153,7 +153,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'CAPTAIN',
-      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. The log does not lie.`,
+      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. Every one of them logged.`,
     },
     {
       kind: 'line',
@@ -171,9 +171,9 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'GATEKEEPER',
-      text: 'Four bosses wait inside. Each one guards a real chapter of the career.',
+      text: 'Four bosses wait inside. Each one guards a chapter of the career.',
     },
-    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what was actually shipped is yours.' },
+    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what shipped is yours.' },
     {
       kind: 'choice',
       prompt: 'Enter the arena?',
