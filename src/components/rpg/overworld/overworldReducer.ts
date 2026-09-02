@@ -391,8 +391,10 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
     case 'INPUT_DOWN': {
       if (state.mode !== 'walk') return state;
       if (state.queue[0] === action.dir) return state;
-      const queue = [action.dir, ...state.queue.filter((d) => d !== action.dir)];
-      return { ...state, queue };
+      const queued = { ...state, queue: [action.dir, ...state.queue.filter((d) => d !== action.dir)] };
+      // Latch the step now rather than on the next frame, so a quick tap during
+      // a slow frame is never lost
+      return queued.stepping ? queued : tryStartStep(queued);
     }
 
     case 'INPUT_UP': {
