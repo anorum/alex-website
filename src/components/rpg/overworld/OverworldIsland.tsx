@@ -37,12 +37,13 @@ const WINDOWS: Record<string, React.ComponentType<WindowContentProps>> = {
   'travel-map': TravelMapWindow,
 };
 
-function windowFor(id: string, onClose: () => void): ReactElement | null {
+function windowFor(id: string, props: Omit<WindowContentProps, 'initialTab'>): ReactElement | null {
   if (id.startsWith('materia:')) {
-    return <MateriaList label={id.slice('materia:'.length)} onClose={onClose} />;
+    return <MateriaList label={id.slice('materia:'.length)} {...props} />;
   }
-  const Component = WINDOWS[id.split(':')[0]];
-  return Component ? <Component onClose={onClose} /> : null;
+  const [base, tab] = id.split(':');
+  const Component = WINDOWS[base];
+  return Component ? <Component {...props} initialTab={tab} /> : null;
 }
 
 /** Touch D-pad in battle: same routing as the keyboard. */
@@ -188,7 +189,7 @@ function OverworldGame({ speed, active, reducedMotion }: OverworldGameProps) {
           />
         )}
 
-        {state.window && windowFor(state.window, () => dispatch({ type: 'CLOSE_WINDOW' }))}
+        {state.window && windowFor(state.window, { onClose: () => dispatch({ type: 'CLOSE_WINDOW' }), save: state.save, dispatch })}
 
         {inBattle && state.battle && (
           <BattleView state={state.battle} dispatch={(a) => dispatch({ type: 'BATTLE', action: a })} reducedMotion={reducedMotion} />

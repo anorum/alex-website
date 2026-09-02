@@ -452,3 +452,61 @@
     animation: none;
   }
 }
+
+/* --- shop tabs and buy list --- */
+
+.theme-rpg .rpgsh-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.theme-rpg .rpgsh-tab {
+  background: none;
+  border: 1px solid var(--ff7-border, #c0c0c0);
+  color: var(--ff7-text, #fff);
+  font-family: inherit;
+  font-size: 9px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+
+.theme-rpg .rpgsh-tab.selected {
+  background-color: var(--ff7-blue, #0000aa);
+  color: var(--ff7-text-highlight, #ffff00);
+}
+
+.theme-rpg .rpgsh-gil {
+  margin-left: auto;
+  color: var(--ff7-text-highlight, #ffff00);
+  font-size: 10px;
+}
+
+.theme-rpg .rpgsh-buy {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .theme-rpg .rpgsh-buy {
+    grid-template-columns: 1fr;
+  }
+}
+
+.theme-rpg .rpgsh-item-name {
+  flex: 1;
+}
+
+.theme-rpg .rpgsh-price {
+  color: var(--ff7-text-highlight, #ffff00);
+  font-size: 9px;
+}
+
+.theme-rpg .rpgsh-owned {
+  font-size: 9px;
+  opacity: 0.8;
+  min-width: 2.5em;
+  text-align: right;
+}

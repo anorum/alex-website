@@ -1,13 +1,20 @@
 import type { ReactNode } from 'react';
+import type { SaveData } from '../../../utils/rpg-save';
+import type { OverworldAction } from '../overworld/overworldReducer';
 import { useWindowKeys } from './useWindowKeys';
 import './ff7-window.css';
 
 /** What every window in src/components/rpg/windows receives. */
 export interface WindowContentProps {
   onClose: () => void;
+  save: SaveData;
+  dispatch: (action: OverworldAction) => void;
+  /** e.g. "buy" from a window id like "shop:buy" */
+  initialTab?: string;
 }
 
-interface WindowProps extends WindowContentProps {
+interface WindowProps {
+  onClose: () => void;
   title: string;
   children: ReactNode;
   /** extra keyboard handling, e.g. cursor lists */
