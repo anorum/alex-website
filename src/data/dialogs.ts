@@ -32,7 +32,7 @@ const japanVisits = travelLocations.find((l) => l.country === 'Japan')?.visits ?
 
 export const dialogs: Record<string, DialogScript> = {
   'house-mirror': [
-    { kind: 'line', text: 'A familiar face looks back. Still level 99, somehow.' },
+    { kind: 'line', text: 'A mirror. The reflection looks about right.' },
     { kind: 'action', action: { type: 'openWindow', window: 'status' } },
   ],
 
@@ -42,7 +42,7 @@ export const dialogs: Record<string, DialogScript> = {
       kind: 'line',
       text: 'The notebook on top reads: fourteen years of data platforms. Simple systems where the right way is the easy way.',
     },
-    { kind: 'line', text: 'The last page just says: build the paved road, then get out of the way.' },
+    { kind: 'line', text: 'The last page repeats one line: build the paved road, then get out of the way.' },
   ],
 
   'house-mara': [
@@ -50,7 +50,7 @@ export const dialogs: Record<string, DialogScript> = {
     { kind: 'line', speaker: 'MARA', text: 'Woof.' },
     {
       kind: 'line',
-      text: 'She had a chatbot once. It cannot be repaired. She seems fine about it.',
+      text: 'She had a chatbot once. It does not run anymore. She does not seem to mind.',
     },
     {
       kind: 'choice',
@@ -63,20 +63,20 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'mara-watch-on': [
-    { kind: 'line', speaker: 'MARA', text: 'Mara keeps watch. The fields go quiet.' },
+    { kind: 'line', speaker: 'MARA', text: 'Mara keeps watch. Random battles are off.' },
   ],
 
   'mara-watch-off': [
-    { kind: 'line', speaker: 'MARA', text: 'Mara goes back to sleep. Wild data roams again.' },
+    { kind: 'line', speaker: 'MARA', text: 'Mara goes back to sleep. Random battles are back on.' },
   ],
 
   'intro-encounters': [
-    { kind: 'line', text: 'Wild data roams these fields.' },
-    { kind: 'line', text: 'Press E if you would rather walk in peace. Mara can also keep watch at the house.' },
+    { kind: 'line', text: 'There are random battles out here.' },
+    { kind: 'line', text: 'Press E to turn them off, or ask Mara at the house to keep watch.' },
   ],
 
   'hall-board': [
-    { kind: 'line', text: 'Closed contracts, pinned neatly. Someone has finished a lot of quests.' },
+    { kind: 'line', text: 'A board of closed contracts. Every job so far, in order.' },
     { kind: 'action', action: { type: 'openWindow', window: 'quests' } },
   ],
 
@@ -85,7 +85,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'RECEPTIONIST',
-      text: 'The ledger is public. Every contract closed, every reward accounted for.',
+      text: 'The ledger is public. Each contract lists what came out of it.',
     },
     {
       kind: 'choice',
@@ -98,38 +98,38 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'tower-lectern': [
-    { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same five places.' },
+    { kind: 'line', text: 'A heavy book, open. Five rules, one per page.' },
     ...creed.map((line) => ({ kind: 'line' as const, speaker: "ENGINEER'S CREED", text: line })),
   ],
 
   'tower-orb': [
-    { kind: 'line', text: 'The orb hums with practiced commands.' },
+    { kind: 'line', text: 'An orb. Touch it to see the command list.' },
     { kind: 'action', action: { type: 'openWindow', window: 'abilities' } },
   ],
 
   'dojo-shelf-core': [
-    { kind: 'line', text: 'The core shelf. Worn smooth from daily use.' },
+    { kind: 'line', text: 'The core shelf. The tools used most days.' },
     { kind: 'action', action: { type: 'openWindow', window: 'materia:Core' } },
   ],
 
   'dojo-shelf-also': [
-    { kind: 'line', text: 'Spares and specials. Reached for often enough.' },
+    { kind: 'line', text: 'The second shelf. Used less often, still in the bag.' },
     { kind: 'action', action: { type: 'openWindow', window: 'materia:Also' } },
   ],
 
   'dojo-shelf-ai': [
-    { kind: 'line', text: 'Newer orbs. Still warm.' },
+    { kind: 'line', text: 'The newer shelf. AI tooling.' },
     { kind: 'action', action: { type: 'openWindow', window: 'materia:AI' } },
   ],
 
   'dojo-shelf-honest': [
-    { kind: 'line', text: 'A small shelf, honestly labeled.' },
+    { kind: 'line', text: 'A small shelf with an honest label.' },
     { kind: 'action', action: { type: 'openWindow', window: 'materia:Honest levels' } },
   ],
 
   'dojo-sensei': [
-    { kind: 'line', speaker: 'SENSEI', text: 'You want numbers? Mastery percentages? Little bars?' },
-    { kind: 'line', speaker: 'SENSEI', text: 'Percentages lie.' },
+    { kind: 'line', speaker: 'SENSEI', text: 'No skill levels here.' },
+    { kind: 'line', speaker: 'SENSEI', text: 'Percentages on a resume are made up.' },
     ...honestItems.map((item) => ({ kind: 'line' as const, speaker: 'SENSEI', text: item + '.' })),
     {
       kind: 'line',
@@ -142,7 +142,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'SHOPKEEPER',
-      text: 'Welcome, traveler. Everything here was forged after hours.',
+      text: 'Welcome. Everything here was built on nights and weekends.',
     },
     {
       kind: 'choice',
@@ -158,19 +158,19 @@ export const dialogs: Record<string, DialogScript> = {
   'shop-crate': [
     {
       kind: 'line',
-      text: 'Crates of spare parts and old project boxes. Something in here still works.',
+      text: 'Crates of spare parts and old project boxes.',
     },
   ],
 
   'camp-fire': [
-    { kind: 'line', text: 'The fire crackles. Off the clock at last.' },
+    { kind: 'line', text: 'A campfire. This is the off-the-clock part.' },
     { kind: 'action', action: { type: 'openWindow', window: 'crafts' } },
   ],
 
   'camp-log': [
     {
       kind: 'line',
-      text: 'A good sitting log, worn smooth. Sheet music and a paperback left on one end.',
+      text: 'A log for sitting. Sheet music and a paperback on one end.',
     },
   ],
 
@@ -178,17 +178,17 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'CAPTAIN',
-      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. The log does not lie.`,
+      text: `${travelStats.totalCountries} countries and ${travelStats.totalVisits} trips in the log.`,
     },
     {
       kind: 'line',
       speaker: 'CAPTAIN',
-      text: `Japan, ${japanVisits} times. I stopped asking why. The answer is always the trains and the food.`,
+      text: `Japan ${japanVisits} times. Mostly for the trains and the food.`,
     },
   ],
 
   'harbor-chart': [
-    { kind: 'line', text: 'A chart of every voyage, inked by hand.' },
+    { kind: 'line', text: 'A chart of every trip.' },
     { kind: 'action', action: { type: 'openWindow', window: 'travel-map' } },
   ],
 
@@ -196,9 +196,9 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'GATEKEEPER',
-      text: 'Four bosses wait inside. Each one guards a real chapter of the career.',
+      text: 'Four bosses inside. Each one is tied to a real job.',
     },
-    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what was actually shipped is yours.' },
+    { kind: 'line', speaker: 'GATEKEEPER', text: 'Beat one and you get the list of what shipped there.' },
     {
       kind: 'choice',
       prompt: 'Which one?',

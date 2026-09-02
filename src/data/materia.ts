@@ -31,7 +31,7 @@ export const materia: MateriaDef[] = [
   { id: 'bark', name: 'BARK', owner: 'mara', kind: 'status', element: 'none', power: 0, mpCost: 2, target: 'enemy', status: { id: 'atkDown', chance: 1, turns: 3 }, line: 'MARA barks. The enemy hesitates.' },
   { id: 'fetch', name: 'FETCH', owner: 'mara', kind: 'fetch', element: 'none', power: 0, mpCost: 3, target: 'self', line: 'MARA runs off and comes back with something.' },
   { id: 'growl', name: 'GROWL', owner: 'mara', kind: 'status', element: 'none', power: 0, mpCost: 2, target: 'enemy', status: { id: 'defDown', chance: 1, turns: 3 }, line: 'MARA growls.' },
-  { id: 'lick', name: 'LICK', owner: 'mara', kind: 'heal', element: 'none', power: 70, mpCost: 3, target: 'ally', line: 'MARA licks a wound. It helps, somehow.' },
+  { id: 'lick', name: 'LICK', owner: 'mara', kind: 'heal', element: 'none', power: 70, mpCost: 3, target: 'ally', line: 'MARA licks a wound. It helps.' },
   { id: 'dig', name: 'DIG', owner: 'mara', kind: 'damage', element: 'earth', power: 36, mpCost: 4, target: 'enemy', line: 'MARA digs furiously.' },
 ];
 

@@ -475,7 +475,7 @@ function checkOutcome(s: BattleState): boolean {
   const enemiesDead = livingEnemies(s).length === 0;
   const partyDead = partyMembers(s).every((p) => !p.alive);
   if (enemiesDead) {
-    const bossLine = s.bossId ? bossById(s.bossId)!.defeatLine : 'The field is clear.';
+    const bossLine = s.bossId ? bossById(s.bossId)!.defeatLine : 'Battle over.';
     s.queue = [
       { at: s.clock + 150, type: 'message', text: bossLine },
       { at: s.clock + timing.resultDelayMs, type: 'sfx', sfx: 'victory' },
@@ -486,7 +486,7 @@ function checkOutcome(s: BattleState): boolean {
   }
   if (partyDead) {
     s.queue = [
-      { at: s.clock + 150, type: 'message', text: 'The party is down. Rolling back.' },
+      { at: s.clock + 150, type: 'message', text: 'The party is down.' },
       { at: s.clock + timing.resultDelayMs, type: 'sfx', sfx: 'defeat' },
       { at: s.clock + timing.resultDelayMs, type: 'finish', outcome: 'defeat' },
     ];
@@ -788,7 +788,7 @@ export function battleReducer(state: BattleState, action: BattleAction): BattleS
       if (item.effect === 'escape') {
         if (s.kind === 'boss') {
           sfx(s, 'buzzer');
-          s.message = 'Nobody answers the page.';
+          s.message = 'No answer. You cannot escape a boss.';
           s.menu.pending = null;
           return s;
         }

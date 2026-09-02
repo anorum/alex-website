@@ -35,7 +35,7 @@ export const character = {
   limitBreak: {
     name: 'PLATFORM OMNISLASH',
     description:
-      'Unleashes a full-stack data platform assault: automates workflows, deploys secure self-service pipelines, and slices legacy runtimes from hours to minutes. Grants party-wide observability and governance buffs.',
+      'Five hits on one target. Earth element. Fills from damage taken or from defending.',
   },
   location: 'PORTLAND',
   party: 'MARA (LABRADOODLE)',

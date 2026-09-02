@@ -19,7 +19,7 @@ export default function TravelMapWindow({ onClose }: WindowContentProps) {
         </Suspense>
       </div>
       <p className="rpga-flavor" style={{ marginTop: '0.5rem' }}>
-        {travelStats.totalCountries} countries. {travelStats.totalVisits} trips. The log does not lie.
+        {travelStats.totalCountries} countries, {travelStats.totalVisits} trips. Green means visited.
       </p>
     </Window>
   );

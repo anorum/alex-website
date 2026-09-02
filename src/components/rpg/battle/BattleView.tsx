@@ -279,7 +279,7 @@ function ResultWindow({ state, dispatch }: { state: BattleState; dispatch: Battl
     <div className="rpgb-window rpgb-result" data-testid={r.outcome === 'defeat' ? 'defeat-panel' : 'fled-panel'}>
       <h3 className="rpgb-result-title">{r.outcome === 'defeat' ? 'ROLLED BACK' : 'GOT AWAY'}</h3>
       <p className="rpgb-result-note">
-        {r.outcome === 'defeat' ? 'Rolled back to the last known-good deploy. Nothing was lost.' : 'Nobody followed.'}
+        {r.outcome === 'defeat' ? 'Rolled back to the last good deploy. You keep your gil and items.' : 'You got away.'}
       </p>
       <div className="rpgb-result-actions">
         <button type="button" className="rpgb-result-btn" data-testid="result-continue" onClick={() => dispatch({ type: 'RESULT_CONTINUE' })}>CONTINUE ▶</button>

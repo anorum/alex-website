@@ -37,7 +37,7 @@ export const projects: Project[] = [
     rpg: {
       itemName: 'PDX TRAIN SCOPE',
       itemDescription:
-        'Sees through steel. Reveals whether a freight train blocks the path ahead before you set out.',
+        'Shows whether a freight train is blocking the crossing before you leave.',
     },
   },
   {
@@ -60,7 +60,7 @@ export const projects: Project[] = [
     rpg: {
       itemName: 'SIGHTREAD MATERIA',
       itemDescription:
-        'Grants the bearer the ability to read ancient musical scripts at first sight. Judges every note played.',
+        'Practice sheet music. Checks every note you play.',
     },
   },
   {
@@ -80,7 +80,7 @@ export const projects: Project[] = [
     rpg: {
       itemName: 'ODYSSEY PATCHER',
       itemDescription:
-        'Restores lost memories. Once used to return 500 power moons to a young adventurer.',
+        'Repairs a lost save. Returned 500 moons to a nephew once.',
     },
   },
   {
@@ -100,7 +100,7 @@ export const projects: Project[] = [
     rpg: {
       itemName: 'HOMELAB CORE',
       itemDescription:
-        'A humming power source hidden in a closet. Keeps every other artifact in this shop alive.',
+        'The cluster in the closet. Runs everything else in this shop.',
     },
   },
   {
@@ -116,7 +116,7 @@ export const projects: Project[] = [
     rpg: {
       itemName: 'MARA-BOT (BROKEN)',
       itemDescription:
-        'A faithful companion construct, now dormant. Still remembers a few good tricks. Cannot be repaired.',
+        'A retired chatbot of the dog. Does not run anymore.',
     },
   },
 ];
