@@ -104,7 +104,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'dojo-sensei': [
-    { kind: 'line', speaker: 'SENSEI', text: 'You want numbers? Mastery percentages? Little bars?' },
+    { kind: 'line', speaker: 'SENSEI', text: 'You want numbers? Little bars?' },
     { kind: 'line', speaker: 'SENSEI', text: 'Percentages lie.' },
     ...honestItems.map((item) => ({ kind: 'line' as const, speaker: 'SENSEI', text: item + '.' })),
     {
