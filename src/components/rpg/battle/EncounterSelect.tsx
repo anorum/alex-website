@@ -49,7 +49,7 @@ export default function EncounterSelect({ wins, active, onPick }: EncounterSelec
     <div className="rpgb-window" data-testid="encounter-select">
       <div className="rpgb-select-title">BATTLE ARENA</div>
       <div className="rpgb-select-sub">
-        {allClear ? '★ ALL BOSSES DEFEATED - PLATFORM SECURED ★' : 'Choose your encounter. Beat a boss to unlock its chapter of the career.'}
+        {allClear ? '★ ALL BOSSES DEFEATED · PLATFORM SECURED ★' : 'Choose your encounter. Beat a boss to unlock its chapter of the career.'}
       </div>
       <div className="rpgb-encounters">
         {bosses.map((boss, i) => (

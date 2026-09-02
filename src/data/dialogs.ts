@@ -52,7 +52,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'hall-board': [
-    { kind: 'line', text: 'Closed contracts, pinned neatly. Someone has finished a lot of quests.' },
+    { kind: 'line', text: 'Closed contracts, pinned in rows. Someone has finished a lot of quests.' },
     { kind: 'action', action: { type: 'openWindow', window: 'quests' } },
   ],
 
@@ -118,7 +118,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'SHOPKEEPER',
-      text: 'Welcome, traveler. Everything here was forged after hours.',
+      text: 'Welcome, traveler. Alex forged everything here after hours.',
     },
     {
       kind: 'choice',

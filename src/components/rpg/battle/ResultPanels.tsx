@@ -25,7 +25,7 @@ export function VictoryPanel({ boss, onWin, onExit }: { boss: Boss; onWin: (boss
 
       {era && (
         <>
-          <div className="rpgb-quest-header">REWARD - REAL-WORLD ACHIEVEMENTS UNLOCKED:</div>
+          <div className="rpgb-quest-header">REWARD · REAL-WORLD ACHIEVEMENTS UNLOCKED:</div>
           <div className="rpgb-quest-role">{era.role} · {era.company} · {era.period}</div>
           <ul className="rpgb-achievements" data-testid="victory-achievements">
             {era.achievements.map((a) => (

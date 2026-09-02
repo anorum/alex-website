@@ -94,7 +94,7 @@ try {
 
     check('hero h1', await page.locator('h1.display-type').isVisible());
     const eyebrows = await page.locator('section h2.eyebrow').allTextContents();
-    const nums = eyebrows.map((t) => (t.trim().match(/^(\d\d) -/) || [])[1]).filter(Boolean);
+    const nums = eyebrows.map((t) => (t.trim().match(/^(\d\d) ·/) || [])[1]).filter(Boolean);
     check('sections are h2s numbered 01-06', JSON.stringify(nums) === JSON.stringify(['01', '02', '03', '04', '05', '06']), JSON.stringify(nums));
     check('5 what-i-do cards', (await page.locator('.card').count()) === 5);
     check('5 project cards', (await page.locator('.proj').count()) === 5);

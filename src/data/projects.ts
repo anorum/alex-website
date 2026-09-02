@@ -45,7 +45,7 @@ export const projects: Project[] = [
     name: 'Sightread',
     tagline: 'Sight-reading practice for piano with a MIDI keyboard.',
     description:
-      'Generates random but musically sensible sight-reading exercises for piano, from easy to brutal. Plug in a MIDI keyboard and it checks what you played, note by note.',
+      'Generates random sight-reading exercises for piano that still follow musical rules, from easy to brutal. Plug in a MIDI keyboard and it checks what you played, note by note.',
     highlights: [
       'Standard notation rendered in the browser',
       'Note-by-note feedback from a MIDI keyboard',
@@ -88,7 +88,7 @@ export const projects: Project[] = [
     name: 'Homelab',
     tagline: 'A place to break things.',
     description:
-      'A k3s cluster (nodes swagman-1 and swagman-2) plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka and MinIO for the data side. It hosts PDX Train and whatever comes next.',
+      'A two-node k3s cluster, swagman-1 and swagman-2, plus a Raspberry Pi 5 running Home Assistant. Tailscale and Cloudflare tunnels for access, Strimzi Kafka and MinIO for the data side. It hosts PDX Train and whatever comes next.',
     highlights: [
       'GitOps deploys via ArgoCD, everything in version control',
       'Home Assistant with Zigbee and Lutron Caseta',
