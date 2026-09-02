@@ -54,7 +54,7 @@ export const dialogs: Record<string, DialogScript> = {
     },
     {
       kind: 'choice',
-      prompt: 'Have Mara keep watch? Wild data leaves the fields alone while she is on duty.',
+      prompt: 'Have Mara keep watch? Random battles stop while she is on duty.',
       options: [
         { label: 'KEEP WATCH', action: { type: 'setEncounters', on: false, then: 'mara-watch-on' } },
         { label: 'LET HER SLEEP', action: { type: 'setEncounters', on: true, then: 'mara-watch-off' } },

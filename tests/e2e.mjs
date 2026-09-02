@@ -118,7 +118,7 @@ try {
     check('creed present', /resolve ambiguity yourself/i.test(bodyText));
     check('no job-status copy', !/open to staff|free agent/i.test(bodyText));
     check('no buzzwords', !/\b(leverage|synergy|passionate|thought leader|cutting-edge|world-class|empower|unlock|delve)\b/i.test(bodyText));
-    check('analytics card present', /started my career as an analyst/i.test(bodyText));
+    check('analytics card present', /started as an analyst/i.test(bodyText));
     check('new relic analyst arc', /lead data analyst/i.test(bodyText));
     check('standard visitors load zero RPG JS', rpgRequests.length === 0, rpgRequests.join(' '));
 
