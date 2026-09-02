@@ -165,6 +165,7 @@ try {
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
+    await advanceDialog(page); // first-visit encounter intro
     check('spawn 11,5 on world', (await tile(page)) === '11,5' && (await scene(page)) === 'world');
 
     await walk(page, 'ArrowRight', 3);
@@ -181,8 +182,9 @@ try {
     check('mirror prompt', ((await page.locator('.ow-prompt-btn').textContent()) || '').includes('MIRROR'));
     await openWindowAhead(page);
     const statusText = await page.locator('.rpgw-window').innerText();
-    check('status window shows LV 99', statusText.includes('LV 99'));
+    check('status shows the real level', /LV \d+/.test(statusText) && !statusText.includes('LV 99'));
     check('status has party row, no guild', statusText.includes('PARTY') && !statusText.includes('FREE AGENT'));
+    check('status shows gil and bosses', /GIL/.test(statusText) && /BOSSES/.test(statusText));
     await page.keyboard.press('Escape');
     await page.waitForTimeout(200);
     await walk(page, 'ArrowDown', 3);
@@ -192,7 +194,12 @@ try {
     await page.waitForTimeout(300);
     check('mara dialog has speaker', (await page.locator('.rpgw-dialog').innerText()).includes('MARA'));
     await advanceDialog(page);
+    check('mara offers to keep watch', await page.locator('.rpgw-choices').isVisible());
+    await page.keyboard.press('Enter'); // KEEP WATCH
+    await page.waitForTimeout(300);
+    await advanceDialog(page);
     check('mara dialog ends', !(await page.locator('.rpgw-dialog').isVisible()));
+    check('keep watch turns encounters off', (await page.evaluate(() => JSON.parse(localStorage.getItem('rpg-save')).encounters)) === false);
     await walk(page, 'ArrowLeft', 2);
     await walk(page, 'ArrowDown', 2);
     check('leave prompt on mat', ((await page.locator('.ow-prompt-btn').textContent()) || '').includes('LEAVE'));
@@ -265,12 +272,14 @@ try {
     await page.waitForTimeout(300);
     await advanceDialog(page);
     check('shopkeeper choice shown', await page.locator('.rpgw-choices').isVisible());
-    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter'); // BROWSE WARES
     await page.waitForTimeout(300);
-    check('5 shop items', (await page.locator('.rpgsh-item').count()) === 5);
+    check('5 shop items', (await page.locator('.rpgsh-item[data-project]').count()) === 5);
     check('broken mara-bot row', (await page.locator('.rpgsh-item.broken').count()) === 1);
     await page.click('.rpgsh-item[data-project="pdx-train"]');
     check('shop live link', (await page.locator('.rpgsh-links a[href="https://pdxtrain.alexnorum.com"]').count()) === 1);
+    await page.click('.rpgsh-tab:has-text("BUY")');
+    check('buy tab lists items with gil readout', (await page.locator('.rpgsh-item[data-item]').count()) === 4 && /GIL \d+/.test(await page.locator('[data-testid="shop-gil"]').innerText()));
     await page.keyboard.press('Escape');
     await page.waitForTimeout(200);
 
@@ -309,13 +318,85 @@ try {
     await page.keyboard.press('Enter');
     await page.waitForTimeout(300);
     await advanceDialog(page);
-    check('gatekeeper choice shown', await page.locator('.rpgw-choices').isVisible());
-    await page.keyboard.press('Enter');
+    check('gatekeeper lists bosses', (await page.locator('.rpgw-choice').count()) === 5);
+    await page.keyboard.press('Enter'); // ON-PREM TITAN
     await page.waitForTimeout(400);
-    check('battle section opened', await page.locator('#rpg-battle.active').isVisible());
-    check('battle UI rendered', (await page.locator('#rpg-battle button').count()) > 0);
+    check('boss battle renders in frame', (await page.locator('.ow-frame [data-testid="battle-view"]').count()) === 1);
+    await page.waitForSelector('[data-testid="battle-view"][data-phase="select"]', { timeout: 8000 });
+    check('turn strip has eight slots', (await page.locator('.rpgb-strip-slot').count()) === 8);
+    check('no RUN against a boss', (await page.locator('.rpgb-cmd[data-cmd="RUN"]').count()) === 0);
+    check('boss battle is flagged as boss', (await page.getAttribute('[data-testid="battle-view"]', 'data-kind')) === 'boss');
     check('menu clock is running', /\d:\d\d:\d\d/.test((await page.locator('#ff7-clock').textContent()) || ''));
     check('no rpg page errors', errors.length === 0, errors.join(' | ').slice(0, 300));
+    await ctx.close();
+  }
+
+  console.log('random encounters');
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await ctx.addInitScript(() => localStorage.setItem('site-theme', 'rpg'));
+    const page = await ctx.newPage();
+    await page.goto(BASE + '/?rpg-speed=2&rpg-seed=7', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.ow');
+    check('encounter intro shown on first visit', await page.locator('.rpgw-dialog').isVisible());
+    await advanceDialog(page);
+    check('intro is recorded in the save', (await page.evaluate(() => JSON.parse(localStorage.getItem('rpg-save')).seenIntro)) === true);
+    const inBattle = async () => (await page.locator('[data-testid="battle-view"]').count()) > 0;
+
+    let fought = false;
+    for (let i = 0; i < 80 && !fought; i++) {
+      await walk(page, i % 2 ? 'ArrowRight' : 'ArrowLeft', 1);
+      fought = await inBattle();
+    }
+    check('random encounter triggers with seed 7', fought);
+    await page.waitForSelector('[data-testid="battle-view"][data-phase="select"]', { timeout: 8000 });
+    check('random battle is flagged as random', (await page.getAttribute('[data-testid="battle-view"]', 'data-kind')) === 'random');
+    await page.click('.rpgb-cmd[data-cmd="RUN"]');
+    await page.waitForSelector('[data-testid="battle-view"][data-phase="fled"]', { timeout: 8000 });
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
+    check('back to walking after fleeing', !(await inBattle()) && (await scene(page)) === 'world');
+
+    await page.keyboard.press('e');
+    await page.waitForTimeout(100);
+    check('help line shows encounters off', /ENCOUNTERS OFF/.test(await page.locator('.ow-help').innerText()));
+    let quiet = true;
+    for (let i = 0; i < 60; i++) {
+      await walk(page, i % 2 ? 'ArrowRight' : 'ArrowLeft', 1);
+      if (await inBattle()) quiet = false;
+    }
+    check('no encounters while off', quiet);
+    check('save persists the toggle', (await page.evaluate(() => JSON.parse(localStorage.getItem('rpg-save')).encounters)) === false);
+
+    await page.click('#ff7-menu-button');
+    await page.click('.ff7-menu-option:has([data-encounters-label])');
+    await page.waitForTimeout(200);
+    check('menu toggle turns encounters on', (await page.evaluate(() => JSON.parse(localStorage.getItem('rpg-save')).encounters)) === true);
+    check('menu label mirrors the flag', /ENCOUNTERS: ON/.test(await page.locator('[data-encounters-label]').innerText()));
+
+    // fight one out with plain attacks
+    fought = false;
+    for (let i = 0; i < 80 && !fought; i++) {
+      await walk(page, i % 2 ? 'ArrowRight' : 'ArrowLeft', 1);
+      fought = await inBattle();
+    }
+    check('second encounter triggers', fought);
+    let outcome = null;
+    for (let turn = 0; turn < 60; turn++) {
+      const phase = await page.getAttribute('[data-testid="battle-view"]', 'data-phase').catch(() => null);
+      if (!phase) break;
+      if (phase === 'victory' || phase === 'defeat' || phase === 'fled') { outcome = phase; break; }
+      if (phase === 'select' || phase === 'target') { await page.keyboard.press('Enter'); await page.waitForTimeout(120); }
+      else await page.waitForTimeout(150);
+    }
+    check('fight resolves', outcome === 'victory' || outcome === 'defeat', 'outcome ' + outcome);
+    if (outcome === 'victory') {
+      check('results show exp', /EXP/.test(await page.locator('.rpgb-result').innerText()));
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(300);
+      const after = await page.evaluate(() => JSON.parse(localStorage.getItem('rpg-save')));
+      check('exp and gil saved after victory', after.exp > 0 && after.gil > 0);
+    }
     await ctx.close();
   }
 
@@ -330,6 +411,7 @@ try {
     const page = await ctx.newPage();
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
+    await advanceDialog(page); // first-visit encounter intro
     check('d-pad visible on touch device', await page.locator('.ow-dpad').isVisible());
     const before = await tile(page);
     const btn = page.locator('.ow-dpad-btn[aria-label="Move right"]');
@@ -348,6 +430,7 @@ try {
     const page = await ctx.newPage();
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
+    await advanceDialog(page); // first-visit encounter intro
     await walk(page, 'ArrowRight', 2);
     check('player moves under reduced motion', (await tile(page)) === '13,5', 'got ' + (await tile(page)));
     await ctx.close();
