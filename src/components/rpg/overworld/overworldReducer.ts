@@ -99,8 +99,7 @@ export type OverworldAction =
   | { type: 'SET_ENCOUNTERS'; on: boolean }
   | { type: 'SET_SOUND'; on: boolean }
   | { type: 'SET_SAVE'; save: SaveData }
-  | { type: 'BUY'; itemId: string }
-  | { type: 'SHOW_INTRO' };
+  | { type: 'BUY'; itemId: string };
 
 function computePrompt(state: OverworldState): Prompt | null {
   const scene = getScene(state.scene);
@@ -163,7 +162,12 @@ export function createOverworldState(
     promptSeq: 0,
     confirmSeq: 0,
   };
-  return { ...base, prompt: computePrompt(base) };
+  const ready = { ...base, prompt: computePrompt(base) };
+  // First visit: explain encounters once, before the player can walk into one
+  if (!save.seenIntro) {
+    return openDialog({ ...ready, save: { ...save, seenIntro: true } }, 'intro-encounters');
+  }
+  return ready;
 }
 
 function battleSetupFromSave(state: OverworldState, partial: Pick<BattleSetup, 'kind' | 'enemies' | 'bossId' | 'seed'>): BattleSetup {
@@ -480,11 +484,6 @@ export function overworldReducer(state: OverworldState, action: OverworldAction)
       if (!item || state.save.gil < item.price) return state;
       const inventory = { ...state.save.inventory, [item.id]: (state.save.inventory[item.id] ?? 0) + 1 };
       return confirmed({ ...state, save: { ...state.save, gil: state.save.gil - item.price, inventory } });
-    }
-
-    case 'SHOW_INTRO': {
-      if (state.save.seenIntro || state.mode !== 'walk') return state;
-      return openDialog({ ...state, save: { ...state.save, seenIntro: true } }, 'intro-encounters');
     }
 
     default:

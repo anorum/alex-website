@@ -46,6 +46,17 @@ async function advanceDialog(page, max = 12) {
   }
 }
 
+/** Dismiss the one-time encounter intro and wait until the player can walk again. */
+async function dismissIntro(page) {
+  await page.waitForSelector('.rpgw-dialog', { timeout: 3000 }).catch(() => {});
+  await advanceDialog(page);
+  await page.waitForFunction(
+    () => /ARROWS \/ WASD/.test(document.querySelector('.ow-help')?.textContent || ''),
+    null,
+    { timeout: 5000 }
+  );
+}
+
 /** Interact with what the player is facing and advance until a window opens. */
 async function openWindowAhead(page) {
   await page.keyboard.press('Enter');
@@ -165,7 +176,7 @@ try {
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
-    await advanceDialog(page); // first-visit encounter intro
+    await dismissIntro(page);
     check('spawn 11,5 on world', (await tile(page)) === '11,5' && (await scene(page)) === 'world');
 
     await walk(page, 'ArrowRight', 3);
@@ -411,7 +422,7 @@ try {
     const page = await ctx.newPage();
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
-    await advanceDialog(page); // first-visit encounter intro
+    await dismissIntro(page);
     check('d-pad visible on touch device', await page.locator('.ow-dpad').isVisible());
     const before = await tile(page);
     const btn = page.locator('.ow-dpad-btn[aria-label="Move right"]');
@@ -430,7 +441,7 @@ try {
     const page = await ctx.newPage();
     await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
     await page.waitForSelector('.ow', { timeout: 5000 });
-    await advanceDialog(page); // first-visit encounter intro
+    await dismissIntro(page);
     await walk(page, 'ArrowRight', 2);
     check('player moves under reduced motion', (await tile(page)) === '13,5', 'got ' + (await tile(page)));
     await ctx.close();

@@ -18,16 +18,25 @@ function step(s: S, dir: 'left' | 'right' | 'up' | 'down'): S {
 }
 
 const flaky = () => ({ kind: 'random' as const, enemies: [enemyById('flaky-test')!], level: 5, exp: 0, gil: 0, inventory: {}, seed: 4 });
+/** a returning player: the one-time intro has already been seen */
+const returning = () => ({ ...defaultSave(), seenIntro: true });
 
 describe('overworld battle mode', () => {
   it('starts with the save in state', () => {
-    const s = createOverworldState(null, { ...defaultSave(), gil: 5 }, 1);
+    const s = createOverworldState(null, { ...returning(), gil: 5 }, 1);
     expect(s.save.gil).toBe(5);
     expect(s.mode).toBe('walk');
   });
 
+  it('a first visit opens the encounter intro before anything else', () => {
+    const s = createOverworldState(null, defaultSave(), 1);
+    expect(s.mode).toBe('dialog');
+    expect(s.dialog?.scriptId).toBe('intro-encounters');
+    expect(s.save.seenIntro).toBe(true);
+  });
+
   it('START_BATTLE enters battle mode after the swirl and BATTLE forwards actions', () => {
-    let s = createOverworldState(null, defaultSave(), 1);
+    let s = createOverworldState(null, returning(), 1);
     s = overworldReducer(s, { type: 'START_BATTLE', setup: flaky() });
     expect(s.mode).toBe('fade');
     s = tick(s, 800);
@@ -38,7 +47,7 @@ describe('overworld battle mode', () => {
   });
 
   it('a finished battle returns to walk', () => {
-    let s = createOverworldState(null, defaultSave(), 1);
+    let s = createOverworldState(null, returning(), 1);
     s = overworldReducer(s, { type: 'START_BATTLE', setup: flaky() });
     s = tick(s, 3000);
     // RUN is the last of six root commands in a random battle
@@ -52,7 +61,7 @@ describe('overworld battle mode', () => {
   });
 
   it('walking with encounters on eventually triggers a battle, with encounters off never', () => {
-    let on = createOverworldState(null, defaultSave(), 7);
+    let on = createOverworldState(null, returning(), 7);
     let fought = false;
     for (let i = 0; i < 80 && !fought; i++) {
       on = step(on, i % 2 === 0 ? 'left' : 'right');
@@ -60,13 +69,13 @@ describe('overworld battle mode', () => {
     }
     expect(fought).toBe(true); // seed 7 is deterministic; if the map changes, pick a seed that fights within 80 steps
 
-    let off = createOverworldState(null, { ...defaultSave(), encounters: false }, 7);
+    let off = createOverworldState(null, { ...returning(), encounters: false }, 7);
     for (let i = 0; i < 80; i++) off = step(off, i % 2 === 0 ? 'left' : 'right');
     expect(off.mode).toBe('walk');
   });
 
   it('TOGGLE_ENCOUNTERS flips the save flag', () => {
-    let s = createOverworldState(null, defaultSave(), 1);
+    let s = createOverworldState(null, returning(), 1);
     s = overworldReducer(s, { type: 'TOGGLE_ENCOUNTERS' });
     expect(s.save.encounters).toBe(false);
   });
@@ -76,7 +85,7 @@ describe('overworld battle mode', () => {
   });
 
   it('defeat fades home with no gil loss', () => {
-    let s = createOverworldState(null, { ...defaultSave(), gil: 77 }, 1);
+    let s = createOverworldState(null, { ...returning(), gil: 77 }, 1);
     s = overworldReducer(s, { type: 'START_BATTLE', setup: { ...flaky(), gil: 77 } });
     s = tick(s, 800);
     s = { ...s, battle: { ...s.battle!, phase: 'defeat', result: { outcome: 'defeat', exp: 0, gil: 0, drops: [], levelsGained: 0, newLevel: 5 } } };

@@ -128,11 +128,6 @@ function OverworldGame({ speed, reducedMotion }: OverworldGameProps) {
   const overlayOpen = state.mode === 'dialog' || state.mode === 'window' || inBattle;
   const swirling = !!state.pendingBattle && !!state.fade && !reducedMotion;
 
-  // First visit: explain encounters and the E key once
-  useEffect(() => {
-    if (!state.save.seenIntro && state.mode === 'walk') dispatch({ type: 'SHOW_INTRO' });
-  }, [state.save.seenIntro, state.mode, dispatch]);
-
   let helpText = `ARROWS / WASD TO MOVE · ENTER TO INTERACT · E: ENCOUNTERS ${state.save.encounters ? 'ON' : 'OFF'}`;
   if (inBattle) helpText = 'ARROWS SELECT · ENTER CONFIRM · ESC BACK';
   else if (overlayOpen) helpText = 'ENTER TO CONTINUE · ESC TO CLOSE';
