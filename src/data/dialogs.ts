@@ -52,7 +52,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'hall-board': [
-    { kind: 'line', text: 'Closed contracts, pinned neatly. Someone has finished a lot of quests.' },
+    { kind: 'line', text: 'Closed contracts, pinned in rows. Someone has finished a lot of quests.' },
     { kind: 'action', action: { type: 'openWindow', window: 'quests' } },
   ],
 
@@ -74,7 +74,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'tower-lectern': [
-    { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same five places.' },
+    { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same six places.' },
     ...creed.map((line) => ({ kind: 'line' as const, speaker: "ENGINEER'S CREED", text: line })),
   ],
 
@@ -104,7 +104,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'dojo-sensei': [
-    { kind: 'line', speaker: 'SENSEI', text: 'You want numbers? Mastery percentages? Little bars?' },
+    { kind: 'line', speaker: 'SENSEI', text: 'You want numbers? Little bars?' },
     { kind: 'line', speaker: 'SENSEI', text: 'Percentages lie.' },
     ...honestItems.map((item) => ({ kind: 'line' as const, speaker: 'SENSEI', text: item + '.' })),
     {
@@ -118,7 +118,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'SHOPKEEPER',
-      text: 'Welcome, traveler. Everything here was forged after hours.',
+      text: 'Welcome, traveler. Alex forged everything here after hours.',
     },
     {
       kind: 'choice',
@@ -153,7 +153,7 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'CAPTAIN',
-      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. The log does not lie.`,
+      text: `${travelStats.totalCountries} countries. ${travelStats.totalVisits} voyages. Every one of them logged.`,
     },
     {
       kind: 'line',
@@ -171,9 +171,9 @@ export const dialogs: Record<string, DialogScript> = {
     {
       kind: 'line',
       speaker: 'GATEKEEPER',
-      text: 'Four bosses wait inside. Each one guards a real chapter of the career.',
+      text: 'Four bosses wait inside. Each one guards a chapter of the career.',
     },
-    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what was actually shipped is yours.' },
+    { kind: 'line', speaker: 'GATEKEEPER', text: 'Win, and the record of what shipped is yours.' },
     {
       kind: 'choice',
       prompt: 'Enter the arena?',
