@@ -74,7 +74,7 @@ export const dialogs: Record<string, DialogScript> = {
   ],
 
   'tower-lectern': [
-    { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same five places.' },
+    { kind: 'line', text: 'A heavy book lies open. The pages are worn at the same six places.' },
     ...creed.map((line) => ({ kind: 'line' as const, speaker: "ENGINEER'S CREED", text: line })),
   ],
 

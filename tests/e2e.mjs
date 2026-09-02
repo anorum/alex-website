@@ -104,7 +104,7 @@ try {
     const bodyText = await page.evaluate(() => document.body.innerText);
     check('no em/en dashes in rendered text', !bodyText.includes('—') && !bodyText.includes('–'));
     check('legalzoom is past tense', !bodyText.includes('I run the team') && bodyText.includes('2023 - 2026'));
-    check('creed present', /resolve ambiguity yourself/i.test(bodyText));
+    check('creed present', /meet them where they are/i.test(bodyText));
     check('no job-status copy', !/open to staff|free agent/i.test(bodyText));
     check('no buzzwords', !/\b(leverage|synergy|passionate|thought leader|cutting-edge|world-class|empower|unlock|delve)\b/i.test(bodyText));
     check('analytics card present', /started my career as an analyst/i.test(bodyText));
