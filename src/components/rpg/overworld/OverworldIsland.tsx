@@ -1,6 +1,5 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { getScene } from '../../../data/scenes';
-import type { Direction } from '../../../data/overworld';
 import { getScript, type DialogStep } from '../../../data/dialogs';
 import { CHAR_MS, lineRevealed, type OverworldState } from './overworldReducer';
 import { useOverworld } from './useOverworld';
@@ -19,7 +18,6 @@ import ShopWindow from '../windows/ShopWindow';
 import CraftsWindow from '../windows/CraftsWindow';
 import TravelMapWindow from '../windows/TravelMapWindow';
 import BattleView from '../battle/BattleView';
-import type { BattleAction } from '../battle/types';
 import './overworld.css';
 
 function readParam(name: string): number | null {
@@ -44,25 +42,6 @@ function windowFor(id: string, props: Omit<WindowContentProps, 'initialTab'>): R
   const [base, tab] = id.split(':');
   const Component = WINDOWS[base];
   return Component ? <Component {...props} initialTab={tab} /> : null;
-}
-
-/** Touch D-pad in battle: same routing as the keyboard. */
-function battleActionForDir(state: OverworldState, dir: Direction): BattleAction | null {
-  const b = state.battle;
-  if (!b) return null;
-  const back = dir === 'up' || dir === 'left';
-  if (b.phase === 'target') return { type: 'TARGET_MOVE', delta: back ? -1 : 1 };
-  if (b.phase === 'select') return { type: 'MENU_MOVE', delta: back ? -1 : 1 };
-  return null;
-}
-
-function battleConfirm(state: OverworldState): BattleAction | null {
-  const b = state.battle;
-  if (!b) return null;
-  if (b.phase === 'target') return { type: 'TARGET_CONFIRM' };
-  if (b.phase === 'select') return { type: 'MENU_CONFIRM' };
-  if (b.phase === 'victory' || b.phase === 'defeat' || b.phase === 'fled') return { type: 'RESULT_CONTINUE' };
-  return null;
 }
 
 /** Fade covers the screen at the swap point: 0 -> 1 fading out, 1 -> 0 fading in. */
@@ -187,31 +166,20 @@ function OverworldGame({ speed, reducedMotion }: OverworldGameProps) {
 
       <p className="ow-help" aria-hidden="true">{helpText}</p>
 
-      <TouchControls
-        onDown={(dir) => {
-          if (inBattle) {
-            const a = battleActionForDir(state, dir);
-            if (a) dispatch({ type: 'BATTLE', action: a });
-            return;
-          }
-          dispatch({ type: 'INPUT_DOWN', dir });
-        }}
-        onUp={(dir) => { if (!inBattle) dispatch({ type: 'INPUT_UP', dir }); }}
-        onInteract={() => {
-          if (inBattle) {
-            const a = battleConfirm(state);
-            if (a) dispatch({ type: 'BATTLE', action: a });
-            return;
-          }
-          dispatch({ type: 'INTERACT' });
-        }}
-        onCancel={() => {
-          if (inBattle) dispatch({ type: 'BATTLE', action: { type: 'MENU_CANCEL' } });
-          else if (state.mode === 'window') dispatch({ type: 'CLOSE_WINDOW' });
-          else if (state.mode === 'dialog') dispatch({ type: 'DIALOG_CANCEL' });
-        }}
-        showCancel={overlayOpen}
-      />
+      {/* battles are fully tappable (commands, targets, back, continue), so the
+          walking controls leave the screen instead of sitting below the fold */}
+      {!inBattle && (
+        <TouchControls
+          onDown={(dir) => dispatch({ type: 'INPUT_DOWN', dir })}
+          onUp={(dir) => dispatch({ type: 'INPUT_UP', dir })}
+          onInteract={() => dispatch({ type: 'INTERACT' })}
+          onCancel={() => {
+            if (state.mode === 'window') dispatch({ type: 'CLOSE_WINDOW' });
+            else if (state.mode === 'dialog') dispatch({ type: 'DIALOG_CANCEL' });
+          }}
+          showCancel={overlayOpen}
+        />
+      )}
     </div>
   );
 }

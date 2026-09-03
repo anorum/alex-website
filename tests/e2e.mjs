@@ -468,9 +468,15 @@ try {
     check('mobile command rows are thumb-sized', !!cmd && cmd.height >= 40, `cmd ${cmd && Math.round(cmd.height)}px`);
     const noHScroll = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1);
     check('mobile battle does not overflow horizontally', noHScroll);
-    // choose ATTACK by tapping it, then tap the enemy card to confirm the target
+    check('walking controls leave the screen in battle', (await page.locator('.ow-touch').count()) === 0);
+    const menu = await page.locator('[data-testid="command-menu"]').boundingBox();
+    check('mobile command menu fits on one screen', !!menu && menu.y + menu.height <= 664, `menu bottom ${menu && Math.round(menu.y + menu.height)}px`);
+    // choose ATTACK by tapping it, back out, choose again, then tap the enemy card to confirm the target
     await tapAt('.rpgb-cmd'); await page.waitForTimeout(250);
     check('tapping a command reaches target phase', (await page.getAttribute('[data-testid="battle-view"]', 'data-phase')) === 'target');
+    await tapAt('[data-testid="battle-back"]'); await page.waitForTimeout(250);
+    check('tapping BACK returns to the command menu', (await page.getAttribute('[data-testid="battle-view"]', 'data-phase')) === 'select');
+    await tapAt('.rpgb-cmd'); await page.waitForTimeout(250);
     await tapAt('.rpgb-enemy-card'); await page.waitForTimeout(250);
     check('tapping the enemy confirms the target', (await page.getAttribute('[data-testid="battle-view"]', 'data-phase')) === 'resolving');
     await ctx.close();

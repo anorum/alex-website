@@ -163,10 +163,13 @@ function Commands({ state, dispatch }: { state: BattleState; dispatch: BattleVie
   const selecting = state.phase === 'select' && active?.side === 'party';
   const { open, cursor } = state.menu;
 
+  const back = <button type="button" className="rpgb-cmd rpgb-cmd-back" data-testid="battle-back" onClick={() => dispatch({ type: 'MENU_CANCEL' })}>◀ BACK</button>;
+
   if (!selecting || !active) {
     return (
       <div className="rpgb-window rpgb-commands" data-testid="command-menu">
         <div className="rpgb-waiting">{waitingHint(state.phase)}</div>
+        {state.phase === 'target' && back}
       </div>
     );
   }
@@ -175,7 +178,6 @@ function Commands({ state, dispatch }: { state: BattleState; dispatch: BattleVie
     dispatch({ type: 'MENU_SET_CURSOR', index });
     dispatch({ type: 'MENU_CONFIRM' });
   };
-  const back = <button type="button" className="rpgb-cmd rpgb-cmd-back" onClick={() => dispatch({ type: 'MENU_CANCEL' })}>◀ BACK</button>;
 
   if (open === 'materia') {
     return (

@@ -210,32 +210,44 @@
 @media (max-width: 640px) {
   .theme-rpg .rpgb {
     font-size: 11px;
-    padding: 0.5rem 0.4rem;
+    padding: 0.3rem 0.4rem;
     min-height: 0;
   }
   .theme-rpg .rpgb-field {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
-    row-gap: 0.75rem;
-    min-height: 240px;
+    row-gap: 0.5rem;
+    min-height: 160px;
     align-content: center;
   }
   .theme-rpg .rpgb-enemies {
     gap: 1.25rem;
   }
   .theme-rpg .rpgb-card-sprite {
-    width: clamp(56px, 22vw, 88px);
+    width: clamp(52px, 19vw, 76px);
   }
   .theme-rpg .rpgb-card.rpgb-party-card .rpgb-card-sprite {
-    width: clamp(48px, 18vw, 72px);
+    width: clamp(44px, 15vw, 60px);
   }
   .theme-rpg .rpgb-bottom {
     grid-template-columns: 1fr;
+  }
+  .theme-rpg .rpgb-commands {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
   }
   .theme-rpg .rpgb-cmd {
     min-height: 44px;
     font-size: 11px;
     padding-left: 1.25rem;
+  }
+  .theme-rpg .rpgb-cmd-back,
+  .theme-rpg .rpgb-waiting {
+    grid-column: 1 / -1;
+  }
+  .theme-rpg .rpgb-waiting {
+    align-self: center;
   }
   .theme-rpg .rpgb-stat-row {
     font-size: 9px;
@@ -248,8 +260,8 @@
     font-size: 10px;
   }
   .theme-rpg .rpgb-strip-slot {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
   .theme-rpg .rpgb-result {
     left: 3%;
