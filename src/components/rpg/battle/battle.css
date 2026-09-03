@@ -206,70 +206,6 @@
   gap: 0.35rem;
 }
 
-/* Phones: fighters stack (enemies above the party), rows grow to thumb size */
-@media (max-width: 640px) {
-  .theme-rpg .rpgb {
-    font-size: 11px;
-    padding: 0.3rem 0.4rem;
-    min-height: 0;
-  }
-  .theme-rpg .rpgb-field {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    row-gap: 0.5rem;
-    min-height: 160px;
-    align-content: center;
-  }
-  .theme-rpg .rpgb-enemies {
-    gap: 1.25rem;
-  }
-  .theme-rpg .rpgb-card-sprite {
-    width: clamp(52px, 19vw, 76px);
-  }
-  .theme-rpg .rpgb-card.rpgb-party-card .rpgb-card-sprite {
-    width: clamp(44px, 15vw, 60px);
-  }
-  .theme-rpg .rpgb-bottom {
-    grid-template-columns: 1fr;
-  }
-  .theme-rpg .rpgb-commands {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-  .theme-rpg .rpgb-cmd {
-    min-height: 44px;
-    font-size: 11px;
-    padding-left: 1.25rem;
-  }
-  .theme-rpg .rpgb-cmd-back,
-  .theme-rpg .rpgb-waiting {
-    grid-column: 1 / -1;
-  }
-  .theme-rpg .rpgb-waiting {
-    align-self: center;
-  }
-  .theme-rpg .rpgb-stat-row {
-    font-size: 9px;
-    grid-template-columns: 40px 1fr 1fr 52px;
-  }
-  .theme-rpg .rpgb-stat-cell span {
-    font-size: 8px;
-  }
-  .theme-rpg .rpgb-message {
-    font-size: 10px;
-  }
-  .theme-rpg .rpgb-strip-slot {
-    width: 24px;
-    height: 24px;
-  }
-  .theme-rpg .rpgb-result {
-    left: 3%;
-    right: 3%;
-    top: 6%;
-    max-height: 88%;
-  }
-}
 
 .theme-rpg .rpgb-status {
   padding: 0.4rem 0.6rem;
@@ -582,5 +518,70 @@
   .theme-rpg .rpgb-callout {
     animation: none;
     opacity: 1;
+  }
+}
+
+/* Phones (kept last so these override the base rules): fighters stack (enemies above the party), rows grow to thumb size */
+@media (max-width: 640px) {
+  .theme-rpg .rpgb {
+    font-size: 11px;
+    padding: 0.3rem 0.4rem;
+    min-height: 0;
+  }
+  .theme-rpg .rpgb-field {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    row-gap: 0.5rem;
+    min-height: 160px;
+    align-content: center;
+  }
+  .theme-rpg .rpgb-enemies {
+    gap: 1.25rem;
+  }
+  .theme-rpg .rpgb-card-sprite {
+    width: clamp(52px, 19vw, 76px);
+  }
+  .theme-rpg .rpgb-card.rpgb-party-card .rpgb-card-sprite {
+    width: clamp(44px, 15vw, 60px);
+  }
+  .theme-rpg .rpgb-bottom {
+    grid-template-columns: 1fr;
+  }
+  .theme-rpg .rpgb-commands {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .theme-rpg .rpgb-cmd {
+    min-height: 44px;
+    font-size: 11px;
+    padding-left: 1.25rem;
+  }
+  .theme-rpg .rpgb-cmd-back,
+  .theme-rpg .rpgb-waiting {
+    grid-column: 1 / -1;
+  }
+  .theme-rpg .rpgb-waiting {
+    align-self: center;
+  }
+  .theme-rpg .rpgb-stat-row {
+    font-size: 9px;
+    grid-template-columns: 40px 1fr 1fr 52px;
+  }
+  .theme-rpg .rpgb-stat-cell span {
+    font-size: 8px;
+  }
+  .theme-rpg .rpgb-message {
+    font-size: 10px;
+  }
+  .theme-rpg .rpgb-strip-slot {
+    width: 24px;
+    height: 24px;
+  }
+  .theme-rpg .rpgb-result {
+    left: 3%;
+    right: 3%;
+    top: 6%;
+    max-height: 88%;
   }
 }
