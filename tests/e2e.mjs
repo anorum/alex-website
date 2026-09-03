@@ -363,6 +363,9 @@ try {
     await page.waitForSelector('[data-testid="battle-view"][data-phase="select"]', { timeout: 8000 });
     check('random battle is flagged as random', (await page.getAttribute('[data-testid="battle-view"]', 'data-kind')) === 'random');
     await page.click('.rpgb-cmd[data-cmd="RUN"]');
+    // park the mouse off the menu: hover sets the cursor, and a stale pointer
+    // would keep re-selecting whatever row sits under it in the next fight
+    await page.mouse.move(0, 0);
     await page.waitForSelector('[data-testid="battle-view"][data-phase="fled"]', { timeout: 8000 });
     await page.keyboard.press('Enter');
     await page.waitForTimeout(300);
@@ -392,8 +395,12 @@ try {
       fought = await inBattle();
     }
     check('second encounter triggers', fought);
+    // the MENU clicks leave the pointer where the command window will render;
+    // hover sets the cursor, so park it before driving the fight by keyboard
+    await page.mouse.move(0, 0);
     let outcome = null;
-    for (let turn = 0; turn < 60; turn++) {
+    const deadline = Date.now() + 60000;
+    while (Date.now() < deadline) {
       const phase = await page.getAttribute('[data-testid="battle-view"]', 'data-phase').catch(() => null);
       if (!phase) break;
       if (phase === 'victory' || phase === 'defeat' || phase === 'fled') { outcome = phase; break; }
@@ -430,6 +437,42 @@ try {
     await btn.dispatchEvent('pointerup', { pointerId: 1 });
     await page.waitForTimeout(200);
     check('d-pad tap moves player', before !== (await tile(page)));
+    await ctx.close();
+  }
+
+  console.log('rpg mobile battle layout');
+  {
+    const ctx = await browser.newContext({
+      viewport: { width: 390, height: 664 },
+      hasTouch: true,
+      isMobile: true,
+      deviceScaleFactor: 3,
+      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+    });
+    await ctx.addInitScript(() => { localStorage.setItem('site-theme', 'rpg'); localStorage.setItem('rpg-save', JSON.stringify({ v: 1, level: 5, exp: 0, gil: 0, inventory: { coffee: 2, runbook: 1 }, bossesBeaten: [], encounters: false, sound: false, seenIntro: true })); });
+    const page = await ctx.newPage();
+    await page.goto(BASE + '/?rpg-speed=2', { waitUntil: 'networkidle' });
+    await page.waitForSelector('.ow');
+    await teleport(page, 'arena');
+    const tapAt = async (sel) => { const bb = await page.locator(sel).first().boundingBox(); await page.touchscreen.tap(bb.x + bb.width / 2, bb.y + bb.height / 2); };
+    for (let i = 0; i < 3; i++) { await tapAt('.ow-dpad-btn[aria-label="Move up"]'); await page.waitForTimeout(220); }
+    await tapAt('.ow-dpad-btn[aria-label="Move up"]'); await page.waitForTimeout(150);
+    for (let i = 0; i < 6 && !(await page.locator('.rpgw-choices').isVisible()); i++) { await tapAt('.ow-a-btn'); await page.waitForTimeout(250); }
+    await tapAt('.ow-a-btn');
+    await page.waitForSelector('[data-testid="battle-view"][data-phase="select"]', { timeout: 8000 });
+    const field = await page.locator('.rpgb-field').boundingBox();
+    const enemy = await page.locator('.rpgb-enemy-card').first().boundingBox();
+    const cmd = await page.locator('.rpgb-cmd').first().boundingBox();
+    check('mobile battle field has room for fighters', !!field && field.height >= 120, `field ${field && Math.round(field.height)}px`);
+    check('mobile enemy card is visible', !!enemy && enemy.height >= 40, `enemy ${enemy && Math.round(enemy.height)}px`);
+    check('mobile command rows are thumb-sized', !!cmd && cmd.height >= 40, `cmd ${cmd && Math.round(cmd.height)}px`);
+    const noHScroll = await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1);
+    check('mobile battle does not overflow horizontally', noHScroll);
+    // choose ATTACK by tapping it, then tap the enemy card to confirm the target
+    await tapAt('.rpgb-cmd'); await page.waitForTimeout(250);
+    check('tapping a command reaches target phase', (await page.getAttribute('[data-testid="battle-view"]', 'data-phase')) === 'target');
+    await tapAt('.rpgb-enemy-card'); await page.waitForTimeout(250);
+    check('tapping the enemy confirms the target', (await page.getAttribute('[data-testid="battle-view"]', 'data-phase')) === 'resolving');
     await ctx.close();
   }
 

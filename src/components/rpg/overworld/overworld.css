@@ -22,6 +22,17 @@
   margin: 0 auto;
 }
 
+/* In battle the frame sizes to the battle view instead of the map aspect */
+.ow-frame.ow-in-battle {
+  width: 100%;
+  aspect-ratio: auto;
+}
+
+.ow-frame.ow-in-battle .ow-svg,
+.ow-frame.ow-in-battle .ow-scene-name {
+  display: none;
+}
+
 /* Battle swirl: a radial mask that closes in over the frame */
 .ow-fade.ow-swirl {
   opacity: 1;

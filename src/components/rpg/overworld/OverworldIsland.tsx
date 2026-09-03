@@ -135,8 +135,8 @@ function OverworldGame({ speed, reducedMotion }: OverworldGameProps) {
   return (
     <div className="ow" data-player-tile={`${state.x},${state.y}`} data-scene={state.scene}>
       <div
-        className="ow-frame"
-        style={{ aspectRatio: `${cols} / ${rows}`, width: `min(100%, calc(72vh * ${cols} / ${rows}))` }}
+        className={`ow-frame${inBattle ? ' ow-in-battle' : ''}`}
+        style={inBattle ? undefined : { aspectRatio: `${cols} / ${rows}`, width: `min(100%, calc(72vh * ${cols} / ${rows}))` }}
       >
         {state.scene !== 'world' && <div className="ow-scene-name">{scene.name}</div>}
         <svg
